@@ -23,13 +23,15 @@ class SignInActivity : AppCompatActivity() {
         val textView = findViewById<TextView>(R.id.textViewSignup)
         val button = findViewById<TextView>(R.id.buttonLogin)
 
-
+        // get firebase auth
         firebaseAuth = FirebaseAuth.getInstance()
+
+        // link activities
         textView.setOnClickListener {
-            val intent = Intent(this, SignUpActivity::class.java)
-            startActivity(intent)
+            startActivity(Intent(this, SignUpActivity::class.java))
         }
 
+        // credentials validation
         button.setOnClickListener {
             val email = editTextEmail.text.toString()
             val pass = editTextPassword.text.toString()

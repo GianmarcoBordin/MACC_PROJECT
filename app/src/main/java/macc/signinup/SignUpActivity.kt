@@ -17,7 +17,6 @@ class SignUpActivity : AppCompatActivity() {
         setContentView(R.layout.signup_layout)
 
         // finding the edit text and buttons
-        val editTextName = findViewById<EditText>(R.id.editTextName)
         val editTextEmail = findViewById<EditText>(R.id.editTextEmail)
         val editTextPassword = findViewById<EditText>(R.id.editTextPassword)
         val editTextConfirm = findViewById<EditText>(R.id.editTextConfirm)
