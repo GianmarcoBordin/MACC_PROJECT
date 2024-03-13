@@ -1,3 +1,0 @@
-macc.signinup.test
-style WhiteBackgroundDialogTheme
-style WhiteBackgroundTheme
