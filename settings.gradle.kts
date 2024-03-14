@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SignInUp"
+rootProject.name = "ArApp"
 include(":app")

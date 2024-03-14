@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import macc.signinup.R
 
 class EmailVerificationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

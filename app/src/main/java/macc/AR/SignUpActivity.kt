@@ -3,7 +3,7 @@ package macc.AR
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import macc.AR.compose.RegistrationScreen
+import macc.AR.compose.authentication.RegistrationScreen
 
 class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

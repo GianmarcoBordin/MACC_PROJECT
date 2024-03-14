@@ -1,6 +1,5 @@
-package macc.AR.compose
+package macc.AR.compose.authentication
 
-import android.content.Intent
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,8 +16,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.core.content.ContextCompat.startActivity
-import macc.AR.EmailVerificationActivity
 import macc.AR.SignUpActivity
 import macc.AR.data.registerFirebase
 
