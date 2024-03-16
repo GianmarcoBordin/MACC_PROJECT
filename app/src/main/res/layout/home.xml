@@ -9,7 +9,7 @@
         android:id="@+id/titleTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Get It Now"
+        android:text=""
         android:textSize="24sp"
         android:textStyle="bold"
         android:textColor="@android:color/white"
@@ -53,7 +53,24 @@
         android:layout_marginStart="80dp"
         android:text="Rank" />
 
+    <Button
+        android:id="@+id/logout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/titleTextView"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="280dp"
+        android:text="Logout" />
+
+    <Button
+        android:id="@+id/delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/titleTextView"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="240dp"
+        android:text="Delete" />
+
     <!-- You can add more buttons or features here as needed -->
 
 </RelativeLayout>
-

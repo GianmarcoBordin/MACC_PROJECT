@@ -1,4 +1,4 @@
-package macc.signinup
+package macc.AR
 
 import org.junit.Test
 

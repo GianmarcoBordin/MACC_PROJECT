@@ -1,4 +1,4 @@
-package macc.signinup
+package macc.AR
 
 
 import android.content.Intent
@@ -8,6 +8,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import macc.signinup.R
 
 class SignInActivity : AppCompatActivity() {
 
@@ -40,7 +41,7 @@ class SignInActivity : AppCompatActivity() {
 
                 firebaseAuth.signInWithEmailAndPassword(email, pass).addOnCompleteListener {
                     if (it.isSuccessful) {
-                        val intent = Intent(this, MainActivity::class.java)
+                        val intent = Intent(this, HomeActivity::class.java)
                         startActivity(intent)
                     } else {
                         Toast.makeText(this, it.exception.toString(), Toast.LENGTH_SHORT).show()
@@ -58,7 +59,7 @@ class SignInActivity : AppCompatActivity() {
         super.onStart()
 
         if(firebaseAuth.currentUser != null){
-            val intent = Intent(this, MainActivity::class.java)
+            val intent = Intent(this, HomeActivity::class.java)
             startActivity(intent)
         }
     }
