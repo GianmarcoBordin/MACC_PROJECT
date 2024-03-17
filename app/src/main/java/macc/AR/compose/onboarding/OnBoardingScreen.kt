@@ -1,5 +1,4 @@
 package macc.AR.compose.onboarding
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,9 +17,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import kotlinx.coroutines.launch
 import macc.AR.compose.Dimension.MediumPadding2
 import macc.AR.compose.Dimension.PageIndicatorWidth
+import macc.AR.compose.navgraph.Route
 import macc.AR.compose.onboarding.components.OnBoardingButton
 import macc.AR.compose.onboarding.components.OnBoardingPage
 import macc.AR.compose.onboarding.components.OnBoardingTextButton
@@ -31,7 +32,7 @@ import macc.AR.compose.onboarding.components.PagerIndicator
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
 fun OnBoardingScreen(
-    event: (OnBoardingEvent) -> Unit
+    event: (OnBoardingEvent) -> Unit,navController: NavController
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         val pagerState = rememberPagerState(initialPage = 0) {
@@ -87,9 +88,11 @@ fun OnBoardingScreen(
                     onClick = {
                         scope.launch {
                             if (pagerState.currentPage == 2){
-                                //Navigate to the main screen and save a value in datastore preferences
-
+                                // save a value in datastore preferences
+                                // we launch an event that will be captured by the view model
                                 event(OnBoardingEvent.SaveAppEntry)
+                                // navigate to the main screen
+                                navController.navigate(Route.SignInScreen.route)
 
                             }else{
                                 pagerState.animateScrollToPage(

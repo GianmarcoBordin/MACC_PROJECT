@@ -1,4 +1,4 @@
-package macc.AR.domain.usecase
+package macc.AR.domain.usecase.appEntry
 
 import kotlinx.coroutines.flow.Flow
 import macc.AR.domain.manager.LocalUserManager

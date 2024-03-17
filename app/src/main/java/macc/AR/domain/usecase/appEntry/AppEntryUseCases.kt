@@ -1,4 +1,4 @@
-package macc.AR.domain.usecase
+package macc.AR.domain.usecase.appEntry
 
 data class AppEntryUseCases (
     val readAppEntry: ReadAppEntry,

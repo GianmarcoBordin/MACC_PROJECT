@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import macc.AR.domain.usecase.AppEntryUseCases
+import macc.AR.domain.usecase.appEntry.AppEntryUseCases
 import javax.inject.Inject
 
 /* Class responsible for handling onboarding related events. It relies on the appEntryUseCases dependency

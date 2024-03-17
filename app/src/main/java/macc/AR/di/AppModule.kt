@@ -6,10 +6,16 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import macc.AR.data.manager.LocalUserManagerImpl
+import macc.AR.domain.manager.AuthManager
 import macc.AR.domain.manager.LocalUserManager
-import macc.AR.domain.usecase.AppEntryUseCases
-import macc.AR.domain.usecase.ReadAppEntry
-import macc.AR.domain.usecase.SaveAppEntry
+import macc.AR.domain.usecase.appEntry.AppEntryUseCases
+import macc.AR.domain.usecase.appEntry.ReadAppEntry
+import macc.AR.domain.usecase.appEntry.SaveAppEntry
+import macc.AR.domain.usecase.auth.AuthenticationUseCases
+import macc.AR.domain.usecase.auth.LogOut
+import macc.AR.domain.usecase.auth.SignIn
+import macc.AR.domain.usecase.auth.SignUp
+import macc.AR.domain.usecase.auth.Subscribe
 import javax.inject.Singleton
 
 /*
@@ -35,4 +41,16 @@ object AppModule {
         readAppEntry = ReadAppEntry(localUserManager),
         saveAppEntry = SaveAppEntry(localUserManager)
     )
+
+    @Provides
+    @Singleton
+    fun provideAuthUseCases(
+        authManager: AuthManager
+    ) = AuthenticationUseCases(
+        signIn = SignIn(authManager),
+        signUp = SignUp(authManager),
+        logOut = LogOut(authManager),
+        subscribe = Subscribe(authManager)
+    )
+
 }

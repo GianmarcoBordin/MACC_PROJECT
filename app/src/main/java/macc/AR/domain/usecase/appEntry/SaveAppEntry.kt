@@ -1,4 +1,4 @@
-package macc.AR.domain.usecase
+package macc.AR.domain.usecase.appEntry
 
 import macc.AR.domain.manager.LocalUserManager
 
