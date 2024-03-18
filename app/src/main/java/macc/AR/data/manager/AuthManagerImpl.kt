@@ -1,7 +1,12 @@
 package macc.AR.data.manager
 
+import android.content.ContentValues.TAG
+import android.util.Log
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.actionCodeSettings
+import com.google.firebase.auth.auth
 import macc.AR.domain.manager.AuthManager
 
 interface UpdateListener {
@@ -11,6 +16,7 @@ class AuthManagerImpl(
 ): AuthManager {
     private lateinit var firebaseAuth: FirebaseAuth
     private var updateListener: UpdateListener? = null
+    private lateinit var otp: String
 
     override suspend fun signIn(email: String,password: String) {
         // get firebase auth
@@ -71,9 +77,55 @@ class AuthManagerImpl(
         }
     }
 
+    override fun confirm(otp: String): Boolean {
+        return otp==this.otp
+    }
+
+    override fun authCheck(): Boolean {
+        return firebaseAuth.currentUser != null
+    }
+
+    override suspend fun sendEmail() {
+        val email = FirebaseAuth.getInstance().currentUser?.email
+        val name = FirebaseAuth.getInstance().currentUser?.displayName
+        otp=generateOTP()
+        val actionCodeSettings = actionCodeSettings {
+            // URL you want to redirect back to. The domain (www.example.com) for this
+            // URL must be whitelisted in the Firebase Console.
+            url = "Hi $name! This is your auto-generated OTP: $otp please insert it in the app to confirm your account!"
+            // This must be true
+            handleCodeInApp = true
+            setIOSBundleId("com.example.ios")
+            setAndroidPackageName(
+                "com.example.android",
+                true, // installIfNotAvailable
+                "12", // minimumVersion
+            )
+        }
+        Firebase.auth.sendSignInLinkToEmail(email.toString(), actionCodeSettings)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "Email sent.")
+                    updateListener?.onUpdate("Confirmation Success")
+                }else{
+                    updateListener?.onUpdate("Something went wrong, please retry later")
+                }
+            }
+    }
+
     override fun setUpdateListener(ref: UpdateListener) {
        updateListener=ref
     }
 
+    // Generate OTP function
+    private fun generateOTP(): String {
+        val otpLength = 6 // Length of OTP
+        val otp = StringBuilder()
+        val random = java.util.Random()
+        for (i in 0 until otpLength) {
+            otp.append(random.nextInt(10)) // Generate random digit
+        }
+        return otp.toString()
+    }
 
 }

@@ -8,9 +8,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import macc.AR.compose.ArHomeScreen
 import macc.AR.compose.authentication.AuthenticationViewModel
+import macc.AR.compose.authentication.SettingsViewModel
+import macc.AR.compose.authentication.screens.EmailScreen
 import macc.AR.compose.onboarding.OnBoardingScreen
 import macc.AR.compose.onboarding.OnBoardingViewModel
+import macc.AR.compose.settings.SettingsScreen
 
 @Composable
 fun NavGraph(
@@ -49,15 +53,30 @@ fun NavGraph(
 
             }
             composable(
+                route = Route.EmailScreen.route
+            ) {
+                // set screen as the node state
+                val viewModel : AuthenticationViewModel = hiltViewModel()
+                EmailScreen(otpHandler = viewModel::onEmailEvent, viewModel = viewModel, navController = navController)
+            }
+            composable(
+                route = Route.SettingsScreen.route
+            ) {
+                // set screen as the node state
+                val viewModel : SettingsViewModel = hiltViewModel()
+                SettingsScreen(settingsHandler = viewModel::onUpdateEvent, viewModel = viewModel, navController = navController)
+            }
+            composable(
                 route = Route.HomeScreen.route
             ) {
                 // set screen as the node state
                 val viewModel : AuthenticationViewModel = hiltViewModel()
-                /*
-                SignInScreen(signInHandler = , viewModel = , navController = )
+                ArHomeScreen(
+                    settingsHandler = {/* TODO */},
+                    signOutHandler = viewModel::onSignOutEvent,
+                    viewModel = viewModel,
+                    navController = navController
                 )
-
-                 */
             }
             // more nodes...
 

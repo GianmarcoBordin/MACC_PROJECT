@@ -1,4 +1,4 @@
-#Mon Mar 18 12:20:26 CET 2024
+#Mon Mar 18 18:05:01 CET 2024
 base.0=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeExtDexDebug/classes.dex
 base.1=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
 base.10=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/7/classes.dex
@@ -6,6 +6,7 @@ base.11=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/de
 base.12=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/9/classes.dex
 base.13=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeExtDexDebug/classes2.dex
 base.14=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeExtDexDebug/classes3.dex
+base.15=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeExtDexDebug/classes4.dex
 base.2=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/10/classes.dex
 base.3=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/13/classes.dex
 base.4=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/15/classes.dex
@@ -21,6 +22,7 @@ path.11=8/classes.dex
 path.12=9/classes.dex
 path.13=classes2.dex
 path.14=classes3.dex
+path.15=classes4.dex
 path.2=10/classes.dex
 path.3=13/classes.dex
 path.4=15/classes.dex
@@ -36,6 +38,7 @@ renamed.11=classes12.dex
 renamed.12=classes13.dex
 renamed.13=classes14.dex
 renamed.14=classes15.dex
+renamed.15=classes16.dex
 renamed.2=classes3.dex
 renamed.3=classes4.dex
 renamed.4=classes5.dex

@@ -1,3 +1,4 @@
+package macc.AR.compose.authentication.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -8,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
@@ -26,13 +26,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,10 +36,13 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import macc.AR.compose.authentication.AuthenticationViewModel
 import macc.AR.compose.authentication.components.BackButton
-import macc.AR.compose.authentication.events.SignUpEvent
+import macc.AR.compose.authentication.events.EmailEvent
 import macc.AR.compose.navgraph.Route
 import macc.AR.data.manager.AuthManagerImpl
+import macc.AR.domain.usecase.auth.AuthCheck
 import macc.AR.domain.usecase.auth.AuthenticationUseCases
+import macc.AR.domain.usecase.auth.Confirm
+import macc.AR.domain.usecase.auth.SendEmail
 import macc.AR.domain.usecase.auth.SignIn
 import macc.AR.domain.usecase.auth.SignOut
 import macc.AR.domain.usecase.auth.SignUp
@@ -51,13 +50,11 @@ import macc.AR.domain.usecase.auth.Subscribe
 
 // Presentation Layer
 @Composable
-fun SignUpScreen(signInHandler: (SignUpEvent.SignUp) -> Unit, viewModel: AuthenticationViewModel,navController: NavController) {
+fun EmailScreen(otpHandler: (EmailEvent.Email) -> Unit, viewModel: AuthenticationViewModel, navController: NavController) {
 
     // fields of interest
-    var name by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var confirmPass by remember { mutableStateOf("") }
+    var OTP by remember { mutableStateOf("") }
+    var OTPerror by remember { mutableStateOf(false) }
     // observed state
     val data by viewModel.data.observeAsState()
     val focusManager = LocalFocusManager.current
@@ -77,7 +74,7 @@ fun SignUpScreen(signInHandler: (SignUpEvent.SignUp) -> Unit, viewModel: Authent
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "SignUp",
+            text = "Confirm your account",
             style = androidx.compose.material3.MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
             color = Color.Black,
             fontSize=30.sp,
@@ -85,56 +82,13 @@ fun SignUpScreen(signInHandler: (SignUpEvent.SignUp) -> Unit, viewModel: Authent
             modifier = Modifier.padding(bottom = 16.dp)
         )
         OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
-            label = { Text("Name") },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = { focusManager.moveFocus(FocusDirection.Down) }
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp),
-            shape = RoundedCornerShape(size = 20.dp)
-        )
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Next
-            ),
-            keyboardActions = KeyboardActions(
-                onNext = { focusManager.moveFocus(FocusDirection.Down) }
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp),
-            shape = RoundedCornerShape(size = 20.dp)
-        )
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    focusManager.clearFocus()
-                }
-            ),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 10.dp),
-            shape = RoundedCornerShape(size = 20.dp)
-        )
-        OutlinedTextField(
-            value = confirmPass,
-            onValueChange = { confirmPass = it },
-            label = { Text("Confirm Password") },
+            value = OTP,
+            label = { Text("OTP") },
+            onValueChange = {
+                OTP = it
+                OTPerror = !viewModel.isValidOTP(it)
+            },
+            isError = OTPerror,
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Next
             ),
@@ -149,46 +103,20 @@ fun SignUpScreen(signInHandler: (SignUpEvent.SignUp) -> Unit, viewModel: Authent
         Button(
             onClick = {
                 focusManager.clearFocus()
-                signInHandler(SignUpEvent.SignUp(name,email,password,confirmPass))
+                otpHandler(EmailEvent.Email)
             },
             shape = RoundedCornerShape(size = 20.dp),
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            Text("Sign Up")
+            Text("Generate OTP")
         }
-        val text = AnnotatedString.Builder().apply {
-            append("You already have an account? Click here to ")
-            pushStringAnnotation(
-                tag = "LINK",
-                annotation = "destination_page"
-            )
-            withStyle(
-                style = SpanStyle(
-                    color = Color.Blue,
-                    textDecoration = TextDecoration.Underline
-                )
-            ) {
-                append("signIn")
-            }
-            pop()
-        }.toAnnotatedString()
-
-        ClickableText(
-            text = text,
-            onClick = { offset ->
-                text.getStringAnnotations("LINK", offset, offset)
-                    .firstOrNull()?.let {
-                        navController.navigate(Route.SignInScreen.route)
-                    }
-            }
-        )
         // Observe changes in data
         if (data != null) {
             // Display data
-            Text(text = data!!.toString(),color = if (data.equals("SignUp Success")) Color.Green else Color.Red)
+            Text(text = data!!.toString(),color = if (data.equals("Confirmation Success")) Color.Green else Color.Red)
             // Change page if all ok
-            if(data.equals("SignUp Success")) {
+            if(data.equals("Confirmation Success")) {
                 navController.navigate(Route.HomeScreen.route)
             }
         }
@@ -201,6 +129,6 @@ fun SignUpScreen(signInHandler: (SignUpEvent.SignUp) -> Unit, viewModel: Authent
 fun PreviewSignUpScreen() {
     val authManager= AuthManagerImpl()
     val navController = rememberNavController()
-    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), signOut = SignOut(authManager), subscribe = Subscribe(authManager))) }
-    SignUpScreen(signInHandler = {}, viewModel = viewModel, navController = navController)
+    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), signOut = SignOut(authManager), confirm= Confirm(authManager), sendEmail = SendEmail(authManager), authCheck = AuthCheck(authManager), subscribe = Subscribe(authManager))) }
+    EmailScreen(otpHandler = {}, viewModel = viewModel, navController = navController)
 }

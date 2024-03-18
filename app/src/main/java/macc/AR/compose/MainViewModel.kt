@@ -9,28 +9,29 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.onEach
 import macc.AR.compose.navgraph.Route
 import macc.AR.domain.usecase.appEntry.AppEntryUseCases
+import macc.AR.domain.usecase.auth.AuthenticationUseCases
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val appEntryUseCases: AppEntryUseCases,
+    private val authenticationUseCases: AuthenticationUseCases
 ): ViewModel(){
 
     var startDestination by mutableStateOf(Route.AppStartNavigation.route)
-    // TODO if(firebaseAuth.currentUser != null){
-    //          val intent = Intent(this, HomeActivity::class.java)
-    //            startActivity(intent)
-    //        }
-    // TODO here insert code to check if user is already authenticated
     init {
-        // check if user has skipped the onBoardingPage
+        // check if user has skipped the onBoardingPage and if it is logged in
         // the view model is in charge to recover the user preferences
         // moreover a view model in general is in charge of managing the composable functions
         appEntryUseCases.readAppEntry().onEach { shouldStartFromHomeScreen ->
             startDestination = if (shouldStartFromHomeScreen) {
-                Route.HomeScreen.route
+                if(authenticationUseCases.authCheck()){
+                    Route.HomeScreen.route
+                }else{
+                    Route.SignInScreen.route
+                }
             } else {
-                Route.AppStartNavigation.route
+                Route.OnBoardingScreen.route
             }
             delay(300)
         }

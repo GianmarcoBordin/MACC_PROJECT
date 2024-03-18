@@ -35,14 +35,17 @@ import macc.AR.compose.authentication.AuthenticationViewModel
 import macc.AR.compose.authentication.events.SignOutEvent
 import macc.AR.compose.navgraph.Route
 import macc.AR.data.manager.AuthManagerImpl
+import macc.AR.domain.usecase.auth.AuthCheck
 import macc.AR.domain.usecase.auth.AuthenticationUseCases
+import macc.AR.domain.usecase.auth.Confirm
+import macc.AR.domain.usecase.auth.SendEmail
 import macc.AR.domain.usecase.auth.SignIn
 import macc.AR.domain.usecase.auth.SignOut
 import macc.AR.domain.usecase.auth.SignUp
 import macc.AR.domain.usecase.auth.Subscribe
 
 @Composable
-fun ArHomeScreen(settingsHandler: ()->Unit, signOutHandler: (SignOutEvent.SignOut) -> Unit, viewModel:AuthenticationViewModel, navController:NavController) {
+fun ArHomeScreen(settingsHandler: (/*TODO*/)->Unit, signOutHandler: (SignOutEvent.SignOut) -> Unit, viewModel:AuthenticationViewModel, navController:NavController) {
     var isSettingsVisible by remember { mutableStateOf(false) }
     val signOutResult by viewModel.data.observeAsState()
 
@@ -131,6 +134,6 @@ fun SettingsSidebar(onClose: () -> Unit) {
 fun PreviewArHomeScreen() {
     val authManager= AuthManagerImpl()
     val navController = rememberNavController()
-    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), signOut = SignOut(authManager), subscribe = Subscribe(authManager))) }
+    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), signOut = SignOut(authManager), confirm = Confirm(authManager),sendEmail= SendEmail(authManager), authCheck = AuthCheck(authManager), subscribe = Subscribe(authManager))) }
     ArHomeScreen(settingsHandler = {}, signOutHandler = {}, viewModel =viewModel , navController =navController )
 }

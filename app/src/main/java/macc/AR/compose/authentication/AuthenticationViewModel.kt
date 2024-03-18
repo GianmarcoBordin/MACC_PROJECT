@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import macc.AR.compose.authentication.events.EmailEvent
 import macc.AR.compose.authentication.events.SignInEvent
 import macc.AR.compose.authentication.events.SignOutEvent
 import macc.AR.compose.authentication.events.SignUpEvent
@@ -53,6 +54,20 @@ class AuthenticationViewModel  @Inject constructor(
         }
     }
 
+    fun onEmailEvent(event: EmailEvent){
+        when(event){
+            is EmailEvent.Email -> {
+                goConfirmAccount()
+            }
+        }
+    }
+
+    private fun goConfirmAccount() {
+        viewModelScope.launch {
+            authenticationUseCases.signOut()
+        }
+    }
+
     private fun goSignOut() {
         viewModelScope.launch {
             authenticationUseCases.signOut()
@@ -73,6 +88,12 @@ class AuthenticationViewModel  @Inject constructor(
         }
     }
 
+    // Example email validation function
+     fun isValidOTP(otp: String): Boolean {
+        return authenticationUseCases.confirm(otp)
+    }
+
+    // TODO move to a more generale model view
     override fun onUpdate(data:String) {
         // Update UI state with received data
         _data.value= data
