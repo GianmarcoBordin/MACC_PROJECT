@@ -1,6 +1,7 @@
 package macc.AR.compose.navgraph
 
 import SignInScreen
+import SignUpScreen
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -44,11 +45,8 @@ fun NavGraph(
             ) {
                 // set screen as the node state
                 val viewModel : AuthenticationViewModel = hiltViewModel()
-                /*
-                SignInScreen(signInHandler = , viewModel = , navController = )
-                )
+                SignUpScreen(signInHandler = viewModel::onSignUpEvent, viewModel = viewModel, navController = navController)
 
-                 */
             }
             composable(
                 route = Route.HomeScreen.route

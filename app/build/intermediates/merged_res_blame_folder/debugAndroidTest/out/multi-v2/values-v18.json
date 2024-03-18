@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "macc.signinup.test.app-mergeDebugAndroidTestResources-3:/values-v18/values-v18.xml",
+            "outputFile": "macc.signinup.test.app-mergeDebugAndroidTestResources-32:/values-v18/values-v18.xml",
             "map": [
                 {
-                    "source": "/Users/applem2/.gradle/caches/transforms-3/67f5a5248ae2d1741fc355b1106baa4c/transformed/core-1.5.0/res/values-v18/values.xml",
+                    "source": "/Users/applem2/.gradle/caches/transforms-3/01eeecf5f434da551eb8e1ae45a62df5/transformed/core-1.5.0/res/values-v18/values.xml",
                     "from": {
                         "startLines": "4,12",
                         "startColumns": "0,0",

@@ -2983,8 +2983,10 @@ drawable design_ic_visibility
 drawable design_ic_visibility_off
 drawable design_password_eye
 drawable design_snackbar_background
+drawable empty
 drawable game_background
 drawable game_logo
+drawable game_logo2
 drawable googleg_disabled_color_18
 drawable googleg_standard_color_18
 drawable ic_arrow_back_black_24
@@ -3186,9 +3188,7 @@ id browser_actions_menu_item_text
 id browser_actions_menu_items
 id browser_actions_menu_view
 id buttonGenerateOTP
-id buttonLogin
 id buttonPanel
-id buttonSignup
 id buttonVerify
 id cancel_button
 id center
@@ -3228,7 +3228,6 @@ id decelerate
 id decelerateAndComplete
 id decor_content_parent
 id default_activity_button
-id delete
 id deltaRelative
 id design_bottom_sheet
 id design_menu_item_action_area
@@ -3253,11 +3252,7 @@ id easeIn
 id easeInOut
 id easeOut
 id edge
-id editTextConfirm
-id editTextEmail
-id editTextName
 id editTextOTP
-id editTextPassword
 id edit_query
 id edit_text_id
 id elastic
@@ -3328,11 +3323,8 @@ id linear
 id listMode
 id list_item
 id locale
-id logoImageView
-id logout
 id ltr
 id m3_side_sheet
-id mapButton
 id marquee
 id masked
 id match_parent
@@ -3443,7 +3435,6 @@ id pressed
 id progress_circular
 id progress_horizontal
 id radio
-id rankButton
 id ratio
 id rectangles
 id report_drawn
@@ -3501,7 +3492,6 @@ id src_in
 id src_over
 id standard
 id start
-id startGameButton
 id startHorizontal
 id startToEnd
 id startVertical
@@ -3532,8 +3522,6 @@ id textSpacerNoButtons
 id textSpacerNoTitle
 id textStart
 id textTop
-id textViewLogin
-id textViewSignup
 id text_input_end_icon
 id text_input_error_icon
 id text_input_start_icon
@@ -3546,7 +3534,6 @@ id textinput_suffix_text
 id time
 id title
 id titleDividerNoCustom
-id titleTextView
 id title_template
 id toggle
 id top
@@ -3713,10 +3700,8 @@ layout design_navigation_menu_item
 layout design_text_input_end_icon
 layout design_text_input_start_icon
 layout email_verification
-layout home
 layout ime_base_split_test_activity
 layout ime_secondary_split_test_activity
-layout login_layout
 layout m3_alert_dialog
 layout m3_alert_dialog_actions
 layout m3_alert_dialog_title
@@ -3777,7 +3762,6 @@ layout notification_template_part_time
 layout select_dialog_item_material
 layout select_dialog_multichoice_material
 layout select_dialog_singlechoice_material
-layout signup_layout
 layout support_simple_spinner_dropdown_item
 mipmap ic_launcher
 mipmap ic_launcher_round

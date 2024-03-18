@@ -7,7 +7,8 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import macc.AR.compose.authentication.events.SignInEvent
-import macc.AR.compose.onboarding.OnBoardingEvent
+import macc.AR.compose.authentication.events.SignOutEvent
+import macc.AR.compose.authentication.events.SignUpEvent
 import macc.AR.data.manager.UpdateListener
 import macc.AR.domain.usecase.auth.AuthenticationUseCases
 import javax.inject.Inject
@@ -29,38 +30,47 @@ class AuthenticationViewModel  @Inject constructor(
     }
 
     fun onSignInEvent(event: SignInEvent){
-        sequenceOf(
             when (event) {
                 is SignInEvent.SignIn-> {
-                    val email= event.email
-                    val password=event.password
-                    goSignIn(email, password)
+                    goSignIn(event.email, event.password)
                 }
             }
-        )
     }
 
-    fun onSignUpEvent(event: OnBoardingEvent){
-        when(event){
-            is OnBoardingEvent.SaveAppEntry -> {
-                TODO("Not yet implemented")
+    fun onSignUpEvent(event: SignUpEvent){
+        when (event) {
+            is SignUpEvent.SignUp-> {
+                goSignUp(event.name,event.email, event.password,event.confirmPass)
             }
         }
     }
 
-    fun onSignOutEvent(event: OnBoardingEvent){
+    fun onSignOutEvent(event: SignOutEvent){
         when(event){
-            is OnBoardingEvent.SaveAppEntry -> {
-                TODO("Not yet implemented")
+            is SignOutEvent.SignOut -> {
+            goSignOut()
             }
         }
     }
+
+    private fun goSignOut() {
+        viewModelScope.launch {
+            authenticationUseCases.signOut()
+        }
+    }
+
 
     private fun goSignIn(email:String,password:String) {
         viewModelScope.launch {
             authenticationUseCases.signIn(email,password)
         }
 
+    }
+
+    private fun goSignUp(name:String,email:String,password:String,confirmPass:String) {
+        viewModelScope.launch {
+            authenticationUseCases.signUp(name,email,password,confirmPass)
+        }
     }
 
     override fun onUpdate(data:String) {

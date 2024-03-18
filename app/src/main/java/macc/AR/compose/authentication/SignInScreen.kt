@@ -1,9 +1,12 @@
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
@@ -19,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
@@ -35,23 +39,36 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import macc.AR.compose.authentication.AuthenticationViewModel
+import macc.AR.compose.authentication.components.BackButton
 import macc.AR.compose.authentication.events.SignInEvent
 import macc.AR.compose.navgraph.Route
 import macc.AR.data.manager.AuthManagerImpl
 import macc.AR.domain.usecase.auth.AuthenticationUseCases
-import macc.AR.domain.usecase.auth.LogOut
 import macc.AR.domain.usecase.auth.SignIn
+import macc.AR.domain.usecase.auth.SignOut
 import macc.AR.domain.usecase.auth.SignUp
 import macc.AR.domain.usecase.auth.Subscribe
 
 @Composable
-fun SignInScreen(signInHandler: (SignInEvent.SignIn) -> Unit,viewModel: AuthenticationViewModel,navController: NavController) {
+fun SignInScreen(
+    signInHandler: (SignInEvent.SignIn) -> Unit,
+    viewModel: AuthenticationViewModel,
+    navController: NavController) {
+
+    // fields of interest
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-
+    // observed state
     val data by viewModel.data.observeAsState()
     val focusManager = LocalFocusManager.current
 
+    BackButton(
+        navController = navController,
+        modifier = Modifier
+            .size(50.dp)
+            .clip(CircleShape) // Change the shape of the button here
+            .background(Color.DarkGray)
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -140,11 +157,12 @@ fun SignInScreen(signInHandler: (SignInEvent.SignIn) -> Unit,viewModel: Authenti
         // Observe changes in data
         if (data != null) {
             // Display data
-            Text(text = data!!.toString(),color = Color.Red)
+            Text(text = data!!.toString(),color = if (data.equals("SignUp Success")) Color.Green else Color.Red)
             // Change page if all ok
             if(data.equals("Login Success")) {
                 navController.navigate(Route.HomeScreen.route)
             }
+
         }
     }
 }
@@ -155,7 +173,6 @@ fun SignInScreen(signInHandler: (SignInEvent.SignIn) -> Unit,viewModel: Authenti
 fun PreviewSignInScreen() {
     val authManager=AuthManagerImpl()
     val navController = rememberNavController()
-    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), logOut = LogOut(authManager), subscribe = Subscribe(authManager))) }
-    // TODO make sure to call login screen with the dependencies ecc
+    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), signOut = SignOut(authManager), subscribe = Subscribe(authManager))) }
     SignInScreen(signInHandler = {}, viewModel = viewModel, navController = navController)
 }
