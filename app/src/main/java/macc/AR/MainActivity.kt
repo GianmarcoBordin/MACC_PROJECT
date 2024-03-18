@@ -4,14 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
 import macc.AR.compose.MainViewModel
-import macc.AR.compose.navgraph.NavGraph
-import macc.ui.theme.ArAppTheme
+import macc.AR.compose.navgraph.Route
 
 // the only activity present in the app
 @AndroidEntryPoint
@@ -23,7 +18,8 @@ class MainActivity: ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            ArAppTheme(
+            Route.ARScreen.route
+            /*ArAppTheme(
                 dynamicColor = false
             ) {
                 Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
@@ -31,6 +27,8 @@ class MainActivity: ComponentActivity() {
                     NavGraph(startDestination = startDestination)
                 }
             }
+
+             */
         }
     }
 }

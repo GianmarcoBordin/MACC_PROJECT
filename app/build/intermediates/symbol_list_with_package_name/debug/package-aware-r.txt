@@ -3084,6 +3084,7 @@ drawable notify_panel_notification_icon_bg
 drawable onboarding1
 drawable onboarding2
 drawable onboarding3
+drawable sceneview_fit_to_scan
 drawable test_level_drawable
 drawable tooltip_frame_dark
 drawable tooltip_frame_light
@@ -3104,6 +3105,9 @@ id SHOW_PROGRESS
 id SYM
 id TOP_END
 id TOP_START
+id __arcore_cancelButton
+id __arcore_continueButton
+id __arcore_messageText
 id accelerate
 id accessibility_action_clickable_span
 id accessibility_custom_action_0
@@ -3653,6 +3657,7 @@ interpolator mtrl_fast_out_linear_in
 interpolator mtrl_fast_out_slow_in
 interpolator mtrl_linear
 interpolator mtrl_linear_out_slow_in
+layout __arcore_education
 layout abc_action_bar_title_item
 layout abc_action_bar_up_container
 layout abc_action_menu_item_layout
@@ -3767,6 +3772,12 @@ mipmap ic_launcher
 mipmap ic_launcher_round
 plurals mtrl_badge_content_description
 raw firebase_common_keep
+raw keep_arcore
+string __arcore_cancel
+string __arcore_continue
+string __arcore_install_app
+string __arcore_install_feature
+string __arcore_installing
 string abc_action_bar_home_description
 string abc_action_bar_up_description
 string abc_action_menu_overflow_description
@@ -3856,6 +3867,7 @@ string icon_content_description
 string in_progress
 string indeterminate
 string item_view_role_description
+string lib_name
 string m3_exceed_max_badge_text_suffix
 string m3_ref_typeface_brand_medium
 string m3_ref_typeface_brand_regular
@@ -4021,9 +4033,19 @@ string path_password_eye
 string path_password_eye_mask_strike_through
 string path_password_eye_mask_visible
 string path_password_strike_through
+string point_your_phone_down
 string project_id
 string range_end
 string range_start
+string sceneview_bad_state_message
+string sceneview_camera_permission_required
+string sceneview_camera_unavailable_message
+string sceneview_excessive_motion_message
+string sceneview_insufficient_features_message
+string sceneview_insufficient_light_android_s_message
+string sceneview_insufficient_light_message
+string sceneview_tap_on_surface
+string sceneview_unknown_tracking_failure
 string search_menu_title
 string searchbar_scrolling_view_behavior
 string searchview_clear_text_content_description
@@ -4034,6 +4056,7 @@ string side_sheet_behavior
 string status_bar_notification_info_overflow
 string switch_role
 string tab
+string tap_anywhere_to_add_model
 string template_percent
 string tooltip_description
 string tooltip_label

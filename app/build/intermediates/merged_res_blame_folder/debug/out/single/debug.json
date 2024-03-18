@@ -1,126 +1,110 @@
 [
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/xml_backup_rules.xml.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/xml/backup_rules.xml"
+        "merged": "macc.signinup.app-merged_res-84:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "macc.signinup.app-main-86:/mipmap-hdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/mipmap-xhdpi_ic_launcher.webp.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/mipmap-xhdpi/ic_launcher.webp"
+        "merged": "macc.signinup.app-merged_res-84:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "macc.signinup.app-main-86:/mipmap-mdpi/ic_launcher.webp"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/mipmap-xhdpi_ic_launcher_round.webp.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/mipmap-xhdpi/ic_launcher_round.webp"
+        "merged": "macc.signinup.app-merged_res-84:/mipmap-anydpi_ic_launcher.xml.flat",
+        "source": "macc.signinup.app-main-86:/mipmap-anydpi/ic_launcher.xml"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/drawable_onboarding2.jpeg.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/drawable/onboarding2.jpeg"
+        "merged": "macc.signinup.app-merged_res-84:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "macc.signinup.app-main-86:/mipmap-xhdpi/ic_launcher.webp"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/drawable_ic_launcher_background.xml.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/drawable/ic_launcher_background.xml"
+        "merged": "macc.signinup.app-merged_res-84:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "macc.signinup.app-main-86:/mipmap-xxhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/drawable_game_logo2.png.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/drawable/game_logo2.png"
+        "merged": "macc.signinup.app-merged_res-84:/drawable_game_background.png.flat",
+        "source": "macc.signinup.app-main-86:/drawable/game_background.png"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/font_poppins_bold.ttf.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/font/poppins_bold.ttf"
+        "merged": "macc.signinup.app-merged_res-84:/font_poppins_regular.ttf.flat",
+        "source": "macc.signinup.app-main-86:/font/poppins_regular.ttf"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/mipmap-hdpi_ic_launcher.webp.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/mipmap-hdpi/ic_launcher.webp"
+        "merged": "macc.signinup.app-merged_res-84:/drawable_onboarding1.jpg.flat",
+        "source": "macc.signinup.app-main-86:/drawable/onboarding1.jpg"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/drawable/ic_launcher_foreground.xml"
+        "merged": "macc.signinup.app-merged_res-84:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "macc.signinup.app-main-86:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/drawable_game_background.png.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/drawable/game_background.png"
+        "merged": "macc.signinup.app-merged_res-84:/drawable_empty.webp.flat",
+        "source": "macc.signinup.app-main-86:/drawable/empty.webp"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/mipmap-hdpi_ic_launcher_round.webp.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/mipmap-hdpi/ic_launcher_round.webp"
+        "merged": "macc.signinup.app-merged_res-84:/xml_data_extraction_rules.xml.flat",
+        "source": "macc.signinup.app-main-86:/xml/data_extraction_rules.xml"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/layout_home.xml.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/layout/home.xml"
+        "merged": "macc.signinup.app-merged_res-84:/font_poppins_semibold.ttf.flat",
+        "source": "macc.signinup.app-main-86:/font/poppins_semibold.ttf"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/mipmap-xxxhdpi_ic_launcher.webp.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/mipmap-xxxhdpi/ic_launcher.webp"
+        "merged": "macc.signinup.app-merged_res-84:/xml_backup_rules.xml.flat",
+        "source": "macc.signinup.app-main-86:/xml/backup_rules.xml"
     },
     {
-        "merged": "macc.signinup.app-merged_res-78:/drawable_empty.webp.flat",
-        "source": "macc.signinup.app-main-80:/drawable/empty.webp"
+        "merged": "macc.signinup.app-merged_res-84:/drawable_ic_launcher_background.xml.flat",
+        "source": "macc.signinup.app-main-86:/drawable/ic_launcher_background.xml"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/drawable_onboarding3.jpeg.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/drawable/onboarding3.jpeg"
+        "merged": "macc.signinup.app-merged_res-84:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "macc.signinup.app-main-86:/mipmap-xxxhdpi/ic_launcher.webp"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/layout_signup_layout.xml.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/layout/signup_layout.xml"
+        "merged": "macc.signinup.app-merged_res-84:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "macc.signinup.app-main-86:/mipmap-xhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/drawable_game_logo.jpg.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/drawable/game_logo.jpg"
+        "merged": "macc.signinup.app-merged_res-84:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "macc.signinup.app-main-86:/mipmap-hdpi/ic_launcher.webp"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/mipmap-anydpi_ic_launcher.xml.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/mipmap-anydpi/ic_launcher.xml"
+        "merged": "macc.signinup.app-merged_res-84:/drawable_onboarding2.jpeg.flat",
+        "source": "macc.signinup.app-main-86:/drawable/onboarding2.jpeg"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/mipmap-mdpi_ic_launcher_round.webp.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/mipmap-mdpi/ic_launcher_round.webp"
+        "merged": "macc.signinup.app-merged_res-84:/drawable_game_logo2.png.flat",
+        "source": "macc.signinup.app-main-86:/drawable/game_logo2.png"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/mipmap-xxhdpi/ic_launcher_round.webp"
+        "merged": "macc.signinup.app-merged_res-84:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "macc.signinup.app-main-86:/mipmap-mdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/xml_data_extraction_rules.xml.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/xml/data_extraction_rules.xml"
+        "merged": "macc.signinup.app-merged_res-84:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "macc.signinup.app-main-86:/mipmap-xxxhdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/drawable_onboarding1.jpg.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/drawable/onboarding1.jpg"
+        "merged": "macc.signinup.app-merged_res-84:/layout_email_verification.xml.flat",
+        "source": "macc.signinup.app-main-86:/layout/email_verification.xml"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/mipmap-anydpi_ic_launcher_round.xml.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/mipmap-anydpi/ic_launcher_round.xml"
+        "merged": "macc.signinup.app-merged_res-84:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "macc.signinup.app-main-86:/mipmap-xxhdpi/ic_launcher.webp"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/font_poppins_regular.ttf.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/font/poppins_regular.ttf"
+        "merged": "macc.signinup.app-merged_res-84:/drawable_game_logo.jpg.flat",
+        "source": "macc.signinup.app-main-86:/drawable/game_logo.jpg"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/mipmap-mdpi_ic_launcher.webp.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/mipmap-mdpi/ic_launcher.webp"
+        "merged": "macc.signinup.app-merged_res-84:/font_poppins_bold.ttf.flat",
+        "source": "macc.signinup.app-main-86:/font/poppins_bold.ttf"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/font_poppins_semibold.ttf.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/font/poppins_semibold.ttf"
+        "merged": "macc.signinup.app-merged_res-84:/drawable_onboarding3.jpeg.flat",
+        "source": "macc.signinup.app-main-86:/drawable/onboarding3.jpeg"
     },
     {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/drawable_settings.jpg.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/drawable/settings.jpg"
-    },
-    {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/mipmap-xxxhdpi/ic_launcher_round.webp"
-    },
-    {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/layout_email_verification.xml.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/layout/email_verification.xml"
-    },
-    {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/mipmap-xxhdpi_ic_launcher.webp.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/mipmap-xxhdpi/ic_launcher.webp"
-    },
-    {
-        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-78:/layout_login_layout.xml.flat",
-        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-80:/layout/login_layout.xml"
+        "merged": "macc.signinup.app-merged_res-84:/mipmap-anydpi_ic_launcher_round.xml.flat",
+        "source": "macc.signinup.app-main-86:/mipmap-anydpi/ic_launcher_round.xml"
     }
 ]

@@ -15,7 +15,9 @@
     <string name="google_app_id" translatable="false">1:213538345095:android:e8ca77dbd45f8ac89ea822</string>
     <string name="google_crash_reporting_api_key" translatable="false">AIzaSyC_hxKCAz39Pxc76lZsVVBVz_SX6AG_Jpg</string>
     <string name="google_storage_bucket" translatable="false">signinup-e0bea.appspot.com</string>
+    <string name="point_your_phone_down">Point your phone down at an empty space, and move it around slowly</string>
     <string name="project_id" translatable="false">signinup-e0bea</string>
+    <string name="tap_anywhere_to_add_model">Tap anywhere to add model</string>
     <style name="Theme.SignInUp" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         
         <item name="colorPrimary">@color/purple_500</item>

@@ -1,20 +1,20 @@
-#Mon Mar 18 18:05:01 CET 2024
-base.0=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeExtDexDebug/classes.dex
-base.1=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
-base.10=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/7/classes.dex
-base.11=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/8/classes.dex
-base.12=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/9/classes.dex
-base.13=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeExtDexDebug/classes2.dex
-base.14=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeExtDexDebug/classes3.dex
-base.15=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeExtDexDebug/classes4.dex
-base.2=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/10/classes.dex
-base.3=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/13/classes.dex
-base.4=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/15/classes.dex
-base.5=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/2/classes.dex
-base.6=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/3/classes.dex
-base.7=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/4/classes.dex
-base.8=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/5/classes.dex
-base.9=/Users/applem2/AndroidStudioProjects/SignInUp/app/build/intermediates/dex/debug/mergeProjectDexDebug/6/classes.dex
+#Mon Mar 18 20:31:55 CET 2024
+base.0=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeExtDexDebug/classes.dex
+base.1=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex
+base.10=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeProjectDexDebug/7/classes.dex
+base.11=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeProjectDexDebug/8/classes.dex
+base.12=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeProjectDexDebug/9/classes.dex
+base.13=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeExtDexDebug/classes2.dex
+base.14=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeExtDexDebug/classes3.dex
+base.15=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeExtDexDebug/classes4.dex
+base.2=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeProjectDexDebug/10/classes.dex
+base.3=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeProjectDexDebug/13/classes.dex
+base.4=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeProjectDexDebug/15/classes.dex
+base.5=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeProjectDexDebug/2/classes.dex
+base.6=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeProjectDexDebug/3/classes.dex
+base.7=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeProjectDexDebug/4/classes.dex
+base.8=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeProjectDexDebug/5/classes.dex
+base.9=/home/carlo/AndroidStudioProjects/MACC_PROJECT/app/build/intermediates/dex/debug/mergeProjectDexDebug/6/classes.dex
 path.0=classes.dex
 path.1=0/classes.dex
 path.10=7/classes.dex

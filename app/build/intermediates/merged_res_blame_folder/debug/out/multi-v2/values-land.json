@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "macc.signinup.app-mergeDebugResources-76:/values-land/values-land.xml",
+            "outputFile": "macc.signinup.app-mergeDebugResources-82:/values-land/values-land.xml",
             "map": [
                 {
-                    "source": "/Users/applem2/.gradle/caches/transforms-3/6844eef171ccd99d2ce488b574eaada9/transformed/material-1.11.0/res/values-land/values-land.xml",
+                    "source": "/home/carlo/.gradle/caches/transforms-3/6844eef171ccd99d2ce488b574eaada9/transformed/material-1.11.0/res/values-land/values-land.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,26,35,40",
                         "startColumns": "4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4",
@@ -23,7 +23,7 @@
                     }
                 },
                 {
-                    "source": "/Users/applem2/.gradle/caches/transforms-3/f7c4135b9c29dcd03925b34ef9b0647d/transformed/appcompat-1.6.1/res/values-land/values-land.xml",
+                    "source": "/home/carlo/.gradle/caches/transforms-3/f7c4135b9c29dcd03925b34ef9b0647d/transformed/appcompat-1.6.1/res/values-land/values-land.xml",
                     "from": {
                         "startLines": "2,3,4",
                         "startColumns": "4,4,4",
