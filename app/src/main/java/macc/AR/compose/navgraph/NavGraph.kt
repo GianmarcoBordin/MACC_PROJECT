@@ -42,7 +42,7 @@ fun NavGraph(
             ) {
                 // set screen as the node state
                 val viewModel : AuthenticationViewModel = hiltViewModel()
-                SignInScreen(signInHandler = viewModel::onSignInEvent, viewModel = viewModel, navController = navController)
+                SignInScreen(signInHandler = viewModel::onSignInEvent, viewModel = viewModel, bioSignInHandler = viewModel::onBioSignInEvent, navController = navController)
             }
             composable(
                 route = Route.SignUpScreen.route
@@ -64,7 +64,7 @@ fun NavGraph(
             ) {
                 // set screen as the node state
                 val viewModel : SettingsViewModel = hiltViewModel()
-                SettingsScreen(settingsHandler = viewModel::onUpdateEvent, viewModel = viewModel, navController = navController)
+                SettingsScreen(settingsHandler = viewModel::onUpdateEvent, signOutHandler = viewModel::onSignOutEvent, viewModel = viewModel, navController = navController)
             }
             composable(
                 route = Route.HomeScreen.route
@@ -73,7 +73,6 @@ fun NavGraph(
                 val viewModel : AuthenticationViewModel = hiltViewModel()
                 ArHomeScreen(
                     settingsHandler = {/* TODO */},
-                    signOutHandler = viewModel::onSignOutEvent,
                     viewModel = viewModel,
                     navController = navController
                 )

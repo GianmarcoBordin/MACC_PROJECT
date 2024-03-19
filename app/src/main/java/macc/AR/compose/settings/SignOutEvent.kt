@@ -1,4 +1,4 @@
-package macc.AR.compose.authentication.events
+package macc.AR.compose.settings
 
 sealed class SignOutEvent(){
      data object SignOut : SignOutEvent()

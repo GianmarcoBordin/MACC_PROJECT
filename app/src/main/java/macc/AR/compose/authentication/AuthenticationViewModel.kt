@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import macc.AR.compose.authentication.events.BioSignInEvent
 import macc.AR.compose.authentication.events.EmailEvent
 import macc.AR.compose.authentication.events.SignInEvent
-import macc.AR.compose.authentication.events.SignOutEvent
 import macc.AR.compose.authentication.events.SignUpEvent
 import macc.AR.data.manager.UpdateListener
 import macc.AR.domain.usecase.auth.AuthenticationUseCases
@@ -20,85 +20,89 @@ import javax.inject.Inject
 @HiltViewModel
 class AuthenticationViewModel  @Inject constructor(
     private val authenticationUseCases: AuthenticationUseCases
-): ViewModel(),UpdateListener{
+): ViewModel(),UpdateListener {
 
     private val _data = MutableLiveData<String>()
     val data: LiveData<String> = _data
+
+
 
     init {
         // Set ViewModel as the listener for updates
         authenticationUseCases.subscribe.invoke(this)
     }
 
-    fun onSignInEvent(event: SignInEvent){
-            when (event) {
-                is SignInEvent.SignIn-> {
-                    goSignIn(event.email, event.password)
-                }
-            }
-    }
-
-    fun onSignUpEvent(event: SignUpEvent){
+    fun onSignInEvent(event: SignInEvent) {
         when (event) {
-            is SignUpEvent.SignUp-> {
-                goSignUp(event.name,event.email, event.password,event.confirmPass)
+            is SignInEvent.SignIn -> {
+                goSignIn(event.email, event.password)
             }
         }
     }
 
-    fun onSignOutEvent(event: SignOutEvent){
-        when(event){
-            is SignOutEvent.SignOut -> {
-            goSignOut()
+    fun onSignUpEvent(event: SignUpEvent) {
+        when (event) {
+            is SignUpEvent.SignUp -> {
+                goSignUp(event.name, event.email, event.password, event.confirmPass)
             }
         }
     }
 
-    fun onEmailEvent(event: EmailEvent){
-        when(event){
+
+    fun onEmailEvent(event: EmailEvent) {
+        when (event) {
             is EmailEvent.Email -> {
                 goConfirmAccount()
             }
         }
     }
 
+    fun onBioSignInEvent(event: BioSignInEvent) {
+        when (event) {
+            is BioSignInEvent.BioSignIn -> {
+                goBioSignIn(event.context, event.callback)
+            }
+        }
+    }
+
     private fun goConfirmAccount() {
         viewModelScope.launch {
-            authenticationUseCases.signOut()
-        }
-    }
-
-    private fun goSignOut() {
-        viewModelScope.launch {
-            authenticationUseCases.signOut()
+            authenticationUseCases.sendEmail()
         }
     }
 
 
-    private fun goSignIn(email:String,password:String) {
+    private fun goSignIn(email: String, password: String) {
         viewModelScope.launch {
-            authenticationUseCases.signIn(email,password)
+            authenticationUseCases.signIn(email, password)
         }
 
     }
 
-    private fun goSignUp(name:String,email:String,password:String,confirmPass:String) {
+    private fun goSignUp(name: String, email: String, password: String, confirmPass: String) {
         viewModelScope.launch {
-            authenticationUseCases.signUp(name,email,password,confirmPass)
+            authenticationUseCases.signUp(name, email, password, confirmPass)
         }
     }
 
     // Example email validation function
-     fun isValidOTP(otp: String): Boolean {
+    fun isValidOTP(otp: String): Boolean {
         return authenticationUseCases.confirm(otp)
     }
 
-    // TODO move to a more generale model view
-    override fun onUpdate(data:String) {
+    override fun onUpdate(data: String) {
         // Update UI state with received data
-        _data.value= data
+        _data.value = data
     }
 
 
+    private fun goBioSignIn(
+        context: android.content.Context,
+        callback: (Boolean) -> Unit
+    ) {
+        viewModelScope.launch {
+            authenticationUseCases.bioSignIn(context, callback)
+        }
+    }
 }
 

@@ -16,14 +16,15 @@ import macc.AR.domain.usecase.appEntry.ReadAppEntry
 import macc.AR.domain.usecase.appEntry.SaveAppEntry
 import macc.AR.domain.usecase.auth.AuthCheck
 import macc.AR.domain.usecase.auth.AuthenticationUseCases
+import macc.AR.domain.usecase.auth.BioSignIn
 import macc.AR.domain.usecase.auth.Confirm
 import macc.AR.domain.usecase.auth.SendEmail
 import macc.AR.domain.usecase.auth.SignIn
-import macc.AR.domain.usecase.auth.SignOut
 import macc.AR.domain.usecase.auth.SignUp
 import macc.AR.domain.usecase.auth.Subscribe
 import macc.AR.domain.usecase.settings.FetchUserProfile
 import macc.AR.domain.usecase.settings.SettingsUseCases
+import macc.AR.domain.usecase.settings.SignOut
 import macc.AR.domain.usecase.settings.Update
 import javax.inject.Singleton
 
@@ -63,10 +64,10 @@ object AppModule {
     ) = AuthenticationUseCases(
         signIn = SignIn(authManager),
         signUp = SignUp(authManager),
-        signOut = SignOut(authManager),
         confirm= Confirm(authManager),
         sendEmail=SendEmail(authManager),
         authCheck=AuthCheck(authManager),
+        bioSignIn= BioSignIn(authManager),
         subscribe = Subscribe(authManager)
     )
 
@@ -83,6 +84,7 @@ object AppModule {
     ) = SettingsUseCases(
         update= Update(settingsManager),
         fetch= FetchUserProfile(settingsManager),
+        signOut = SignOut(settingsManager),
         subscribe = macc.AR.domain.usecase.settings.Subscribe(settingsManager)
     )
 }

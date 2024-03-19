@@ -1,4 +1,5 @@
 
+import androidx.biometric.BiometricManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -40,30 +42,34 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import macc.AR.compose.authentication.AuthenticationViewModel
 import macc.AR.compose.authentication.components.BackButton
+import macc.AR.compose.authentication.events.BioSignInEvent
 import macc.AR.compose.authentication.events.SignInEvent
 import macc.AR.compose.navgraph.Route
 import macc.AR.data.manager.AuthManagerImpl
 import macc.AR.domain.usecase.auth.AuthCheck
 import macc.AR.domain.usecase.auth.AuthenticationUseCases
+import macc.AR.domain.usecase.auth.BioSignIn
 import macc.AR.domain.usecase.auth.Confirm
 import macc.AR.domain.usecase.auth.SendEmail
 import macc.AR.domain.usecase.auth.SignIn
-import macc.AR.domain.usecase.auth.SignOut
 import macc.AR.domain.usecase.auth.SignUp
 import macc.AR.domain.usecase.auth.Subscribe
 
 @Composable
 fun SignInScreen(
     signInHandler: (SignInEvent.SignIn) -> Unit,
+    bioSignInHandler:(BioSignInEvent.BioSignIn) -> Unit,
     viewModel: AuthenticationViewModel,
     navController: NavController) {
 
     // fields of interest
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val context = LocalContext.current
     // observed state
     val data by viewModel.data.observeAsState()
     val focusManager = LocalFocusManager.current
+    var authenticationResult by remember { mutableStateOf("") }
 
     BackButton(
         navController = navController,
@@ -157,6 +163,38 @@ fun SignInScreen(
                     }
             }
         )
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            Button(
+                shape = RoundedCornerShape(size = 20.dp),
+                modifier = Modifier
+                    .fillMaxWidth(),
+                onClick = {
+                val biometricManager = BiometricManager.from(context)
+                if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS) {
+                    bioSignInHandler(BioSignInEvent.BioSignIn(context){ success ->
+                        authenticationResult = if (success) {
+                            "Biometric authentication successful"
+                        } else {
+                            "Biometric authentication failed"
+                        }
+                    })
+                } else {
+                    authenticationResult = "Biometric authentication not available"
+                }
+            }) {
+                Text(text = "Authenticate with Biometric")
+            }
+
+            Text(
+                text = authenticationResult,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(top = 16.dp)
+            )
+        }
         // Observe changes in data
         if (data != null) {
             // Display data
@@ -176,6 +214,6 @@ fun SignInScreen(
 fun PreviewSignInScreen() {
     val authManager=AuthManagerImpl()
     val navController = rememberNavController()
-    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), signOut = SignOut(authManager),confirm= Confirm(authManager),sendEmail= SendEmail(authManager), authCheck=AuthCheck(authManager),subscribe = Subscribe(authManager))) }
-    SignInScreen(signInHandler = {}, viewModel = viewModel, navController = navController)
+    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), confirm= Confirm(authManager),sendEmail= SendEmail(authManager), authCheck=AuthCheck(authManager), bioSignIn = BioSignIn(authManager), subscribe = Subscribe(authManager))) }
+    SignInScreen(signInHandler = {}, viewModel = viewModel, bioSignInHandler = {}, navController = navController)
 }

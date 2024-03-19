@@ -1,12 +1,15 @@
 package macc.AR.data.manager
 
 import android.content.ContentValues.TAG
+import android.content.Context
+import android.hardware.biometrics.BiometricPrompt
 import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.actionCodeSettings
 import com.google.firebase.auth.auth
+import macc.AR.data.BiometricState
 import macc.AR.domain.manager.AuthManager
 
 interface UpdateListener {
@@ -16,6 +19,8 @@ class AuthManagerImpl(
 ): AuthManager {
     private lateinit var firebaseAuth: FirebaseAuth
     private var updateListener: UpdateListener? = null
+    private lateinit var contxt: Context
+    private lateinit var bioState: BiometricState
     private lateinit var otp: String
 
     override suspend fun signIn(email: String,password: String) {
@@ -36,6 +41,56 @@ class AuthManagerImpl(
         }
     }
 
+    //TODO // Function to handle biometric login and sign in with Firebase
+    fun biometricLoginAndSignIn(email: String, password: String, callback: (Boolean) -> Unit) {
+        // Perform biometric authentication and obtain credentials
+        // Example: showBiometricPrompt { credentials ->
+        //     if (credentials != null) {
+        //         signInWithFirebase(credentials.email, credentials.password) { success ->
+        //             callback.invoke(success)
+        //         }
+        //     } else {
+        //         callback.invoke(false)
+        //     }
+        // }
+    }
+
+    override suspend fun bioSignIn(context: Context, callback: (Boolean) -> Unit) {
+        contxt=context
+        val biometricPrompt = BiometricPrompt.Builder(context)
+            .setTitle("Biometric Authentication")
+            .setSubtitle("Please authenticate to continue")
+            .setNegativeButton(
+                "Cancel",
+                context.mainExecutor,
+                { _, _ -> callback.invoke(false) }
+            )
+            .build()
+
+        biometricPrompt.authenticate(
+            android.os.CancellationSignal(),
+            context.mainExecutor,
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    bioState.initBio(context)
+                    callback.invoke(true)
+                }
+
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
+                    callback.invoke(false)
+                }
+
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                    callback.invoke(false)
+                }
+            }
+        )
+    }
+
+
     override suspend fun signUp(name:String,email: String,password: String,confirmPass:String) {
         firebaseAuth = FirebaseAuth.getInstance()
         if (password!=confirmPass){
@@ -45,6 +100,7 @@ class AuthManagerImpl(
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Sign-up success
+                    bioState.setBio(contxt,email,password)
                     updateListener?.onUpdate("SignUp Success")
 
                 } else {
@@ -64,17 +120,6 @@ class AuthManagerImpl(
 
                 }
             }
-    }
-
-    override suspend fun signOut() {
-       firebaseAuth=FirebaseAuth.getInstance()
-        try {
-            firebaseAuth.signOut()
-            updateListener?.onUpdate("SignOut Success")
-
-        } catch (e: Exception) {
-            updateListener?.onUpdate(e.message.toString())
-        }
     }
 
     override fun confirm(otp: String): Boolean {

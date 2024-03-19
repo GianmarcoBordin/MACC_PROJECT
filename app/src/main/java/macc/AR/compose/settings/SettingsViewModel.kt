@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import macc.AR.compose.settings.SignOutEvent
 import macc.AR.compose.settings.UpdateEvent
 import macc.AR.data.manager.UpdateListener
 import macc.AR.domain.usecase.settings.SettingsUseCases
@@ -44,9 +45,23 @@ class SettingsViewModel  @Inject constructor(
         }
     }
 
+    fun onSignOutEvent(event: SignOutEvent){
+        when(event){
+            is SignOutEvent.SignOut -> {
+                goSignOut()
+            }
+        }
+    }
+
     override fun onUpdate(data:String) {
         // Update UI state with received data
         _data.value= data
+    }
+
+    private fun goSignOut() {
+        viewModelScope.launch {
+            settingsUseCases.signOut()
+        }
     }
 
     private fun goUpdate(name:String,email:String,password:String) {

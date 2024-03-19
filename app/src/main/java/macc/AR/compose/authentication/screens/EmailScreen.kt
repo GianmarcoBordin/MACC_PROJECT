@@ -41,10 +41,10 @@ import macc.AR.compose.navgraph.Route
 import macc.AR.data.manager.AuthManagerImpl
 import macc.AR.domain.usecase.auth.AuthCheck
 import macc.AR.domain.usecase.auth.AuthenticationUseCases
+import macc.AR.domain.usecase.auth.BioSignIn
 import macc.AR.domain.usecase.auth.Confirm
 import macc.AR.domain.usecase.auth.SendEmail
 import macc.AR.domain.usecase.auth.SignIn
-import macc.AR.domain.usecase.auth.SignOut
 import macc.AR.domain.usecase.auth.SignUp
 import macc.AR.domain.usecase.auth.Subscribe
 
@@ -129,6 +129,6 @@ fun EmailScreen(otpHandler: (EmailEvent.Email) -> Unit, viewModel: Authenticatio
 fun PreviewSignUpScreen() {
     val authManager= AuthManagerImpl()
     val navController = rememberNavController()
-    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), signOut = SignOut(authManager), confirm= Confirm(authManager), sendEmail = SendEmail(authManager), authCheck = AuthCheck(authManager), subscribe = Subscribe(authManager))) }
+    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), confirm= Confirm(authManager), sendEmail = SendEmail(authManager), authCheck = AuthCheck(authManager), bioSignIn = BioSignIn(authManager), subscribe = Subscribe(authManager))) }
     EmailScreen(otpHandler = {}, viewModel = viewModel, navController = navController)
 }
