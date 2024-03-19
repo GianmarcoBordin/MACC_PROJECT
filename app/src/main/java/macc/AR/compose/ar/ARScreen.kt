@@ -1,10 +1,13 @@
 package macc.AR.compose.ar
 
+import android.Manifest
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -19,6 +22,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import com.google.android.filament.Engine
 import com.google.ar.core.Anchor
 import com.google.ar.core.Config
@@ -46,58 +53,114 @@ import io.github.sceneview.rememberOnGestureListener
 import io.github.sceneview.rememberView
 import macc.signinup.R
 
+// TODO this whole file is a copy-paste, so it must be adjusted for the purpose
+
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ARScreen() {
-    Box(modifier = Modifier.fillMaxSize()){
-        Box(
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            // The destroy calls are automatically made when their disposable effect leaves
-            // the composition or its key changes.
-            val engine = rememberEngine()
-            val modelLoader = rememberModelLoader(engine)
-            val materialLoader = rememberMaterialLoader(engine)
-            val cameraNode = rememberARCameraNode(engine)
-            val childNodes = rememberNodes()
-            val view = rememberView(engine)
-            val collisionSystem = rememberCollisionSystem(view)
+    // Camera permission state
+    val cameraPermissionState = rememberPermissionState(
+        Manifest.permission.CAMERA
+    )
 
-            var planeRenderer by remember { mutableStateOf(true) }
+    if (cameraPermissionState.status.isGranted) {
 
-            val modelInstances = remember { mutableListOf<ModelInstance>() }
-            var trackingFailureReason by remember {
-                mutableStateOf<TrackingFailureReason?>(null)
+        Screen()
+
+    } else {
+        Column {
+            val textToShow = if (cameraPermissionState.status.shouldShowRationale) {
+                // If the user has denied the permission but the rationale can be shown,
+                // then gently explain why the app requires this permission
+                "The camera is important for this app. Please grant the permission."
+            } else {
+                // If it's the first time the user lands on this feature, or the user
+                // doesn't want to be asked again for this permission, explain that the
+                // permission is required
+                "Camera permission required for this feature to be available. " +
+                        "Please grant the permission"
             }
-            var frame by remember { mutableStateOf<Frame?>(null) }
-            ARScene(
-                modifier = Modifier.fillMaxSize(),
-                childNodes = childNodes,
-                engine = engine,
-                view = view,
-                modelLoader = modelLoader,
-                collisionSystem = collisionSystem,
-                sessionConfiguration = { session, config ->
-                    config.depthMode =
-                        when (session.isDepthModeSupported(Config.DepthMode.AUTOMATIC)) {
-                            true -> Config.DepthMode.AUTOMATIC
-                            else -> Config.DepthMode.DISABLED
-                        }
-                    config.instantPlacementMode = Config.InstantPlacementMode.LOCAL_Y_UP
-                    config.lightEstimationMode =
-                        Config.LightEstimationMode.ENVIRONMENTAL_HDR
-                },
-                cameraNode = cameraNode,
-                planeRenderer = planeRenderer,
-                onTrackingFailureChanged = {
-                    trackingFailureReason = it
-                },
-                onSessionUpdated = { session, updatedFrame ->
-                    frame = updatedFrame
+            Text(textToShow)
+            Button(onClick = { cameraPermissionState.launchPermissionRequest() }) {
+                Text("Request permission")
+            }
+        }
+    }
+}
 
-                    if (childNodes.isEmpty()) {
-                        updatedFrame.getUpdatedPlanes()
-                            .firstOrNull { it.type == Plane.Type.HORIZONTAL_UPWARD_FACING }
-                            ?.let { it.createAnchorOrNull(it.centerPose) }?.let { anchor ->
+@Composable
+fun Screen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+    ) {
+        // The destroy calls are automatically made when their disposable effect leaves
+        // the composition or its key changes.
+        val engine = rememberEngine()
+        val modelLoader = rememberModelLoader(engine)
+        val materialLoader = rememberMaterialLoader(engine)
+        val cameraNode = rememberARCameraNode(engine)
+        val childNodes = rememberNodes()
+        val view = rememberView(engine)
+        val collisionSystem = rememberCollisionSystem(view)
+
+        var planeRenderer by remember { mutableStateOf(true) }
+
+        val modelInstances = remember { mutableListOf<ModelInstance>() }
+        var trackingFailureReason by remember {
+            mutableStateOf<TrackingFailureReason?>(null)
+        }
+        var frame by remember { mutableStateOf<Frame?>(null) }
+        ARScene(
+            modifier = Modifier.fillMaxSize(),
+            childNodes = childNodes,
+            engine = engine,
+            view = view,
+            modelLoader = modelLoader,
+            collisionSystem = collisionSystem,
+            sessionConfiguration = { session, config ->
+                config.depthMode =
+                    when (session.isDepthModeSupported(Config.DepthMode.AUTOMATIC)) {
+                        true -> Config.DepthMode.AUTOMATIC
+                        else -> Config.DepthMode.DISABLED
+                    }
+                config.instantPlacementMode = Config.InstantPlacementMode.LOCAL_Y_UP
+                config.lightEstimationMode =
+                    Config.LightEstimationMode.ENVIRONMENTAL_HDR
+            },
+            cameraNode = cameraNode,
+            planeRenderer = planeRenderer,
+            onTrackingFailureChanged = {
+                trackingFailureReason = it
+            },
+            onSessionUpdated = { session, updatedFrame ->
+                frame = updatedFrame
+
+                if (childNodes.isEmpty()) {
+                    updatedFrame.getUpdatedPlanes()
+                        .firstOrNull { it.type == Plane.Type.HORIZONTAL_UPWARD_FACING }
+                        ?.let { it.createAnchorOrNull(it.centerPose) }?.let { anchor ->
+                            childNodes += createAnchorNode(
+                                engine = engine,
+                                modelLoader = modelLoader,
+                                materialLoader = materialLoader,
+                                modelInstances = modelInstances,
+                                anchor = anchor
+                            )
+                        }
+                }
+            },
+            onGestureListener = rememberOnGestureListener(
+                onSingleTapConfirmed = { motionEvent, node ->
+                    if (node == null) {
+                        val hitResults = frame?.hitTest(motionEvent.x, motionEvent.y)
+                        hitResults?.firstOrNull {
+                            it.isValid(
+                                depthPoint = false,
+                                point = false
+                            )
+                        }?.createAnchorOrNull()
+                            ?.let { anchor ->
+                                planeRenderer = false
                                 childNodes += createAnchorNode(
                                     engine = engine,
                                     modelLoader = modelLoader,
@@ -107,55 +170,29 @@ fun ARScreen() {
                                 )
                             }
                     }
-                },
-                onGestureListener = rememberOnGestureListener(
-                    onSingleTapConfirmed = { motionEvent, node ->
-                        if (node == null) {
-                            val hitResults = frame?.hitTest(motionEvent.x, motionEvent.y)
-                            hitResults?.firstOrNull {
-                                it.isValid(
-                                    depthPoint = false,
-                                    point = false
-                                )
-                            }?.createAnchorOrNull()
-                                ?.let { anchor ->
-                                    planeRenderer = false
-                                    childNodes += createAnchorNode(
-                                        engine = engine,
-                                        modelLoader = modelLoader,
-                                        materialLoader = materialLoader,
-                                        modelInstances = modelInstances,
-                                        anchor = anchor
-                                    )
-                                }
-                        }
-                    }
-                )
-            )
-            Text(
-                modifier = Modifier
-                    .systemBarsPadding()
-                    .fillMaxWidth()
-                    .align(Alignment.TopCenter)
-                    .padding(top = 16.dp, start = 32.dp, end = 32.dp),
-                textAlign = TextAlign.Center,
-                fontSize = 28.sp,
-                color = Color.White,
-                text = trackingFailureReason?.let {
-                    it.getDescription(LocalContext.current)
-                } ?: if (childNodes.isEmpty()) {
-                    stringResource(R.string.point_your_phone_down)
-                } else {
-                    stringResource(R.string.tap_anywhere_to_add_model)
-                }
-            )
-        }
+                })
+        )
+        Text(
+            modifier = Modifier
+                .systemBarsPadding()
+                .fillMaxWidth()
+                .align(Alignment.TopCenter)
+                .padding(top = 16.dp, start = 32.dp, end = 32.dp),
+            textAlign = TextAlign.Center,
+            fontSize = 28.sp,
+            color = Color.White,
+            text = trackingFailureReason?.let {
+                it.getDescription(LocalContext.current)
+            } ?: if (childNodes.isEmpty()) {
+                stringResource(R.string.point_your_phone_down)
+            } else {
+                stringResource(R.string.tap_anywhere_to_add_model)
+            }
+        )
     }
 }
 
-private const val kModelFile = "models/damaged_helmet.glb"
-private const val kMaxModelInstances = 10
-
+/*
 fun createAnchorNode(
     engine: Engine,
     modelLoader: ModelLoader,
@@ -194,3 +231,4 @@ fun createAnchorNode(
     }
     return anchorNode
 }
+*/

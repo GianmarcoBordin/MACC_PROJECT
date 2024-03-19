@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import dagger.hilt.android.AndroidEntryPoint
 import macc.AR.compose.MainViewModel
-import macc.AR.compose.navgraph.Route
+import macc.AR.compose.ar.ARScreen
 
 // the only activity present in the app
 @AndroidEntryPoint
@@ -18,7 +18,8 @@ class MainActivity: ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            Route.ARScreen.route
+            ARScreen()
+            //Route.ARScreen.route
             /*ArAppTheme(
                 dynamicColor = false
             ) {
