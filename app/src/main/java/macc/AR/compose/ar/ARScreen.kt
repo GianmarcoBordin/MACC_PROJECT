@@ -30,11 +30,9 @@ import com.google.android.filament.Engine
 import com.google.ar.core.Anchor
 import com.google.ar.core.Config
 import com.google.ar.core.Frame
-import com.google.ar.core.Plane
 import com.google.ar.core.TrackingFailureReason
 import io.github.sceneview.ar.ARScene
 import io.github.sceneview.ar.arcore.createAnchorOrNull
-import io.github.sceneview.ar.arcore.getUpdatedPlanes
 import io.github.sceneview.ar.arcore.isValid
 import io.github.sceneview.ar.getDescription
 import io.github.sceneview.ar.node.AnchorNode
@@ -132,12 +130,19 @@ fun Screen() {
             onTrackingFailureChanged = {
                 trackingFailureReason = it
             },
+            // session is updated each time a new frame is received (if the camera records at 60fps, then session is updated 60 times per second)
             onSessionUpdated = { session, updatedFrame ->
                 frame = updatedFrame
 
+                // used to populate the scene with exactly one new item if there is no item on the scene
+                /*
                 if (childNodes.isEmpty()) {
                     updatedFrame.getUpdatedPlanes()
+                        // if the first element is a Plane of type "Plane.Type.HORIZONTAL_UPWARD_FACING"
+                        // (if the detected plane is a floor or a table)
                         .firstOrNull { it.type == Plane.Type.HORIZONTAL_UPWARD_FACING }
+                        // then create an Anchor that has centerPose as coordinates and is attached to this Plane
+                        // and pass it to create an Anchor Node
                         ?.let { it.createAnchorOrNull(it.centerPose) }?.let { anchor ->
                             childNodes += createAnchorNode(
                                 engine = engine,
@@ -148,10 +153,13 @@ fun Screen() {
                             )
                         }
                 }
+                 */
             },
             onGestureListener = rememberOnGestureListener(
                 onSingleTapConfirmed = { motionEvent, node ->
                     if (node == null) {
+                        // performs a ray cast from the user's device in the direction of the given location in the camera view
+                        // hitResults is List of HitResult, intersection between a way and estimated real world geometry
                         val hitResults = frame?.hitTest(motionEvent.x, motionEvent.y)
                         hitResults?.firstOrNull {
                             it.isValid(
@@ -170,7 +178,13 @@ fun Screen() {
                                 )
                             }
                     }
-                })
+                },
+                onDoubleTapEvent = { motionEvent, node ->
+                    if (node == null) {
+                        childNodes.clear()
+                    }
+                }
+            )
         )
         Text(
             modifier = Modifier
@@ -192,7 +206,6 @@ fun Screen() {
     }
 }
 
-/*
 fun createAnchorNode(
     engine: Engine,
     modelLoader: ModelLoader,
@@ -200,10 +213,17 @@ fun createAnchorNode(
     modelInstances: MutableList<ModelInstance>,
     anchor: Anchor
 ): AnchorNode {
+    val kModelFile = "models/dragon_coin.glb"
+    val kMaxModelInstances = 3
+
     val anchorNode = AnchorNode(engine = engine, anchor = anchor)
     val modelNode = ModelNode(
         modelInstance = modelInstances.apply {
+            // if the modelInstances list is empty
             if (isEmpty()) {
+                // then create a number of new instances of the model from kModelFile (a path to the object)
+                // that is equal to kMaxModelInstances
+                // all of them share the same resources of the first asset
                 this += modelLoader.createInstancedModel(kModelFile, kMaxModelInstances)
             }
         }.removeLast(),
@@ -213,9 +233,12 @@ fun createAnchorNode(
         // Model Node needs to be editable for independent rotation from the anchor rotation
         isEditable = true
     }
+    // create a cube node (presumably the hitbox of the object)
     val boundingBoxNode = CubeNode(
         engine,
+        // that has the size equal to the size of the model node
         size = modelNode.extents,
+        // and the same center
         center = modelNode.center,
         materialInstance = materialLoader.createColorInstance(Color.White.copy(alpha = 0.5f))
     ).apply {
@@ -226,9 +249,10 @@ fun createAnchorNode(
 
     listOf(modelNode, anchorNode).forEach {
         it.onEditingChanged = { editingTransforms ->
+            // if editingTransforms is not empty, then the Cube Node is visible
+            // otherwise, it is hidden
             boundingBoxNode.isVisible = editingTransforms.isNotEmpty()
         }
     }
     return anchorNode
 }
-*/
