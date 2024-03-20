@@ -13,5 +13,6 @@ sealed class Route(
     data object MapScreen : Route(route = "mapScreen")
     data object RankScreen : Route(route = "rankScreen")
     data object AppStartNavigation : Route(route = "appStartNavigation")
+    data object ARScreen : Route(route = "arScreen")
 
 }
