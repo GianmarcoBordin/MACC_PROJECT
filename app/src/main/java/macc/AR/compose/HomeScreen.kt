@@ -42,7 +42,6 @@ import macc.signinup.R
 @Composable
 fun ArHomeScreen( navController: NavController) {
     // mutable state
-
     Surface (color = Color.Black){
         Column {
             TopAppBar(
@@ -55,6 +54,14 @@ fun ArHomeScreen( navController: NavController) {
                     }
                 }
             )
+            Row{
+                Text(text = "AR Home")
+                IconButton(onClick = {
+                    navController.navigate(Route.SettingsScreen.route)
+                }) {
+                    Icon(Icons.Default.Settings, contentDescription = "Settings")
+                }
+            }
             Row(modifier = Modifier.fillMaxSize()) {
                 LogoImage()
             }
@@ -65,7 +72,7 @@ fun ArHomeScreen( navController: NavController) {
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BottomNavigationContent()
+      BottomNavigationContent()
     }
 }
 
@@ -98,6 +105,7 @@ fun BottomNavigationContent() {
                                         painter = painterResource(id = item.iconResId),
                                         contentDescription = item.title,
                                         modifier = Modifier.size(50.dp) // Adjust icon size
+
                                     )
                                     Text(
                                         text = item.title,
@@ -124,7 +132,7 @@ fun BottomNavigationContent() {
 
 @Composable
 fun LogoImage(modifier: Modifier = Modifier) {
-    // Replace R.drawable.your_logo with the resource ID of your PNG file
+
     Image(
         painter = painterResource(id = R.drawable.logo),
         contentDescription = "Logo",

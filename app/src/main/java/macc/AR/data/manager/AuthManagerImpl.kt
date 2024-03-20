@@ -24,35 +24,7 @@ class AuthManagerImpl(
     private lateinit var otp: String
 
     override suspend fun signIn(email: String,password: String) {
-        // get firebase auth
-        firebaseAuth = FirebaseAuth.getInstance()
-        if (email.isNotEmpty() && password.isNotEmpty()) {
-            // fetch
-            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-                // Notify UI about data update
-                if (it.isSuccessful) {
-                    updateListener?.onUpdate("Login Success")
-                } else {
-                    updateListener?.onUpdate("Login Failed")
-                }
-            }
-        } else {
-            updateListener?.onUpdate("Fields must not be empty")
-        }
-    }
-
-    //TODO // Function to handle biometric login and sign in with Firebase
-    fun biometricLoginAndSignIn(email: String, password: String, callback: (Boolean) -> Unit) {
-        // Perform biometric authentication and obtain credentials
-        // Example: showBiometricPrompt { credentials ->
-        //     if (credentials != null) {
-        //         signInWithFirebase(credentials.email, credentials.password) { success ->
-        //             callback.invoke(success)
-        //         }
-        //     } else {
-        //         callback.invoke(false)
-        //     }
-        // }
+        doSignIn(email,password)
     }
 
     override suspend fun bioSignIn(context: Context, callback: (Boolean) -> Unit) {
@@ -74,6 +46,8 @@ class AuthManagerImpl(
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
                     bioState.initBio(context)
+                    val bio=bioState.getBio()
+                    doSignIn(bio.first,bio.second)
                     callback.invoke(true)
                 }
 
@@ -171,6 +145,24 @@ class AuthManagerImpl(
             otp.append(random.nextInt(10)) // Generate random digit
         }
         return otp.toString()
+    }
+
+     private fun doSignIn(email: String,password: String) {
+        // get firebase auth
+        firebaseAuth = FirebaseAuth.getInstance()
+        if (email.isNotEmpty() && password.isNotEmpty()) {
+            // fetch
+            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+                // Notify UI about data update
+                if (it.isSuccessful) {
+                    updateListener?.onUpdate("Login Success")
+                } else {
+                    updateListener?.onUpdate("Login Failed")
+                }
+            }
+        } else {
+            updateListener?.onUpdate("Fields must not be empty")
+        }
     }
 
 }
