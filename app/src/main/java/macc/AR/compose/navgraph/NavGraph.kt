@@ -1,5 +1,6 @@
 package macc.AR.compose.navgraph
 
+import ARScreen
 import SignInScreen
 import SignUpScreen
 import androidx.compose.runtime.Composable
@@ -9,7 +10,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import macc.AR.compose.ArHomeScreen
-import macc.AR.compose.ar.ARScreen
 import macc.AR.compose.ar.ARViewModel
 import macc.AR.compose.authentication.AuthenticationViewModel
 import macc.AR.compose.authentication.SettingsViewModel
@@ -74,8 +74,6 @@ fun NavGraph(
                 // set screen as the node state
                 val viewModel : AuthenticationViewModel = hiltViewModel()
                 ArHomeScreen(
-                    settingsHandler = {/* TODO */},
-                    viewModel = viewModel,
                     navController = navController
                 )
             }

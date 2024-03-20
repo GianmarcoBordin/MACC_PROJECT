@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "macc.signinup.app-mergeDebugResources-78:/values-en-rIN/values-en-rIN.xml",
+            "outputFile": "macc.signinup.app-mergeDebugResources-84:/values-en-rIN/values-en-rIN.xml",
             "map": [
                 {
                     "source": "/Users/applem2/.gradle/caches/transforms-3/e16daed25deab96df0414bd028321083/transformed/biometric-1.2.0-alpha05/res/values-en-rIN/values-en-rIN.xml",

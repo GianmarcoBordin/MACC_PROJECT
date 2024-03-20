@@ -1,3 +1,6 @@
+import androidx.compose.runtime.Composable
+
+/*
 package macc.AR.compose.ar
 
 import android.Manifest
@@ -58,6 +61,7 @@ import macc.signinup.R
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ARScreen() {
+}
     // Camera permission state
     val cameraPermissionState = rememberPermissionState(
         Manifest.permission.CAMERA
@@ -192,7 +196,7 @@ fun Screen() {
     }
 }
 
-/*
+
 fun createAnchorNode(
     engine: Engine,
     modelLoader: ModelLoader,
@@ -232,3 +236,7 @@ fun createAnchorNode(
     return anchorNode
 }
 */
+
+@Composable
+fun ARScreen() {
+}
