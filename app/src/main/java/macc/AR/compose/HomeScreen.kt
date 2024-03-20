@@ -1,139 +1,152 @@
 package macc.AR.compose
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.material.Button
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.BottomAppBar
+import androidx.compose.material.BottomNavigation
+import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import macc.AR.compose.authentication.AuthenticationViewModel
-import macc.AR.compose.authentication.events.SignOutEvent
 import macc.AR.compose.navgraph.Route
-import macc.AR.data.manager.AuthManagerImpl
-import macc.AR.domain.usecase.auth.AuthCheck
-import macc.AR.domain.usecase.auth.AuthenticationUseCases
-import macc.AR.domain.usecase.auth.Confirm
-import macc.AR.domain.usecase.auth.SendEmail
-import macc.AR.domain.usecase.auth.SignIn
-import macc.AR.domain.usecase.auth.SignOut
-import macc.AR.domain.usecase.auth.SignUp
-import macc.AR.domain.usecase.auth.Subscribe
+import macc.signinup.R
 
 @Composable
-fun ArHomeScreen(settingsHandler: (/*TODO*/)->Unit, signOutHandler: (SignOutEvent.SignOut) -> Unit, viewModel:AuthenticationViewModel, navController:NavController) {
-    var isSettingsVisible by remember { mutableStateOf(false) }
-    val signOutResult by viewModel.data.observeAsState()
-
-    Column {
-        // Your UI content here
-
-        Button(onClick = { signOutHandler(SignOutEvent.SignOut)
-        }) {
-            Text(text = "Logout")
-        }
-
-        // Observe changes in data
-        if (signOutResult != null) {
-            // Display data
-            Text(text = signOutResult!!.toString(),color = if (signOutResult.equals("Signout Success")) Color.Green else Color.Red)
-            // Change page if all ok
-            if(signOutResult.equals("SignOut Success")) {
-                navController.navigate(Route.HomeScreen.route)
-            }
-
-        }
-    }
-    Column {
-        TopAppBar(
-            title = { Text(text = "AR Home") },
-            actions = {
-                IconButton(onClick = { isSettingsVisible = true }) {
+fun ArHomeScreen( navController: NavController) {
+    // mutable state
+    Surface (color = Color.Black){
+        Column {
+            TopAppBar(
+                title = { Text(text = "AR Home") },
+                actions = {
+                    IconButton(onClick = {
+                        navController.navigate(Route.SettingsScreen.route)
+                    }) {
+                        Icon(Icons.Default.Settings, contentDescription = "Settings")
+                    }
+                }
+            )
+            Row{
+                Text(text = "AR Home")
+                IconButton(onClick = {
+                    navController.navigate(Route.SettingsScreen.route)
+                }) {
                     Icon(Icons.Default.Settings, contentDescription = "Settings")
                 }
             }
-        )
-
-        Row(modifier = Modifier.fillMaxSize()) {
-            ArContent(modifier = Modifier.weight(1f))
-
-            if (isSettingsVisible) {
-                SettingsSidebar(onClose = { isSettingsVisible = false })
+            Row(modifier = Modifier.fillMaxSize()) {
+                LogoImage()
             }
         }
     }
-}
-
-
-
-@Composable
-fun ArContent(modifier: Modifier) {
-    // Content of the AR home screen
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "AR Content",
-            modifier = Modifier.align(Alignment.Center)
-        )
+      BottomNavigationContent()
     }
 }
 
 @Composable
-fun SettingsSidebar(onClose: () -> Unit) {
-    // Settings sidebar content
-    Box(
-        modifier = Modifier
+fun BottomNavigationContent() {
+    val items = listOf(
+        BottomNavigationItemInfo("Rank", R.drawable.rank),
+        BottomNavigationItemInfo("Scan", R.drawable.search),
+        BottomNavigationItemInfo("Map", R.drawable.map))
+    var selectedIndex by remember { mutableStateOf(0) }
+
+    BottomAppBar(
+        modifier= Modifier
+            .fillMaxWidth()
+            .height(105.dp),
+        contentColor = Color.White,
+        content = {
+                BottomNavigation {
+                    items.forEachIndexed { index, item ->
+                        BottomNavigationItem(
+                            selected = selectedIndex == index,
+                            onClick = { selectedIndex = index },
+                            modifier = Modifier.fillMaxHeight(),
+                            icon = {
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    modifier = Modifier.padding(end = 4.dp) // Adjust padding between icon and text
+                                ) {
+                                    Icon(
+                                        painter = painterResource(id = item.iconResId),
+                                        contentDescription = item.title,
+                                        modifier = Modifier.size(50.dp) // Adjust icon size
+
+                                    )
+                                    Text(
+                                        text = item.title,
+                                        style = TextStyle(
+                                            color = Color.White,
+                                            fontSize = 24.sp, // Adjust font size
+                                            fontWeight = FontWeight.Bold, // Adjust font weight
+                                            letterSpacing = 0.1.sp, // Adjust letter spacing
+                                            lineHeight = 24.sp // Adjust line height
+                                        ),
+                                    )
+                                }
+                            }
+
+                        )
+                    }
+                }
+
+        }
+    )
+}
+
+
+
+@Composable
+fun LogoImage(modifier: Modifier = Modifier) {
+
+    Image(
+        painter = painterResource(id = R.drawable.logo),
+        contentDescription = "Logo",
+        modifier = modifier
+            .fillMaxWidth()
             .fillMaxHeight()
-            .width(200.dp)
-            .background(MaterialTheme.colors.surface)
-            .padding(16.dp)
-    ) {
-        Column {
-            Text(
-                text = "Settings",
-                style = MaterialTheme.typography.h6
-            )
-            // Add your settings options here
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(onClick = onClose) {
-                Text(text = "Close")
-            }
-        }
-    }
+    )
 }
+
+data class BottomNavigationItemInfo(val title: String, val iconResId: Int)
 
 @Preview
 @Composable
-fun PreviewArHomeScreen() {
-    val authManager= AuthManagerImpl()
+fun HomeScreen() {
     val navController = rememberNavController()
-    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), signOut = SignOut(authManager), confirm = Confirm(authManager),sendEmail= SendEmail(authManager), authCheck = AuthCheck(authManager), subscribe = Subscribe(authManager))) }
-    ArHomeScreen(settingsHandler = {}, signOutHandler = {}, viewModel =viewModel , navController =navController )
+    ArHomeScreen(  navController =navController )
 }

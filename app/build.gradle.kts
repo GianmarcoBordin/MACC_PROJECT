@@ -49,11 +49,22 @@ android {
 }
 
 dependencies {
-    implementation("com.google.firebase:firebase-firestore-ktx:24.10.3")
+
+    // Compose
     val composeBom = platform("androidx.compose:compose-bom:2024.02.02")
     implementation(composeBom)
     androidTestImplementation(composeBom)
+    // Java language implementation
+    implementation ("androidx.biometric:biometric:1.1.0")
 
+    // Kotlin
+    implementation( "androidx.biometric:biometric-ktx:1.2.0-alpha05")
+
+    // Security
+    val security_version = "1.0.0-alpha02"
+    implementation ("androidx.security:security-crypto:$security_version")
+    // Firestore
+    implementation("com.google.firebase:firebase-firestore-ktx:21.4.0")
     // Choose one of the following:
     // Material Design 3
     implementation("androidx.compose.material3:material3")
@@ -98,14 +109,14 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.51")
     kapt("com.google.dagger:hilt-android-compiler:2.51")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-
-
-
+    // Firebase
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("com.google.firebase:firebase-auth-ktx:22.3.1")
     implementation("com.google.firebase:firebase-auth:22.3.1")
+
+    // Test
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

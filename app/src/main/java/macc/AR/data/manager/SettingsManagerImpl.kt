@@ -1,8 +1,10 @@
 package macc.AR.data.manager
 
+import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import macc.AR.compose.authentication.UserProfileBundle
+import macc.AR.data.BiometricState
 
 import macc.AR.domain.manager.SettingsManager
 
@@ -10,6 +12,8 @@ class SettingsManagerImpl(
 ): SettingsManager {
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var contxt: Context
+    private lateinit var bioState: BiometricState
     private var updateListener: UpdateListener? = null
 
 
@@ -31,6 +35,7 @@ class SettingsManagerImpl(
             )
                 .addOnSuccessListener {
                     // User data updated successfully
+                    bioState.setCredentials(email,password)
                     updateListener?.onUpdate("Update Success")
 
                 }
@@ -56,6 +61,18 @@ class SettingsManagerImpl(
             userProfile=null
         }
         return userProfile
+    }
+
+    override suspend fun signOut() {
+        firebaseAuth=FirebaseAuth.getInstance()
+        try {
+            firebaseAuth.signOut()
+
+            updateListener?.onUpdate("SignOut Success")
+
+        } catch (e: Exception) {
+            updateListener?.onUpdate(e.message.toString())
+        }
     }
 
     override fun setUpdateListener(ref: UpdateListener) {

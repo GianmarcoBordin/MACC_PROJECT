@@ -36,31 +36,45 @@ import macc.AR.compose.navgraph.Route
 import macc.AR.data.manager.SettingsManagerImpl
 import macc.AR.domain.usecase.settings.FetchUserProfile
 import macc.AR.domain.usecase.settings.SettingsUseCases
+import macc.AR.domain.usecase.settings.SignOut
 import macc.AR.domain.usecase.settings.Subscribe
 import macc.AR.domain.usecase.settings.Update
 
 @Composable
 fun SettingsScreen(
     settingsHandler:(UpdateEvent.Update)-> Unit,
+    signOutHandler: (SignOutEvent.SignOut) -> Unit,
     viewModel: SettingsViewModel,
     navController:NavController
 ) {
-    // init state
+    // observable state
     val userProfile by viewModel.userProfile.collectAsState()
-
+    val data by viewModel.data.observeAsState()
+    // fields of interest
     var newName by remember { mutableStateOf("") }
     var newEmail by remember { mutableStateOf("") }
     var newPassword by remember { mutableStateOf("") }
 
-    // observed state
-    val data by viewModel.data.observeAsState()
-
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.End
+    ){
+    // logout button
+    Button(
+        onClick = {
+            signOutHandler(SignOutEvent.SignOut) }
+    ) {
+        Text(text = "Logout")
+    }
+    }
     BackButton(
         navController = navController,
         modifier = Modifier
             .size(50.dp)
             .clip(CircleShape) // Change the shape of the button here
-            .background(Color.DarkGray)
+            .background(Color.Black)
     )
     Column(
         modifier = Modifier
@@ -101,7 +115,6 @@ fun SettingsScreen(
             label = { Text("New Password") },
             modifier = Modifier.fillMaxWidth()
         )
-
         // Save button
         Button(
             onClick = {
@@ -117,14 +130,13 @@ fun SettingsScreen(
         // Observe changes in data
         if (data != null) {
             // Display data
-            Text(text = data!!.toString(),color = if (data.equals("Update Success")) Color.Green else Color.Red)
+            Text(text = data!!.toString(),color = if (data.equals("Update Success") || data.equals("Signout Success")) Color.Green else Color.Red)
             // Change page if all ok
-            if(data.equals("Update Success")) {
+            if(data.equals("Update Success")|| data.equals("Signout Success")) {
                 navController.navigate(Route.HomeScreen.route)
             }
 
         }
-
     }
 }
 
@@ -133,7 +145,7 @@ fun SettingsScreen(
 @Composable
 fun PreviewSignInScreen() {
     val settingsManager= SettingsManagerImpl()
-    val viewModel = remember { SettingsViewModel(SettingsUseCases(update = Update(settingsManager),fetch= FetchUserProfile(settingsManager),subscribe=Subscribe(settingsManager)))}
+    val viewModel = remember { SettingsViewModel(SettingsUseCases(update = Update(settingsManager),fetch= FetchUserProfile(settingsManager), signOut = SignOut(settingsManager), subscribe=Subscribe(settingsManager)))}
     val navController = rememberNavController()
-    SettingsScreen(viewModel = viewModel,navController=navController,settingsHandler={})
+    SettingsScreen(viewModel = viewModel,navController=navController,settingsHandler={}, signOutHandler = {})
 }

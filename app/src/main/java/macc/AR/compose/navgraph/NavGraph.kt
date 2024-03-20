@@ -1,5 +1,6 @@
 package macc.AR.compose.navgraph
 
+import ARScreen
 import SignInScreen
 import SignUpScreen
 import androidx.compose.runtime.Composable
@@ -9,7 +10,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import macc.AR.compose.ArHomeScreen
-import macc.AR.compose.ar.ARScreen
 import macc.AR.compose.ar.ARViewModel
 import macc.AR.compose.authentication.AuthenticationViewModel
 import macc.AR.compose.authentication.SettingsViewModel
@@ -23,6 +23,7 @@ fun NavGraph(
     startDestination: String
 ) {
     val navController = rememberNavController()
+    val authenticationViewModel: AuthenticationViewModel= init()
     NavHost(navController = navController, startDestination = startDestination){
         // construct a nested nav graph
         navigation(
@@ -43,40 +44,33 @@ fun NavGraph(
                 route = Route.SignInScreen.route
             ) {
                 // set screen as the node state
-                val viewModel : AuthenticationViewModel = hiltViewModel()
-                SignInScreen(signInHandler = viewModel::onSignInEvent, viewModel = viewModel, navController = navController)
+                SignInScreen(signInHandler = authenticationViewModel::onSignInEvent, viewModel = authenticationViewModel, bioSignInHandler = authenticationViewModel::onBioSignInEvent, navController = navController)
             }
             composable(
                 route = Route.SignUpScreen.route
             ) {
                 // set screen as the node state
-                val viewModel : AuthenticationViewModel = hiltViewModel()
-                SignUpScreen(signInHandler = viewModel::onSignUpEvent, viewModel = viewModel, navController = navController)
+                SignUpScreen(signInHandler = authenticationViewModel::onSignUpEvent, viewModel = authenticationViewModel, navController = navController)
 
             }
             composable(
                 route = Route.EmailScreen.route
             ) {
                 // set screen as the node state
-                val viewModel : AuthenticationViewModel = hiltViewModel()
-                EmailScreen(otpHandler = viewModel::onEmailEvent, viewModel = viewModel, navController = navController)
+                EmailScreen(otpHandler = authenticationViewModel::onEmailEvent, viewModel = authenticationViewModel, navController = navController)
             }
             composable(
                 route = Route.SettingsScreen.route
             ) {
                 // set screen as the node state
                 val viewModel : SettingsViewModel = hiltViewModel()
-                SettingsScreen(settingsHandler = viewModel::onUpdateEvent, viewModel = viewModel, navController = navController)
+                SettingsScreen(settingsHandler = viewModel::onUpdateEvent, signOutHandler = viewModel::onSignOutEvent, viewModel = viewModel, navController = navController)
             }
             composable(
                 route = Route.HomeScreen.route
             ) {
                 // set screen as the node state
-                val viewModel : AuthenticationViewModel = hiltViewModel()
                 ArHomeScreen(
-                    settingsHandler = {/* TODO */},
-                    signOutHandler = viewModel::onSignOutEvent,
-                    viewModel = viewModel,
                     navController = navController
                 )
             }
@@ -93,4 +87,9 @@ fun NavGraph(
         }
     }
 
+}
+
+@Composable
+private fun init(): AuthenticationViewModel {
+    return hiltViewModel()
 }

@@ -1,12 +1,16 @@
 package macc.AR.data.manager
 
 import android.content.ContentValues.TAG
+import android.content.Context
+import android.hardware.biometrics.BiometricPrompt
 import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.actionCodeSettings
 import com.google.firebase.auth.auth
+import macc.AR.data.BiometricState
 import macc.AR.domain.manager.AuthManager
 
 interface UpdateListener {
@@ -16,28 +20,57 @@ class AuthManagerImpl(
 ): AuthManager {
     private lateinit var firebaseAuth: FirebaseAuth
     private var updateListener: UpdateListener? = null
+    private lateinit var contxt: Context
+    private lateinit var bioState: BiometricState
     private lateinit var otp: String
 
     override suspend fun signIn(email: String,password: String) {
-        // get firebase auth
-        firebaseAuth = FirebaseAuth.getInstance()
-        if (email.isNotEmpty() && password.isNotEmpty()) {
-            // fetch
-            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
-                // Notify UI about data update
-                if (it.isSuccessful) {
-                    updateListener?.onUpdate("Login Success")
-                } else {
-                    updateListener?.onUpdate("Login Failed")
+        doSignIn(email,password)
+    }
+    //TODO handle account confirmation in app
+
+    override suspend fun bioSignIn(context: Context, callback: (Boolean) -> Unit) {
+        contxt=context
+        bioState.setBio(context)
+        val biometricPrompt = BiometricPrompt.Builder(context)
+            .setTitle("Biometric Authentication")
+            .setSubtitle("Please authenticate to continue")
+            .setNegativeButton(
+                "Cancel",
+                context.mainExecutor,
+                { _, _ -> callback.invoke(false) }
+            )
+            .build()
+
+        biometricPrompt.authenticate(
+            android.os.CancellationSignal(),
+            context.mainExecutor,
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    bioState.initBio(context)
+                    val bio=bioState.getBio()
+                    doSignIn(bio.first,bio.second)
+                    callback.invoke(true)
+                }
+
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
+                    callback.invoke(false)
+                }
+
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                    callback.invoke(false)
                 }
             }
-        } else {
-            updateListener?.onUpdate("Fields must not be empty")
-        }
+        )
     }
+
 
     override suspend fun signUp(name:String,email: String,password: String,confirmPass:String) {
         firebaseAuth = FirebaseAuth.getInstance()
+        bioState=BiometricState(email,password)
         if (password!=confirmPass){
             updateListener?.onUpdate("Two passwords must coincide")
         }
@@ -45,6 +78,25 @@ class AuthManagerImpl(
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Sign-up success
+                    bioState.setCredentials(email,password)
+
+                    // Update user profile
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)
+                        //  TODO You can also update other profile information like photo URL if needed
+                        //.setPhotoUri(newPhotoUri)
+                        .build()
+
+                    firebaseAuth.currentUser?.updateProfile(profileUpdates)
+                        ?.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                // Display name updated successfully
+                                println("Display name updated successfully")
+                            } else {
+                                // Display name update failed
+                                println("Failed to update display name: ${task.exception?.message}")
+                            }
+                        }
                     updateListener?.onUpdate("SignUp Success")
 
                 } else {
@@ -64,17 +116,6 @@ class AuthManagerImpl(
 
                 }
             }
-    }
-
-    override suspend fun signOut() {
-       firebaseAuth=FirebaseAuth.getInstance()
-        try {
-            firebaseAuth.signOut()
-            updateListener?.onUpdate("SignOut Success")
-
-        } catch (e: Exception) {
-            updateListener?.onUpdate(e.message.toString())
-        }
     }
 
     override fun confirm(otp: String): Boolean {
@@ -126,6 +167,24 @@ class AuthManagerImpl(
             otp.append(random.nextInt(10)) // Generate random digit
         }
         return otp.toString()
+    }
+
+     private fun doSignIn(email: String,password: String) {
+        // get firebase auth
+        firebaseAuth = FirebaseAuth.getInstance()
+        if (email.isNotEmpty() && password.isNotEmpty()) {
+            // fetch
+            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+                // Notify UI about data update
+                if (it.isSuccessful) {
+                    updateListener?.onUpdate("Login Success")
+                } else {
+                    updateListener?.onUpdate("Login Failed")
+                }
+            }
+        } else {
+            updateListener?.onUpdate("Fields must not be empty")
+        }
     }
 
 }

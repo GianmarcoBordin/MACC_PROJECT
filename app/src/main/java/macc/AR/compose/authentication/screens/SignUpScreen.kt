@@ -30,6 +30,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
@@ -45,10 +46,10 @@ import macc.AR.compose.navgraph.Route
 import macc.AR.data.manager.AuthManagerImpl
 import macc.AR.domain.usecase.auth.AuthCheck
 import macc.AR.domain.usecase.auth.AuthenticationUseCases
+import macc.AR.domain.usecase.auth.BioSignIn
 import macc.AR.domain.usecase.auth.Confirm
 import macc.AR.domain.usecase.auth.SendEmail
 import macc.AR.domain.usecase.auth.SignIn
-import macc.AR.domain.usecase.auth.SignOut
 import macc.AR.domain.usecase.auth.SignUp
 import macc.AR.domain.usecase.auth.Subscribe
 
@@ -129,6 +130,7 @@ fun SignUpScreen(signInHandler: (SignUpEvent.SignUp) -> Unit, viewModel: Authent
                     focusManager.clearFocus()
                 }
             ),
+            visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
@@ -144,6 +146,7 @@ fun SignUpScreen(signInHandler: (SignUpEvent.SignUp) -> Unit, viewModel: Authent
             keyboardActions = KeyboardActions(
                 onNext = { focusManager.moveFocus(FocusDirection.Down) }
             ),
+            visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
@@ -204,6 +207,6 @@ fun SignUpScreen(signInHandler: (SignUpEvent.SignUp) -> Unit, viewModel: Authent
 fun PreviewSignUpScreen() {
     val authManager= AuthManagerImpl()
     val navController = rememberNavController()
-    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), signOut = SignOut(authManager), confirm = Confirm(authManager),sendEmail=SendEmail(authManager), authCheck = AuthCheck(authManager), subscribe = Subscribe(authManager))) }
+    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), confirm= Confirm(authManager), sendEmail = SendEmail(authManager), authCheck = AuthCheck(authManager), bioSignIn = BioSignIn(authManager), subscribe = Subscribe(authManager))) }
     SignUpScreen(signInHandler = {}, viewModel = viewModel, navController = navController)
 }
