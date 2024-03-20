@@ -26,7 +26,6 @@ class AuthenticationViewModel  @Inject constructor(
     val data: LiveData<String> = _data
 
 
-
     init {
         // Set ViewModel as the listener for updates
         authenticationUseCases.subscribe.invoke(this)

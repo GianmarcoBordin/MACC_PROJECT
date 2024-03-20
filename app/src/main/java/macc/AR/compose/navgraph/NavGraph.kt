@@ -23,6 +23,7 @@ fun NavGraph(
     startDestination: String
 ) {
     val navController = rememberNavController()
+    val authenticationViewModel: AuthenticationViewModel= init()
     NavHost(navController = navController, startDestination = startDestination){
         // construct a nested nav graph
         navigation(
@@ -43,23 +44,20 @@ fun NavGraph(
                 route = Route.SignInScreen.route
             ) {
                 // set screen as the node state
-                val viewModel : AuthenticationViewModel = hiltViewModel()
-                SignInScreen(signInHandler = viewModel::onSignInEvent, viewModel = viewModel, bioSignInHandler = viewModel::onBioSignInEvent, navController = navController)
+                SignInScreen(signInHandler = authenticationViewModel::onSignInEvent, viewModel = authenticationViewModel, bioSignInHandler = authenticationViewModel::onBioSignInEvent, navController = navController)
             }
             composable(
                 route = Route.SignUpScreen.route
             ) {
                 // set screen as the node state
-                val viewModel : AuthenticationViewModel = hiltViewModel()
-                SignUpScreen(signInHandler = viewModel::onSignUpEvent, viewModel = viewModel, navController = navController)
+                SignUpScreen(signInHandler = authenticationViewModel::onSignUpEvent, viewModel = authenticationViewModel, navController = navController)
 
             }
             composable(
                 route = Route.EmailScreen.route
             ) {
                 // set screen as the node state
-                val viewModel : AuthenticationViewModel = hiltViewModel()
-                EmailScreen(otpHandler = viewModel::onEmailEvent, viewModel = viewModel, navController = navController)
+                EmailScreen(otpHandler = authenticationViewModel::onEmailEvent, viewModel = authenticationViewModel, navController = navController)
             }
             composable(
                 route = Route.SettingsScreen.route
@@ -72,7 +70,6 @@ fun NavGraph(
                 route = Route.HomeScreen.route
             ) {
                 // set screen as the node state
-                val viewModel : AuthenticationViewModel = hiltViewModel()
                 ArHomeScreen(
                     navController = navController
                 )
@@ -90,4 +87,9 @@ fun NavGraph(
         }
     }
 
+}
+
+@Composable
+private fun init(): AuthenticationViewModel {
+    return hiltViewModel()
 }

@@ -87,4 +87,5 @@ object AppModule {
         signOut = SignOut(settingsManager),
         subscribe = macc.AR.domain.usecase.settings.Subscribe(settingsManager)
     )
+
 }

@@ -32,6 +32,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
@@ -121,6 +122,7 @@ fun SignInScreen(
                     focusManager.clearFocus()
                 }
             ),
+            visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
@@ -198,7 +200,7 @@ fun SignInScreen(
         // Observe changes in data
         if (data != null) {
             // Display data
-            Text(text = data!!.toString(),color = if (data.equals("SignUp Success")) Color.Green else Color.Red)
+            Text(text = data!!.toString(),color = if (data.equals("Login Success")) Color.Green else Color.Red)
             // Change page if all ok
             if(data.equals("Login Success")) {
                 navController.navigate(Route.HomeScreen.route)

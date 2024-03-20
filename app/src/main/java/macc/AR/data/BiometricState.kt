@@ -13,12 +13,13 @@ data class BiometricState(val _email: String, val _password: String)
     private var email=_email
     private var password= _password
 
-    fun setBio(context: Context, mail: String, pass:String){
+    fun setBio(context: Context){
         saveFirebaseUserIdAndBiometricCredentials(context,this)
+    }
+    fun setCredentials( mail: String, pass:String){
         email=mail
         password=pass
     }
-
     fun getBio():Pair <String,String>{
         return Pair(email,password)
     }

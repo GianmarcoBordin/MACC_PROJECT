@@ -30,6 +30,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
@@ -129,6 +130,7 @@ fun SignUpScreen(signInHandler: (SignUpEvent.SignUp) -> Unit, viewModel: Authent
                     focusManager.clearFocus()
                 }
             ),
+            visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
@@ -144,6 +146,7 @@ fun SignUpScreen(signInHandler: (SignUpEvent.SignUp) -> Unit, viewModel: Authent
             keyboardActions = KeyboardActions(
                 onNext = { focusManager.moveFocus(FocusDirection.Down) }
             ),
+            visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),

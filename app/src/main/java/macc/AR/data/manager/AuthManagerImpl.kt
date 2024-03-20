@@ -7,6 +7,7 @@ import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.actionCodeSettings
 import com.google.firebase.auth.auth
 import macc.AR.data.BiometricState
@@ -26,9 +27,11 @@ class AuthManagerImpl(
     override suspend fun signIn(email: String,password: String) {
         doSignIn(email,password)
     }
+    //TODO handle account confirmation in app
 
     override suspend fun bioSignIn(context: Context, callback: (Boolean) -> Unit) {
         contxt=context
+        bioState.setBio(context)
         val biometricPrompt = BiometricPrompt.Builder(context)
             .setTitle("Biometric Authentication")
             .setSubtitle("Please authenticate to continue")
@@ -67,6 +70,7 @@ class AuthManagerImpl(
 
     override suspend fun signUp(name:String,email: String,password: String,confirmPass:String) {
         firebaseAuth = FirebaseAuth.getInstance()
+        bioState=BiometricState(email,password)
         if (password!=confirmPass){
             updateListener?.onUpdate("Two passwords must coincide")
         }
@@ -74,7 +78,25 @@ class AuthManagerImpl(
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Sign-up success
-                    bioState.setBio(contxt,email,password)
+                    bioState.setCredentials(email,password)
+
+                    // Update user profile
+                    val profileUpdates = UserProfileChangeRequest.Builder()
+                        .setDisplayName(name)
+                        //  TODO You can also update other profile information like photo URL if needed
+                        //.setPhotoUri(newPhotoUri)
+                        .build()
+
+                    firebaseAuth.currentUser?.updateProfile(profileUpdates)
+                        ?.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                // Display name updated successfully
+                                println("Display name updated successfully")
+                            } else {
+                                // Display name update failed
+                                println("Failed to update display name: ${task.exception?.message}")
+                            }
+                        }
                     updateListener?.onUpdate("SignUp Success")
 
                 } else {

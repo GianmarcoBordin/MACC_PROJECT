@@ -35,7 +35,7 @@ class SettingsManagerImpl(
             )
                 .addOnSuccessListener {
                     // User data updated successfully
-                    bioState.setBio(contxt,email,password)
+                    bioState.setCredentials(email,password)
                     updateListener?.onUpdate("Update Success")
 
                 }
