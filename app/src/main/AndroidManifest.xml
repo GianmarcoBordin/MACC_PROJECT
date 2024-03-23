@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
-    <uses-feature
-        android:name="android.hardware.camera" />
-    <uses-permission
-        android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature android:name="android.hardware.camera" />
+
     <application
         android:name="macc.AR.ArApp"
         android:allowBackup="true"
@@ -27,5 +28,8 @@
             </intent-filter>
         </activity>
 
+        <meta-data
+            android:name="com.google.android.ar.API_KEY"
+            android:value="AIzaSyAiffezny5gwxflgn5HB9cNEX7E3GLr_Q8" />
     </application>
 </manifest>

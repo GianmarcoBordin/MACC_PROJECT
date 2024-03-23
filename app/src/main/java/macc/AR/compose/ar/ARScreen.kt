@@ -1,6 +1,7 @@
 package macc.AR.compose.ar
 
 import android.Manifest
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,12 +31,16 @@ import com.google.android.filament.Engine
 import com.google.ar.core.Anchor
 import com.google.ar.core.Config
 import com.google.ar.core.Frame
+import com.google.ar.core.Plane
+import com.google.ar.core.Session
 import com.google.ar.core.TrackingFailureReason
 import io.github.sceneview.ar.ARScene
 import io.github.sceneview.ar.arcore.createAnchorOrNull
+import io.github.sceneview.ar.arcore.getUpdatedPlanes
 import io.github.sceneview.ar.arcore.isValid
 import io.github.sceneview.ar.getDescription
 import io.github.sceneview.ar.node.AnchorNode
+import io.github.sceneview.ar.node.CloudAnchorNode
 import io.github.sceneview.ar.rememberARCameraNode
 import io.github.sceneview.loaders.MaterialLoader
 import io.github.sceneview.loaders.ModelLoader
@@ -124,6 +129,10 @@ fun Screen() {
                 config.instantPlacementMode = Config.InstantPlacementMode.LOCAL_Y_UP
                 config.lightEstimationMode =
                     Config.LightEstimationMode.ENVIRONMENTAL_HDR
+                // configure cloud anchor mode
+                config.cloudAnchorMode = Config.CloudAnchorMode.ENABLED
+
+
             },
             cameraNode = cameraNode,
             planeRenderer = planeRenderer,
@@ -135,7 +144,7 @@ fun Screen() {
                 frame = updatedFrame
 
                 // used to populate the scene with exactly one new item if there is no item on the scene
-                /*
+
                 if (childNodes.isEmpty()) {
                     updatedFrame.getUpdatedPlanes()
                         // if the first element is a Plane of type "Plane.Type.HORIZONTAL_UPWARD_FACING"
@@ -144,18 +153,30 @@ fun Screen() {
                         // then create an Anchor that has centerPose as coordinates and is attached to this Plane
                         // and pass it to create an Anchor Node
                         ?.let { it.createAnchorOrNull(it.centerPose) }?.let { anchor ->
+                            /*
                             childNodes += createAnchorNode(
                                 engine = engine,
                                 modelLoader = modelLoader,
                                 materialLoader = materialLoader,
                                 modelInstances = modelInstances,
-                                anchor = anchor
+                                anchor = anchor,
+                            )*/
+
+                            childNodes += createCloudAnchorNode(
+                                engine = engine,
+                                anchor = anchor,
+                                anchorID = null,
+                                modelLoader = modelLoader,
+                                materialLoader = materialLoader,
+                                modelInstances = modelInstances,
+                                session = session
                             )
                         }
                 }
-                 */
+
             },
             onGestureListener = rememberOnGestureListener(
+
                 onSingleTapConfirmed = { motionEvent, node ->
                     if (node == null) {
                         // performs a ray cast from the user's device in the direction of the given location in the camera view
@@ -169,13 +190,26 @@ fun Screen() {
                         }?.createAnchorOrNull()
                             ?.let { anchor ->
                                 planeRenderer = false
+
+                                /*
+                                childNodes += createCloudAnchorNode(
+                                    engine = engine,
+                                    anchor = anchor,
+                                    anchorID = null,
+                                    modelLoader = modelLoader,
+                                    materialLoader = materialLoader,
+                                    modelInstances = modelInstances,
+
+                                )*/
+
+                                    /*
                                 childNodes += createAnchorNode(
                                     engine = engine,
                                     modelLoader = modelLoader,
                                     materialLoader = materialLoader,
                                     modelInstances = modelInstances,
                                     anchor = anchor
-                                )
+                                )*/
                             }
                     }
                 },
@@ -203,7 +237,92 @@ fun Screen() {
                 stringResource(R.string.tap_anywhere_to_add_model)
             }
         )
+        // TODO here insert a button to resolve the cloud anchors
     }
+}
+
+// TODO create cloud anchor node
+fun createCloudAnchorNode(
+    engine: Engine,
+    anchor: Anchor,
+    anchorID : String? = null,
+    modelLoader: ModelLoader,
+    materialLoader: MaterialLoader,
+    modelInstances: MutableList<ModelInstance>,
+    session: Session
+) : AnchorNode{
+
+
+    val kModelFile = "models/dragon_coin.glb"
+    val kMaxModelInstances = 3
+
+
+    val cloudAnchorNode = CloudAnchorNode(
+        engine = engine,
+        anchor = anchor,
+        cloudAnchorId = anchorID,
+        onHosted = { cloudAnchorId, state ->
+            if (cloudAnchorId != null) {
+                Log.d("ANCHORS", "cloud anchor hosted with id: $cloudAnchorId")
+            }
+            else {
+                Log.d("ANCHORS", "cloud anchor is null")
+            }
+        },
+    )
+
+    // host the cloud anchor
+    cloudAnchorNode.host(
+        session = session,
+        ttlDays = 1,
+        onCompleted = {
+            cloudAnchorId, state -> Log.d("ANCHORS", state.isError.toString())
+        }
+    )
+
+
+    val modelNode = ModelNode(
+        modelInstance = modelInstances.apply {
+            // if the modelInstances list is empty
+            if (isEmpty()) {
+                // then create a number of new instances of the model from kModelFile (a path to the object)
+                // that is equal to kMaxModelInstances
+                // all of them share the same resources of the first asset
+                this += modelLoader.createInstancedModel(kModelFile, kMaxModelInstances)
+            }
+        }.removeLast(),
+        // Scale to fit in a 0.5 meters cube
+        scaleToUnits = 0.5f
+    ).apply {
+        // Model Node needs to be editable for independent rotation from the anchor rotation
+        isEditable = true
+    }
+    // create a cube node (presumably the hitbox of the object)
+    val boundingBoxNode = CubeNode(
+        engine,
+        // that has the size equal to the size of the model node
+        size = modelNode.extents,
+        // and the same center
+        center = modelNode.center,
+        materialInstance = materialLoader.createColorInstance(Color.White.copy(alpha = 0.5f))
+    ).apply {
+        isVisible = false
+    }
+    modelNode.addChildNode(boundingBoxNode)
+    cloudAnchorNode.addChildNode(modelNode)
+
+
+    listOf(modelNode, cloudAnchorNode).forEach {
+        it.onEditingChanged = { editingTransforms ->
+            // if editingTransforms is not empty, then the Cube Node is visible
+            // otherwise, it is hidden
+            boundingBoxNode.isVisible = editingTransforms.isNotEmpty()
+        }
+    }
+
+
+    return cloudAnchorNode
+
 }
 
 fun createAnchorNode(
@@ -246,6 +365,7 @@ fun createAnchorNode(
     }
     modelNode.addChildNode(boundingBoxNode)
     anchorNode.addChildNode(modelNode)
+
 
     listOf(modelNode, anchorNode).forEach {
         it.onEditingChanged = { editingTransforms ->
