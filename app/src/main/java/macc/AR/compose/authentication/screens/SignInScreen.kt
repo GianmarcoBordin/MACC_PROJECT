@@ -212,7 +212,8 @@ fun SignInScreen(
             Text(
                 text = authenticationResult,
                 fontSize = 16.sp,
-                modifier = Modifier.padding(top = 16.dp)
+                modifier = Modifier.padding(top = 16.dp),
+                color = if (authenticationResult == "Biometric authentication successful") Color.Green else Color.Red
             )
         }
     }

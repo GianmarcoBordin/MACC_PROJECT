@@ -72,12 +72,12 @@ fun ArHomeScreen( navController: NavController) {
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-      BottomNavigationContent()
+      BottomNavigationContent(navController)
     }
 }
 
 @Composable
-fun BottomNavigationContent() {
+fun BottomNavigationContent(navController: NavController) {
     val items = listOf(
         BottomNavigationItemInfo("Rank", R.drawable.rank),
         BottomNavigationItemInfo("Scan", R.drawable.search),
@@ -94,7 +94,15 @@ fun BottomNavigationContent() {
                     items.forEachIndexed { index, item ->
                         BottomNavigationItem(
                             selected = selectedIndex == index,
-                            onClick = { selectedIndex = index },
+                            onClick = {
+                                selectedIndex = index
+                                // Navigate to the corresponding screen when a bottom navigation item is clicked
+                                when (index) {
+                                    0 -> navController.navigate(Route.RankScreen.route)
+                                    1 -> navController.navigate(Route.ARScreen.route)
+                                    2 -> navController.navigate(Route.MapScreen.route)
+                                }
+                            },
                             modifier = Modifier.fillMaxHeight(),
                             icon = {
                                 Column(
