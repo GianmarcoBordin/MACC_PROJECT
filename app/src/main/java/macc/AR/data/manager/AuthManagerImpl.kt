@@ -4,73 +4,74 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.hardware.biometrics.BiometricPrompt
 import android.util.Log
-import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.UserProfileChangeRequest
-import com.google.firebase.auth.actionCodeSettings
-import com.google.firebase.auth.auth
 import macc.AR.data.BiometricState
 import macc.AR.domain.manager.AuthManager
+import javax.inject.Inject
 
 interface UpdateListener {
     fun onUpdate(data:String)
 }
-class AuthManagerImpl(
-): AuthManager {
-    private lateinit var firebaseAuth: FirebaseAuth
+class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAuth,
+                                           private val biometricState: BiometricState) : AuthManager {
     private var updateListener: UpdateListener? = null
     private lateinit var contxt: Context
-    private lateinit var bioState: BiometricState
-    private lateinit var otp: String
 
     override suspend fun signIn(email: String,password: String) {
         doSignIn(email,password)
     }
-    //TODO handle account confirmation in app
 
-    override suspend fun bioSignIn(context: Context, callback: (Boolean) -> Unit) {
-        contxt=context
-        bioState.setBio(context)
-        val biometricPrompt = BiometricPrompt.Builder(context)
-            .setTitle("Biometric Authentication")
-            .setSubtitle("Please authenticate to continue")
-            .setNegativeButton(
-                "Cancel",
+    override suspend fun bioSignIn(context: Context, callbacks: (String) -> Unit) {
+        // Check if a user is currently logged in
+        val currentUser = firebaseAuth.currentUser
+        if (currentUser != null) {
+            // User is logged in
+            contxt=context
+            biometricState.setBio(context)
+            val biometricPrompt = BiometricPrompt.Builder(context)
+                .setTitle("Biometric Authentication")
+                .setSubtitle("Please authenticate to continue")
+                .setNegativeButton(
+                    "Cancel",
+                    context.mainExecutor
+                ) { _, _ -> callbacks.invoke("Bio Auth failed") }
+                .build()
+
+            biometricPrompt.authenticate(
+                android.os.CancellationSignal(),
                 context.mainExecutor,
-                { _, _ -> callback.invoke(false) }
+                object : BiometricPrompt.AuthenticationCallback() {
+                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                        super.onAuthenticationSucceeded(result)
+                        val bio=biometricState.getBio()
+                        doSignIn(bio.first,bio.second)
+                        callbacks.invoke("Bio Auth Success")
+                    }
+
+                    override fun onAuthenticationFailed() {
+                        super.onAuthenticationFailed()
+                        callbacks.invoke("Bio Auth failed")
+                    }
+
+                    override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                        super.onAuthenticationError(errorCode, errString)
+                        callbacks.invoke("Bio Auth failed")
+                    }
+                }
             )
-            .build()
+        } else {
+            // User is not logged in
+            Log.d(TAG,"User does not exists cannot bio sign in")
+            callbacks.invoke("User does not exist, please first register")
 
-        biometricPrompt.authenticate(
-            android.os.CancellationSignal(),
-            context.mainExecutor,
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    super.onAuthenticationSucceeded(result)
-                    bioState.initBio(context)
-                    val bio=bioState.getBio()
-                    doSignIn(bio.first,bio.second)
-                    callback.invoke(true)
-                }
+        }
 
-                override fun onAuthenticationFailed() {
-                    super.onAuthenticationFailed()
-                    callback.invoke(false)
-                }
-
-                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                    super.onAuthenticationError(errorCode, errString)
-                    callback.invoke(false)
-                }
-            }
-        )
     }
 
 
     override suspend fun signUp(name:String,email: String,password: String,confirmPass:String) {
-        firebaseAuth = FirebaseAuth.getInstance()
-        bioState=BiometricState(email,password)
         if (password!=confirmPass){
             updateListener?.onUpdate("Two passwords must coincide")
         }
@@ -78,8 +79,7 @@ class AuthManagerImpl(
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Sign-up success
-                    bioState.setCredentials(email,password)
-
+                    Log.d(TAG,"Display name updated successfully")
                     // Update user profile
                     val profileUpdates = UserProfileChangeRequest.Builder()
                         .setDisplayName(name)
@@ -91,12 +91,13 @@ class AuthManagerImpl(
                         ?.addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 // Display name updated successfully
-                                println("Display name updated successfully")
+                                Log.d(TAG,"Display name updated successfully")
                             } else {
                                 // Display name update failed
-                                println("Failed to update display name: ${task.exception?.message}")
+                                Log.d(TAG,"Failed to update display name: ${task.exception?.message}")
                             }
                         }
+                    biometricState.setCredentials(email,password)
                     updateListener?.onUpdate("SignUp Success")
 
                 } else {
@@ -118,60 +119,18 @@ class AuthManagerImpl(
             }
     }
 
-    override fun confirm(otp: String): Boolean {
-        return otp==this.otp
-    }
 
     override fun authCheck(): Boolean {
         return firebaseAuth.currentUser != null
     }
 
-    override suspend fun sendEmail() {
-        val email = FirebaseAuth.getInstance().currentUser?.email
-        val name = FirebaseAuth.getInstance().currentUser?.displayName
-        otp=generateOTP()
-        val actionCodeSettings = actionCodeSettings {
-            // URL you want to redirect back to. The domain (www.example.com) for this
-            // URL must be whitelisted in the Firebase Console.
-            url = "Hi $name! This is your auto-generated OTP: $otp please insert it in the app to confirm your account!"
-            // This must be true
-            handleCodeInApp = true
-            setIOSBundleId("com.example.ios")
-            setAndroidPackageName(
-                "com.example.android",
-                true, // installIfNotAvailable
-                "12", // minimumVersion
-            )
-        }
-        Firebase.auth.sendSignInLinkToEmail(email.toString(), actionCodeSettings)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d(TAG, "Email sent.")
-                    updateListener?.onUpdate("Confirmation Success")
-                }else{
-                    updateListener?.onUpdate("Something went wrong, please retry later")
-                }
-            }
-    }
 
     override fun setUpdateListener(ref: UpdateListener) {
        updateListener=ref
     }
 
-    // Generate OTP function
-    private fun generateOTP(): String {
-        val otpLength = 6 // Length of OTP
-        val otp = StringBuilder()
-        val random = java.util.Random()
-        for (i in 0 until otpLength) {
-            otp.append(random.nextInt(10)) // Generate random digit
-        }
-        return otp.toString()
-    }
 
      private fun doSignIn(email: String,password: String) {
-        // get firebase auth
-        firebaseAuth = FirebaseAuth.getInstance()
         if (email.isNotEmpty() && password.isNotEmpty()) {
             // fetch
             firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {

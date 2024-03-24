@@ -25,14 +25,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 import macc.AR.compose.authentication.SettingsViewModel
 import macc.AR.compose.authentication.components.BackButton
 import macc.AR.compose.navgraph.Route
+import macc.AR.compose.settings.events.SignOutEvent
+import macc.AR.compose.settings.events.UpdateEvent
+import macc.AR.data.BiometricState
 import macc.AR.data.manager.SettingsManagerImpl
 import macc.AR.domain.usecase.settings.FetchUserProfile
 import macc.AR.domain.usecase.settings.SettingsUseCases
@@ -51,9 +56,9 @@ fun SettingsScreen(
     val userProfile by viewModel.userProfile.collectAsState()
     val data by viewModel.data.observeAsState()
     // fields of interest
-    var newName by remember { mutableStateOf("") }
-    var newEmail by remember { mutableStateOf("") }
-    var newPassword by remember { mutableStateOf("") }
+    var newName by remember { mutableStateOf(userProfile?.displayName ?: "New Name") }
+    var newEmail by remember { mutableStateOf(userProfile?.email ?: "New Name") }
+    var newPassword by remember { mutableStateOf("New Password") }
 
     Column(
         modifier = Modifier
@@ -91,9 +96,10 @@ fun SettingsScreen(
 
         // Name field
         OutlinedTextField(
-            value = newName,
-            onValueChange = { newName = it },
-            label = { Text(userProfile?.displayName ?: "New Name") },
+            value = newName ,
+            onValueChange = { newValue ->
+                newName = newValue },
+            label = { Text( "New Name") },
             shape = RoundedCornerShape(size = 20.dp),
             modifier = Modifier.fillMaxWidth()
         )
@@ -101,8 +107,9 @@ fun SettingsScreen(
         // Email field
         OutlinedTextField(
             value = newEmail,
-            onValueChange = { newEmail = it },
-            label = { Text(userProfile?.email ?: "New Email") },
+            onValueChange = { newValue ->
+                newEmail = newValue },
+            label = { Text( "New Email") },
             shape = RoundedCornerShape(size = 20.dp),
             modifier = Modifier.fillMaxWidth()
         )
@@ -110,7 +117,9 @@ fun SettingsScreen(
         // Password field
         OutlinedTextField(
             value = newPassword,
-            onValueChange = { newPassword = it },
+            onValueChange = { newValue ->
+                newPassword = newValue },
+            visualTransformation = PasswordVisualTransformation(),
             shape = RoundedCornerShape(size = 20.dp),
             label = { Text("New Password") },
             modifier = Modifier.fillMaxWidth()
@@ -118,7 +127,7 @@ fun SettingsScreen(
         // Save button
         Button(
             onClick = {
-                settingsHandler(UpdateEvent.Update(newName,newEmail, newPassword))
+                settingsHandler(UpdateEvent.Update(newName ,newEmail, newPassword))
             },
             shape = RoundedCornerShape(size = 20.dp),
             modifier = Modifier
@@ -128,12 +137,23 @@ fun SettingsScreen(
             Text(text = "Save")
         }
         // Observe changes in data
-        if (data != null) {
+        if (data?.isNotEmpty() == true) {
             // Display data
-            Text(text = data!!.toString(),color = if (data.equals("Update Success") || data.equals("Signout Success")) Color.Green else Color.Red)
+            Text(
+                text = data!!.toString(),
+                color = if (data.equals("Update Success") || data.equals("SignOut Success")) Color.Green else Color.Red
+            )
             // Change page if all ok
-            if(data.equals("Update Success")|| data.equals("Signout Success")) {
-                navController.navigate(Route.HomeScreen.route)
+            if (viewModel.navigateToAnotherScreen.value == true) {
+                val route:String
+                if (data.equals("SignOut Success")){
+                    route=Route.SignInScreen.route
+                }else{
+                    route=Route.HomeScreen.route
+                }
+                // navigate
+                navController.navigate(route)
+                viewModel.onNavigationComplete()
             }
 
         }
@@ -144,7 +164,7 @@ fun SettingsScreen(
 @Preview(showBackground = true)
 @Composable
 fun PreviewSignInScreen() {
-    val settingsManager= SettingsManagerImpl()
+    val settingsManager= SettingsManagerImpl(biometricState = BiometricState("",""), firebaseAuth = FirebaseAuth.getInstance())
     val viewModel = remember { SettingsViewModel(SettingsUseCases(update = Update(settingsManager),fetch= FetchUserProfile(settingsManager), signOut = SignOut(settingsManager), subscribe=Subscribe(settingsManager)))}
     val navController = rememberNavController()
     SettingsScreen(viewModel = viewModel,navController=navController,settingsHandler={}, signOutHandler = {})

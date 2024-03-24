@@ -39,16 +39,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 import macc.AR.compose.authentication.AuthenticationViewModel
 import macc.AR.compose.authentication.components.BackButton
 import macc.AR.compose.authentication.events.SignUpEvent
 import macc.AR.compose.navgraph.Route
+import macc.AR.data.BiometricState
 import macc.AR.data.manager.AuthManagerImpl
 import macc.AR.domain.usecase.auth.AuthCheck
 import macc.AR.domain.usecase.auth.AuthenticationUseCases
 import macc.AR.domain.usecase.auth.BioSignIn
-import macc.AR.domain.usecase.auth.Confirm
-import macc.AR.domain.usecase.auth.SendEmail
 import macc.AR.domain.usecase.auth.SignIn
 import macc.AR.domain.usecase.auth.SignUp
 import macc.AR.domain.usecase.auth.Subscribe
@@ -190,13 +190,18 @@ fun SignUpScreen(signInHandler: (SignUpEvent.SignUp) -> Unit, viewModel: Authent
             }
         )
         // Observe changes in data
-        if (data != null) {
+        if (data?.isNotEmpty() == true) {
             // Display data
-            Text(text = data!!.toString(),color = if (data.equals("SignUp Success")) Color.Green else Color.Red)
+            Text(
+                text = data!!.toString(),
+                color = if (data.equals("SignUp Success")) Color.Green else Color.Red
+            )
             // Change page if all ok
-            if(data.equals("SignUp Success")) {
-                navController.navigate(Route.EmailScreen.route)
+            if (viewModel.navigateToAnotherScreen.value==true) {
+                navController.navigate(Route.HomeScreen.route)
+                viewModel.onNavigationComplete()
             }
+
         }
     }
 }
@@ -205,8 +210,8 @@ fun SignUpScreen(signInHandler: (SignUpEvent.SignUp) -> Unit, viewModel: Authent
 @Preview(showBackground = true)
 @Composable
 fun PreviewSignUpScreen() {
-    val authManager= AuthManagerImpl()
+    val authManager=AuthManagerImpl(biometricState = BiometricState("",""), firebaseAuth = FirebaseAuth.getInstance())
     val navController = rememberNavController()
-    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), confirm= Confirm(authManager), sendEmail = SendEmail(authManager), authCheck = AuthCheck(authManager), bioSignIn = BioSignIn(authManager), subscribe = Subscribe(authManager))) }
+    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), authCheck=AuthCheck(authManager), bioSignIn = BioSignIn(authManager), subscribe = Subscribe(authManager))) }
     SignUpScreen(signInHandler = {}, viewModel = viewModel, navController = navController)
 }

@@ -13,9 +13,8 @@ import macc.AR.compose.ArHomeScreen
 import macc.AR.compose.ar.ARViewModel
 import macc.AR.compose.authentication.AuthenticationViewModel
 import macc.AR.compose.authentication.SettingsViewModel
-import macc.AR.compose.authentication.screens.EmailScreen
-import macc.AR.compose.onboarding.OnBoardingScreen
 import macc.AR.compose.onboarding.OnBoardingViewModel
+import macc.AR.compose.onboarding.screens.OnBoardingScreen
 import macc.AR.compose.settings.SettingsScreen
 
 @Composable
@@ -28,7 +27,7 @@ fun NavGraph(
         // construct a nested nav graph
         navigation(
             route = Route.AppStartNavigation.route,
-            startDestination = Route.OnBoardingScreen.route
+            startDestination = Route.SignInScreen.route
         ) {
             // a node of the graph
             composable(
@@ -52,12 +51,6 @@ fun NavGraph(
                 // set screen as the node state
                 SignUpScreen(signInHandler = authenticationViewModel::onSignUpEvent, viewModel = authenticationViewModel, navController = navController)
 
-            }
-            composable(
-                route = Route.EmailScreen.route
-            ) {
-                // set screen as the node state
-                EmailScreen(otpHandler = authenticationViewModel::onEmailEvent, viewModel = authenticationViewModel, navController = navController)
             }
             composable(
                 route = Route.SettingsScreen.route

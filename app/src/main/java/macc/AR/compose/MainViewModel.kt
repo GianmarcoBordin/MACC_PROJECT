@@ -31,7 +31,8 @@ class MainViewModel @Inject constructor(
                     Route.SignInScreen.route
                 }
             } else {
-                Route.OnBoardingScreen.route
+                //Route.OnBoardingScreen.route
+                Route.HomeScreen.route
             }
             delay(300)
         }

@@ -3,11 +3,9 @@ package macc.AR.data
 import android.content.Context
 import macc.AR.data.manager.retrieveFirebaseUserIdAndBiometricCredentials
 import macc.AR.data.manager.saveFirebaseUserIdAndBiometricCredentials
-import javax.inject.Singleton
 
 
 // Data class to hold biometric credentials
-@Singleton
 data class BiometricState(val _email: String, val _password: String)
 {
     private var email=_email

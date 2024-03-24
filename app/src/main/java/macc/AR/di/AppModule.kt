@@ -1,10 +1,12 @@
 package macc.AR.di
 
 import android.app.Application
+import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import macc.AR.data.BiometricState
 import macc.AR.data.manager.AuthManagerImpl
 import macc.AR.data.manager.LocalUserManagerImpl
 import macc.AR.data.manager.SettingsManagerImpl
@@ -17,8 +19,6 @@ import macc.AR.domain.usecase.appEntry.SaveAppEntry
 import macc.AR.domain.usecase.auth.AuthCheck
 import macc.AR.domain.usecase.auth.AuthenticationUseCases
 import macc.AR.domain.usecase.auth.BioSignIn
-import macc.AR.domain.usecase.auth.Confirm
-import macc.AR.domain.usecase.auth.SendEmail
 import macc.AR.domain.usecase.auth.SignIn
 import macc.AR.domain.usecase.auth.SignUp
 import macc.AR.domain.usecase.auth.Subscribe
@@ -54,7 +54,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthManager(): AuthManager = AuthManagerImpl()
+    fun provideAuthManager(firebaseAuth: FirebaseAuth,
+                           biometricState: BiometricState): AuthManager = AuthManagerImpl(biometricState =biometricState , firebaseAuth =firebaseAuth)
+
+
+    @Provides
+    @Singleton
+    fun provideSettingsManager(firebaseAuth: FirebaseAuth,
+                           biometricState: BiometricState): SettingsManager = SettingsManagerImpl(biometricState =biometricState , firebaseAuth =firebaseAuth)
 
 
     @Provides
@@ -64,17 +71,24 @@ object AppModule {
     ) = AuthenticationUseCases(
         signIn = SignIn(authManager),
         signUp = SignUp(authManager),
-        confirm= Confirm(authManager),
-        sendEmail=SendEmail(authManager),
         authCheck=AuthCheck(authManager),
         bioSignIn= BioSignIn(authManager),
         subscribe = Subscribe(authManager)
     )
 
+
+
     @Provides
     @Singleton
-    fun provideSettingsManager(): SettingsManager = SettingsManagerImpl()
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance()
+    }
 
+    @Provides
+    @Singleton
+    fun provideBiometricState(): BiometricState {
+        return BiometricState("","")
+    }
 
     @Provides
     @Singleton

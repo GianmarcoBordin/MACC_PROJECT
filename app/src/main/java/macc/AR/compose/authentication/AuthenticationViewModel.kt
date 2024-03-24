@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import macc.AR.compose.authentication.events.BioSignInEvent
-import macc.AR.compose.authentication.events.EmailEvent
 import macc.AR.compose.authentication.events.SignInEvent
 import macc.AR.compose.authentication.events.SignUpEvent
 import macc.AR.data.manager.UpdateListener
@@ -24,6 +23,9 @@ class AuthenticationViewModel  @Inject constructor(
 
     private val _data = MutableLiveData<String>()
     val data: LiveData<String> = _data
+
+    private val _navigateToAnotherScreen = MutableLiveData<Boolean>()
+    val navigateToAnotherScreen: LiveData<Boolean> = _navigateToAnotherScreen
 
 
     init {
@@ -48,14 +50,6 @@ class AuthenticationViewModel  @Inject constructor(
     }
 
 
-    fun onEmailEvent(event: EmailEvent) {
-        when (event) {
-            is EmailEvent.Email -> {
-                goConfirmAccount()
-            }
-        }
-    }
-
     fun onBioSignInEvent(event: BioSignInEvent) {
         when (event) {
             is BioSignInEvent.BioSignIn -> {
@@ -64,11 +58,6 @@ class AuthenticationViewModel  @Inject constructor(
         }
     }
 
-    private fun goConfirmAccount() {
-        viewModelScope.launch {
-            authenticationUseCases.sendEmail()
-        }
-    }
 
 
     private fun goSignIn(email: String, password: String) {
@@ -84,20 +73,25 @@ class AuthenticationViewModel  @Inject constructor(
         }
     }
 
-    // Example email validation function
-    fun isValidOTP(otp: String): Boolean {
-        return authenticationUseCases.confirm(otp)
-    }
 
     override fun onUpdate(data: String) {
         // Update UI state with received data
         _data.value = data
+        if (_data.value == "SignUp Success" || _data.value == "Login Success" || _data.value=="Confirmation Success") {
+            _navigateToAnotherScreen.value = true
+        }
+
+    }
+
+    fun onNavigationComplete() {
+        _navigateToAnotherScreen.value = false
+        _data.value=""
     }
 
 
     private fun goBioSignIn(
         context: android.content.Context,
-        callback: (Boolean) -> Unit
+        callback: (String) -> Unit
     ) {
         viewModelScope.launch {
             authenticationUseCases.bioSignIn(context, callback)

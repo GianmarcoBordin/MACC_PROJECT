@@ -44,7 +44,7 @@ fun ArHomeScreen( navController: NavController) {
     // mutable state
     Surface (color = Color.Black){
         Column {
-            TopAppBar(
+        TopAppBar(
                 title = { Text(text = "AR Home") },
                 actions = {
                     IconButton(onClick = {

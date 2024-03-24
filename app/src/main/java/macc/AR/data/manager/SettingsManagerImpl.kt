@@ -1,56 +1,74 @@
 package macc.AR.data.manager
 
-import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.auth.UserProfileChangeRequest
 import macc.AR.compose.authentication.UserProfileBundle
 import macc.AR.data.BiometricState
-
 import macc.AR.domain.manager.SettingsManager
+import javax.inject.Inject
 
-class SettingsManagerImpl(
-): SettingsManager {
-    private lateinit var firebaseAuth: FirebaseAuth
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var contxt: Context
-    private lateinit var bioState: BiometricState
+class SettingsManagerImpl @Inject constructor(
+    private val firebaseAuth: FirebaseAuth,
+    private val biometricState: BiometricState
+) : SettingsManager {
     private var updateListener: UpdateListener? = null
 
 
     override suspend fun update(name: String, email: String, password: String) {
-        // Get Firestore instance
-        firestore = FirebaseFirestore.getInstance()
-        // Get user ID
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-        // Update user data in Firestore
-        if (userId != null) {
-            val userDocRef = firestore.collection("users").document(userId)
-            userDocRef.update(
-                mapOf(
-                    "name" to name,
-                    "email" to email,
-                    "password" to password
-                    // Add other fields as needed
-                )
-            )
-                .addOnSuccessListener {
+
+        val user = firebaseAuth.currentUser
+
+        val profileUpdates = UserProfileChangeRequest.Builder()
+            .setDisplayName(name)
+            .build()
+
+        if (password != "New Password"){
+            user?.updateEmail(email)?.continueWithTask { emailUpdateTask ->
+                if (emailUpdateTask.isSuccessful) {
+                    return@continueWithTask user.updatePassword(password)
+                } else {
+                    throw emailUpdateTask.exception!!
+                }
+            }?.continueWithTask { passwordUpdateTask ->
+                if (passwordUpdateTask.isSuccessful) {
+                    return@continueWithTask user.updateProfile(profileUpdates)
+                } else {
+                    throw passwordUpdateTask.exception!!
+                }
+            }?.addOnCompleteListener { combinedTask ->
+                if (combinedTask.isSuccessful) {
+                    // All updates were successful
                     // User data updated successfully
-                    bioState.setCredentials(email,password)
+                    biometricState.setCredentials(email,password)
                     updateListener?.onUpdate("Update Success")
-
+                } else {
+                    // Handle the failure, you can access the exception from combinedTask.exception
+                    updateListener?.onUpdate("Something went wrong, retry later")
                 }
-                .addOnFailureListener { e ->
-                    // Failed to update user data
-                    updateListener?.onUpdate(e.message.toString())
-
+            }
+        }
+        else {
+            user?.updateEmail(email)?.continueWithTask { emailUpdateTask ->
+                if (emailUpdateTask.isSuccessful) {
+                    return@continueWithTask user.updateProfile(profileUpdates)
+                } else {
+                    throw emailUpdateTask.exception!!
                 }
-        }else{
-            updateListener?.onUpdate("Something went wrong, please retry later")
+            }?.addOnCompleteListener { combinedTask ->
+                if (combinedTask.isSuccessful) {
+                    // All updates were successful
+                    // User data updated successfully
+                    biometricState.setCredentials(email,password)
+                    updateListener?.onUpdate("Update Success")
+                } else {
+                    // Handle the failure, you can access the exception from combinedTask.exception
+                    updateListener?.onUpdate("Something went wrong, retry later")
+                }
+            }
         }
     }
 
     override suspend fun fetch(): UserProfileBundle? {
-        firebaseAuth = FirebaseAuth.getInstance()
         val currentUser=firebaseAuth.currentUser
         val userProfile: UserProfileBundle?
         if (currentUser != null) {
@@ -64,10 +82,12 @@ class SettingsManagerImpl(
     }
 
     override suspend fun signOut() {
-        firebaseAuth=FirebaseAuth.getInstance()
         try {
+            // clear firebase
             firebaseAuth.signOut()
-
+            // clear bio state
+            biometricState.setCredentials("","")
+            // update listener
             updateListener?.onUpdate("SignOut Success")
 
         } catch (e: Exception) {
@@ -77,6 +97,8 @@ class SettingsManagerImpl(
 
     override fun setUpdateListener(ref: UpdateListener) {
         updateListener=ref    }
+
+    // TODO capire application context in bio sign in
 
 }
 

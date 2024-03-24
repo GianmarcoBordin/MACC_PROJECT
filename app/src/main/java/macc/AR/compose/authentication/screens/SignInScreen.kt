@@ -41,17 +41,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.auth.FirebaseAuth
 import macc.AR.compose.authentication.AuthenticationViewModel
 import macc.AR.compose.authentication.components.BackButton
 import macc.AR.compose.authentication.events.BioSignInEvent
 import macc.AR.compose.authentication.events.SignInEvent
 import macc.AR.compose.navgraph.Route
+import macc.AR.data.BiometricState
 import macc.AR.data.manager.AuthManagerImpl
 import macc.AR.domain.usecase.auth.AuthCheck
 import macc.AR.domain.usecase.auth.AuthenticationUseCases
 import macc.AR.domain.usecase.auth.BioSignIn
-import macc.AR.domain.usecase.auth.Confirm
-import macc.AR.domain.usecase.auth.SendEmail
 import macc.AR.domain.usecase.auth.SignIn
 import macc.AR.domain.usecase.auth.SignUp
 import macc.AR.domain.usecase.auth.Subscribe
@@ -69,8 +69,9 @@ fun SignInScreen(
     val context = LocalContext.current
     // observed state
     val data by viewModel.data.observeAsState()
-    val focusManager = LocalFocusManager.current
     var authenticationResult by remember { mutableStateOf("") }
+    // focus
+    val focusManager = LocalFocusManager.current
 
     BackButton(
         navController = navController,
@@ -132,6 +133,8 @@ fun SignInScreen(
             onClick = {
                 focusManager.clearFocus()
                 signInHandler(SignInEvent.SignIn(email, password))
+
+
             },
             shape = RoundedCornerShape(size = 20.dp),
             modifier = Modifier
@@ -178,10 +181,12 @@ fun SignInScreen(
                 val biometricManager = BiometricManager.from(context)
                 if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS) {
                     bioSignInHandler(BioSignInEvent.BioSignIn(context){ success ->
-                        authenticationResult = if (success) {
+                        authenticationResult = if (success == "Bio Auth Success") {
                             "Biometric authentication successful"
-                        } else {
+                        } else if (success.equals("Bio Auth Failed")) {
                             "Biometric authentication failed"
+                        }else{
+                            "Biometric authentication failed, User Is not registered"
                         }
                     })
                 } else {
@@ -190,32 +195,36 @@ fun SignInScreen(
             }) {
                 Text(text = "Authenticate with Biometric")
             }
+            // Observe changes in data
+            if (data?.isNotEmpty() == true) {
+                // Display data
+                Text(
+                    text = data!!.toString(),
+                    color = if (data.equals("Login Success")) Color.Green else Color.Red
+                )
+                // Change page if all ok
+                if (viewModel.navigateToAnotherScreen.value==true) {
+                    navController.navigate(Route.HomeScreen.route)
+                    viewModel.onNavigationComplete()
+                }
 
+            }
             Text(
                 text = authenticationResult,
                 fontSize = 16.sp,
                 modifier = Modifier.padding(top = 16.dp)
             )
         }
-        // Observe changes in data
-        if (data != null) {
-            // Display data
-            Text(text = data!!.toString(),color = if (data.equals("Login Success")) Color.Green else Color.Red)
-            // Change page if all ok
-            if(data.equals("Login Success")) {
-                navController.navigate(Route.HomeScreen.route)
-            }
-
-        }
     }
+
 }
 
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewSignInScreen() {
-    val authManager=AuthManagerImpl()
+    val authManager=AuthManagerImpl(biometricState = BiometricState("",""), firebaseAuth = FirebaseAuth.getInstance())
     val navController = rememberNavController()
-    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), confirm= Confirm(authManager),sendEmail= SendEmail(authManager), authCheck=AuthCheck(authManager), bioSignIn = BioSignIn(authManager), subscribe = Subscribe(authManager))) }
+    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), authCheck=AuthCheck(authManager), bioSignIn = BioSignIn(authManager), subscribe = Subscribe(authManager))) }
     SignInScreen(signInHandler = {}, viewModel = viewModel, bioSignInHandler = {}, navController = navController)
 }

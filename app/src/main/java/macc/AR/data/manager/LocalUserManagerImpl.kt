@@ -22,6 +22,7 @@ class LocalUserManagerImpl(
         context.dataStore.edit { settings ->
             settings[PreferencesKeys.APP_ENTRY] = true
         }
+
     }
 
     override fun readAppEntry(): Flow<Boolean> {

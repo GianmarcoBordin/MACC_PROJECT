@@ -6,7 +6,7 @@ import macc.AR.domain.manager.AuthManager
 class BioSignIn(
     private val authManager: AuthManager
 ){
-    suspend operator fun invoke(context: Context,callback:(Boolean) -> Unit){
+    suspend operator fun invoke(context: Context,callback:(String) -> Unit){
         return authManager.bioSignIn(context,callback)
     }
 

@@ -8,8 +8,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import macc.AR.compose.settings.SignOutEvent
-import macc.AR.compose.settings.UpdateEvent
+import macc.AR.compose.settings.events.SignOutEvent
+import macc.AR.compose.settings.events.UpdateEvent
 import macc.AR.data.manager.UpdateListener
 import macc.AR.domain.usecase.settings.SettingsUseCases
 import javax.inject.Inject
@@ -28,15 +28,16 @@ class SettingsViewModel  @Inject constructor(
     private val _userProfile = MutableStateFlow<UserProfileBundle?>(null)
     val userProfile: StateFlow<UserProfileBundle?> = _userProfile
 
+    private val _navigateToAnotherScreen = MutableLiveData<Boolean>()
+    val navigateToAnotherScreen: LiveData<Boolean> = _navigateToAnotherScreen
+
     init {
         // Set ViewModel as the listener for updates
         settingsUseCases.subscribe.invoke(this)
         viewModelScope.launch {
             _userProfile.value = settingsUseCases.fetch.invoke()
         }
-
     }
-
     fun onUpdateEvent(event: UpdateEvent){
         when (event) {
             is UpdateEvent.Update-> {
@@ -56,6 +57,14 @@ class SettingsViewModel  @Inject constructor(
     override fun onUpdate(data:String) {
         // Update UI state with received data
         _data.value= data
+        if (_data.value == "Update Success" || _data.value == "SignOut Success" ) {
+            _navigateToAnotherScreen.value = true
+        }
+    }
+
+    fun onNavigationComplete() {
+        _navigateToAnotherScreen.value = false
+        _data.value=""
     }
 
     private fun goSignOut() {

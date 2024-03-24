@@ -1,4 +1,4 @@
-package macc.AR.compose.onboarding
+package macc.AR.compose.onboarding.screens
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,17 +22,19 @@ import kotlinx.coroutines.launch
 import macc.AR.compose.Dimension.MediumPadding2
 import macc.AR.compose.Dimension.PageIndicatorWidth
 import macc.AR.compose.navgraph.Route
+import macc.AR.compose.onboarding.OnBoardingEvent
 import macc.AR.compose.onboarding.components.OnBoardingButton
 import macc.AR.compose.onboarding.components.OnBoardingPage
 import macc.AR.compose.onboarding.components.OnBoardingTextButton
 import macc.AR.compose.onboarding.components.PagerIndicator
+import macc.AR.compose.onboarding.pages
 
 /*
 * Composable to combine all the OnBoarding components*/
 @Composable
 @OptIn(ExperimentalFoundationApi::class)
 fun OnBoardingScreen(
-    event: (OnBoardingEvent) -> Unit,navController: NavController
+    event: (OnBoardingEvent) -> Unit, navController: NavController
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         val pagerState = rememberPagerState(initialPage = 0) {
@@ -92,7 +94,9 @@ fun OnBoardingScreen(
                                 // we launch an event that will be captured by the view model
                                 event(OnBoardingEvent.SaveAppEntry)
                                 // navigate to the main screen
+
                                 navController.navigate(Route.SignInScreen.route)
+
 
                             }else{
                                 pagerState.animateScrollToPage(

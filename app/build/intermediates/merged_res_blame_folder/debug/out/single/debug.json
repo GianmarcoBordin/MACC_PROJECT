@@ -36,6 +36,10 @@
         "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-88:/drawable/game_background.png"
     },
     {
+        "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-86:/drawable_camera.png.flat",
+        "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-88:/drawable/camera.png"
+    },
+    {
         "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-86:/drawable_home.png.flat",
         "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-88:/drawable/home.png"
     },
@@ -108,6 +112,10 @@
         "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-88:/drawable/onboarding3.jpeg"
     },
     {
+        "merged": "macc.signinup.app-merged_res-86:/mipmap-anydpi_ic_launcher_round.xml.flat",
+        "source": "macc.signinup.app-main-88:/mipmap-anydpi/ic_launcher_round.xml"
+    },
+    {
         "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-86:/drawable_game_logo2.png.flat",
         "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-88:/drawable/game_logo2.png"
     },
@@ -140,6 +148,10 @@
         "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-88:/mipmap-xxhdpi/ic_launcher.webp"
     },
     {
+        "merged": "macc.signinup.app-merged_res-86:/mipmap-anydpi_ic_launcher.xml.flat",
+        "source": "macc.signinup.app-main-88:/mipmap-anydpi/ic_launcher.xml"
+    },
+    {
         "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-86:/drawable_favorite.png.flat",
         "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-88:/drawable/favorite.png"
     },
@@ -162,10 +174,6 @@
     {
         "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-86:/mipmap-anydpi_ic_launcher.xml.flat",
         "source": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-main-88:/mipmap-anydpi/ic_launcher.xml"
-    },
-    {
-        "merged": "macc.signinup.app-merged_res-86:/drawable_camera.png.flat",
-        "source": "macc.signinup.app-main-88:/drawable/camera.png"
     },
     {
         "merged": "/Users/applem2/.gradle/daemon/8.0/macc.signinup.app-merged_res-86:/drawable_add.png.flat",
