@@ -6,13 +6,9 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
 import macc.AR.compose.MainViewModel
-import macc.AR.compose.navgraph.NavGraph
+import macc.AR.compose.ar.ARScreen
 import macc.ui.theme.ArAppTheme
 
 
@@ -29,10 +25,11 @@ class MainActivity: ComponentActivity() {
             ArAppTheme(
                 dynamicColor = false
             ) {
-                Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
+                ARScreen()
+                /*Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
                     val startDestination = viewModel.startDestination
                     NavGraph(startDestination = startDestination)
-                }
+                }*/
             }
         }
     }
