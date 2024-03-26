@@ -1,6 +1,6 @@
 package macc.AR.domain.manager
 
-import macc.AR.compose.authentication.UserProfileBundle
+import macc.AR.compose.UserProfileBundle
 import macc.AR.data.manager.UpdateListener
 
 interface SettingsManager {

@@ -14,7 +14,7 @@ import javax.inject.Inject
 interface UpdateListener {
     fun onUpdate(data:String)
 }
-class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAuth,
+class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAuth?,
                                            private val biometricState: BiometricState) : AuthManager {
     private var updateListener: UpdateListener? = null
     private lateinit var contxt: Context
@@ -25,7 +25,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
 
     override suspend fun bioSignIn(context: Context, callbacks: (String) -> Unit) {
         // Check if a user is currently logged in
-        val currentUser = firebaseAuth.currentUser
+        val currentUser = firebaseAuth?.currentUser
         if (currentUser != null) {
             // User is logged in
             contxt=context
@@ -75,19 +75,18 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
         if (password!=confirmPass){
             updateListener?.onUpdate("Two passwords must coincide")
         }
-        firebaseAuth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener { task ->
+        firebaseAuth?.createUserWithEmailAndPassword(email, password)
+            ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     // Sign-up success
                     Log.d(TAG,"Display name updated successfully")
                     // Update user profile
                     val profileUpdates = UserProfileChangeRequest.Builder()
                         .setDisplayName(name)
-                        //  TODO You can also update other profile information like photo URL if needed
-                        //.setPhotoUri(newPhotoUri)
+                        //.setPhotoUri(createDummyPhotoUri())
                         .build()
 
-                    firebaseAuth.currentUser?.updateProfile(profileUpdates)
+                    firebaseAuth?.currentUser?.updateProfile(profileUpdates)
                         ?.addOnCompleteListener { task ->
                             if (task.isSuccessful) {
                                 // Display name updated successfully
@@ -106,7 +105,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                     updateListener?.onUpdate(errorMessage)
                 }
             }
-            .addOnFailureListener { exception ->
+            ?.addOnFailureListener { exception ->
                 // Handle exceptions
                 if (exception is FirebaseAuthUserCollisionException) {
                     // User already exists with the same email
@@ -119,9 +118,8 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
             }
     }
 
-
     override fun authCheck(): Boolean {
-        return firebaseAuth.currentUser != null
+        return firebaseAuth?.currentUser != null
     }
 
 
@@ -133,7 +131,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
      private fun doSignIn(email: String,password: String) {
         if (email.isNotEmpty() && password.isNotEmpty()) {
             // fetch
-            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
+            firebaseAuth?.signInWithEmailAndPassword(email, password)?.addOnCompleteListener {
                 // Notify UI about data update
                 if (it.isSuccessful) {
                     updateListener?.onUpdate("Login Success")

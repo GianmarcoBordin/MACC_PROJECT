@@ -55,13 +55,15 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAuthManager(firebaseAuth: FirebaseAuth,
-                           biometricState: BiometricState): AuthManager = AuthManagerImpl(biometricState =biometricState , firebaseAuth =firebaseAuth)
+                           biometricState: BiometricState): AuthManager = AuthManagerImpl(
+        biometricState =biometricState , firebaseAuth =firebaseAuth)
 
 
     @Provides
     @Singleton
     fun provideSettingsManager(firebaseAuth: FirebaseAuth,
-                           biometricState: BiometricState): SettingsManager = SettingsManagerImpl(biometricState =biometricState , firebaseAuth =firebaseAuth)
+                           biometricState: BiometricState): SettingsManager = SettingsManagerImpl(
+        biometricState =biometricState , firebaseAuth =firebaseAuth)
 
 
     @Provides

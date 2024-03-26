@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import macc.AR.compose.ArHomeScreen
+import macc.AR.compose.MainViewModel
 import macc.AR.compose.ar.ARScreen
 import macc.AR.compose.ar.ARViewModel
 import macc.AR.compose.authentication.AuthenticationViewModel
@@ -62,9 +63,10 @@ fun NavGraph(
             composable(
                 route = Route.HomeScreen.route
             ) {
-                // set screen as the node state
+                // set screen as the node stateù
+                val  viewModel : MainViewModel= hiltViewModel()
                 ArHomeScreen(
-                    navController = navController
+                    navController = navController, viewModel = viewModel
                 )
             }
             composable(

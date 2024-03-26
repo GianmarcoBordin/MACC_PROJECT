@@ -2,6 +2,7 @@
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -39,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.auth.FirebaseAuth
 import macc.AR.compose.authentication.AuthenticationViewModel
 import macc.AR.compose.authentication.components.BackButton
 import macc.AR.compose.authentication.events.SignUpEvent
@@ -66,13 +66,19 @@ fun SignUpScreen(signInHandler: (SignUpEvent.SignUp) -> Unit, viewModel: Authent
     val data by viewModel.data.observeAsState()
     val focusManager = LocalFocusManager.current
 
-    BackButton(
-        navController = navController,
+    Row(
         modifier = Modifier
-            .size(50.dp)
-            .clip(CircleShape) // Change the shape of the button here
-            .background(Color.DarkGray)
-    )
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween    ){
+        BackButton(
+            navController = navController,
+            modifier = Modifier
+                .size(50.dp)
+                .clip(CircleShape) // Change the shape of the button here
+                .background(Color.Black)
+        )
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -186,6 +192,7 @@ fun SignUpScreen(signInHandler: (SignUpEvent.SignUp) -> Unit, viewModel: Authent
                 text.getStringAnnotations("LINK", offset, offset)
                     .firstOrNull()?.let {
                         navController.navigate(Route.SignInScreen.route)
+                        viewModel.onNavigationComplete()
                     }
             }
         )
@@ -210,7 +217,7 @@ fun SignUpScreen(signInHandler: (SignUpEvent.SignUp) -> Unit, viewModel: Authent
 @Preview(showBackground = true)
 @Composable
 fun PreviewSignUpScreen() {
-    val authManager=AuthManagerImpl(biometricState = BiometricState("",""), firebaseAuth = FirebaseAuth.getInstance())
+    val authManager=AuthManagerImpl(biometricState = BiometricState("",""), firebaseAuth = null)
     val navController = rememberNavController()
     val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), authCheck=AuthCheck(authManager), bioSignIn = BioSignIn(authManager), subscribe = Subscribe(authManager))) }
     SignUpScreen(signInHandler = {}, viewModel = viewModel, navController = navController)

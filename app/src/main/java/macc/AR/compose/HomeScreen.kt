@@ -21,6 +21,7 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -37,15 +39,30 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import macc.AR.compose.navgraph.Route
+import macc.AR.data.BiometricState
+import macc.AR.data.manager.AuthManagerImpl
+import macc.AR.data.manager.LocalUserManagerImpl
+import macc.AR.domain.usecase.appEntry.AppEntryUseCases
+import macc.AR.domain.usecase.appEntry.ReadAppEntry
+import macc.AR.domain.usecase.appEntry.SaveAppEntry
+import macc.AR.domain.usecase.auth.AuthCheck
+import macc.AR.domain.usecase.auth.AuthenticationUseCases
+import macc.AR.domain.usecase.auth.BioSignIn
+import macc.AR.domain.usecase.auth.SignIn
+import macc.AR.domain.usecase.auth.SignUp
+import macc.AR.domain.usecase.auth.Subscribe
 import macc.signinup.R
 
 @Composable
-fun ArHomeScreen( navController: NavController) {
+fun ArHomeScreen( navController: NavController, viewModel: MainViewModel) {
     // mutable state
+    val userProfile by viewModel.userProfile.collectAsState()
+    var name by remember { mutableStateOf(userProfile?.displayName ?: "New Name") }
+
     Surface (color = Color.Black){
         Column {
         TopAppBar(
-                title = { Text(text = "AR Home") },
+                title = { LogoUserImage(name = name) },
                 actions = {
                     IconButton(onClick = {
                         navController.navigate(Route.SettingsScreen.route)
@@ -54,8 +71,10 @@ fun ArHomeScreen( navController: NavController) {
                     }
                 }
             )
-            Row{
-                Text(text = "AR Home")
+            Row (modifier = Modifier
+                .padding(16.dp)
+            ){
+                UserGreeting(name = name, color = Color.White)
                 IconButton(onClick = {
                     navController.navigate(Route.SettingsScreen.route)
                 }) {
@@ -155,6 +174,13 @@ data class BottomNavigationItemInfo(val title: String, val iconResId: Int)
 @Preview
 @Composable
 fun HomeScreen() {
+
+    val localUserManagerImpl=LocalUserManagerImpl(LocalContext.current)
+    val authManager=
+        AuthManagerImpl(biometricState = BiometricState("",""), firebaseAuth = null)
     val navController = rememberNavController()
-    ArHomeScreen(  navController =navController )
+    val authUseCases = remember { AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), authCheck=AuthCheck(authManager), bioSignIn = BioSignIn(authManager), subscribe = Subscribe(authManager)) }
+    val appEntryUseCases=AppEntryUseCases(ReadAppEntry(localUserManagerImpl), SaveAppEntry(localUserManagerImpl))
+    val viewmodel = remember{MainViewModel(authenticationUseCases =authUseCases , appEntryUseCases = appEntryUseCases )}
+    ArHomeScreen(  navController =navController , viewModel = viewmodel )
 }

@@ -3,6 +3,7 @@ package macc.AR.compose.settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,7 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.google.firebase.auth.FirebaseAuth
+import macc.AR.compose.LogoUserImage
+import macc.AR.compose.UserGreeting
 import macc.AR.compose.authentication.SettingsViewModel
 import macc.AR.compose.authentication.components.BackButton
 import macc.AR.compose.navgraph.Route
@@ -60,27 +62,20 @@ fun SettingsScreen(
     var newEmail by remember { mutableStateOf(userProfile?.email ?: "New Name") }
     var newPassword by remember { mutableStateOf("New Password") }
 
-    Column(
+    Row(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        horizontalAlignment = Alignment.End
-    ){
-    // logout button
-    Button(
-        onClick = {
-            signOutHandler(SignOutEvent.SignOut) }
-    ) {
-        Text(text = "Logout")
+        horizontalArrangement = Arrangement.SpaceBetween    ){
+        BackButton(
+            navController = navController,
+            modifier = Modifier
+                .size(50.dp)
+                .clip(CircleShape) // Change the shape of the button here
+                .background(Color.Black)
+        )
+        LogoUserImage(name = newName)
     }
-    }
-    BackButton(
-        navController = navController,
-        modifier = Modifier
-            .size(50.dp)
-            .clip(CircleShape) // Change the shape of the button here
-            .background(Color.Black)
-    )
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -88,12 +83,16 @@ fun SettingsScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "User Settings",
-            style = TextStyle(fontSize = 24.sp, fontWeight = FontWeight.Bold),
-            modifier = Modifier.padding(vertical = 16.dp)
-        )
-
+        Row(modifier = Modifier
+            .padding(18.dp),
+            horizontalArrangement = Arrangement.SpaceBetween  ) {
+            UserGreeting(name = newName, color = Color.Black)
+            Text(
+                text = "Your Settings",
+                style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
+                modifier = Modifier.padding(vertical = 16.dp)
+            )
+        }
         // Name field
         OutlinedTextField(
             value = newName ,
@@ -124,17 +123,29 @@ fun SettingsScreen(
             label = { Text("New Password") },
             modifier = Modifier.fillMaxWidth()
         )
-        // Save button
-        Button(
-            onClick = {
-                settingsHandler(UpdateEvent.Update(newName ,newEmail, newPassword))
-            },
-            shape = RoundedCornerShape(size = 20.dp),
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .align(Alignment.End)
-        ) {
-            Text(text = "Save")
+        Row(modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween) {
+            // logout button
+            Button(
+                onClick = {
+                    signOutHandler(SignOutEvent.SignOut)
+                },
+                shape = RoundedCornerShape(size = 18.dp),
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(text = "LogOut")
+            }
+            // Save button
+            Button(
+                onClick = {
+                    settingsHandler(UpdateEvent.Update(newName ,newEmail, newPassword))
+                },
+                shape = RoundedCornerShape(size = 20.dp),
+                modifier = Modifier
+                    .padding(top = 16.dp)
+            ) {
+                Text(text = "Save")
+            }
         }
         // Observe changes in data
         if (data?.isNotEmpty() == true) {
@@ -161,11 +172,16 @@ fun SettingsScreen(
 }
 
 
+
+// Preview
+
 @Preview(showBackground = true)
 @Composable
 fun PreviewSignInScreen() {
-    val settingsManager= SettingsManagerImpl(biometricState = BiometricState("",""), firebaseAuth = FirebaseAuth.getInstance())
+    val settingsManager= SettingsManagerImpl(biometricState = BiometricState("",""), firebaseAuth = null)
     val viewModel = remember { SettingsViewModel(SettingsUseCases(update = Update(settingsManager),fetch= FetchUserProfile(settingsManager), signOut = SignOut(settingsManager), subscribe=Subscribe(settingsManager)))}
     val navController = rememberNavController()
     SettingsScreen(viewModel = viewModel,navController=navController,settingsHandler={}, signOutHandler = {})
 }
+
+

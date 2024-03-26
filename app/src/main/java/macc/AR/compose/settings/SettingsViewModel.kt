@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import macc.AR.compose.UserProfileBundle
 import macc.AR.compose.settings.events.SignOutEvent
 import macc.AR.compose.settings.events.UpdateEvent
 import macc.AR.data.manager.UpdateListener
@@ -21,6 +22,7 @@ import javax.inject.Inject
 class SettingsViewModel  @Inject constructor(
  private val settingsUseCases: SettingsUseCases
 ): ViewModel(),UpdateListener{
+
 
     private val _data = MutableLiveData<String>()
     val data: LiveData<String> = _data
@@ -81,8 +83,4 @@ class SettingsViewModel  @Inject constructor(
 
 
 }
-data class UserProfileBundle(
-    val displayName: String?,
-    val email: String?
-)
 

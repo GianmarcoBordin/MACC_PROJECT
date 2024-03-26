@@ -2,21 +2,21 @@ package macc.AR.data.manager
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
-import macc.AR.compose.authentication.UserProfileBundle
+import macc.AR.compose.UserProfileBundle
+
 import macc.AR.data.BiometricState
 import macc.AR.domain.manager.SettingsManager
 import javax.inject.Inject
 
 class SettingsManagerImpl @Inject constructor(
-    private val firebaseAuth: FirebaseAuth,
+    private val firebaseAuth: FirebaseAuth?,
     private val biometricState: BiometricState
 ) : SettingsManager {
     private var updateListener: UpdateListener? = null
 
-
     override suspend fun update(name: String, email: String, password: String) {
 
-        val user = firebaseAuth.currentUser
+        val user = firebaseAuth?.currentUser
 
         val profileUpdates = UserProfileChangeRequest.Builder()
             .setDisplayName(name)
@@ -69,7 +69,7 @@ class SettingsManagerImpl @Inject constructor(
     }
 
     override suspend fun fetch(): UserProfileBundle? {
-        val currentUser=firebaseAuth.currentUser
+        val currentUser= firebaseAuth?.currentUser
         val userProfile: UserProfileBundle?
         if (currentUser != null) {
             val displayName = currentUser.displayName
@@ -80,11 +80,10 @@ class SettingsManagerImpl @Inject constructor(
         }
         return userProfile
     }
-
     override suspend fun signOut() {
         try {
             // clear firebase
-            firebaseAuth.signOut()
+            firebaseAuth?.signOut()
             // clear bio state
             biometricState.setCredentials("","")
             // update listener
@@ -97,8 +96,6 @@ class SettingsManagerImpl @Inject constructor(
 
     override fun setUpdateListener(ref: UpdateListener) {
         updateListener=ref    }
-
-    // TODO capire application context in bio sign in
 
 }
 

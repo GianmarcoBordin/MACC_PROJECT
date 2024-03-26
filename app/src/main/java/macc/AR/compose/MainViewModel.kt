@@ -6,6 +6,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onEach
 import macc.AR.compose.navgraph.Route
 import macc.AR.domain.usecase.appEntry.AppEntryUseCases
@@ -17,6 +19,9 @@ class MainViewModel @Inject constructor(
     appEntryUseCases: AppEntryUseCases,
     private val authenticationUseCases: AuthenticationUseCases
 ): ViewModel(){
+
+    private val _userProfile = MutableStateFlow<UserProfileBundle?>(null)
+    val userProfile: StateFlow<UserProfileBundle?> = _userProfile
 
     var startDestination by mutableStateOf(Route.AppStartNavigation.route)
     init {
@@ -40,3 +45,8 @@ class MainViewModel @Inject constructor(
 
 
 }
+
+data class UserProfileBundle(
+    val displayName: String?,
+    val email: String?
+)
