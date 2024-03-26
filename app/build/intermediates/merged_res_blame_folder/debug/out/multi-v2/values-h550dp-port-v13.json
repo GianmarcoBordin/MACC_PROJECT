@@ -4,7 +4,7 @@
             "outputFile": "macc.signinup.app-mergeDebugResources-85:/values-h550dp-port-v13/values-h550dp-port-v13.xml",
             "map": [
                 {
-                    "source": "/home/gabriele/.gradle/caches/transforms-3/6844eef171ccd99d2ce488b574eaada9/transformed/material-1.11.0/res/values-h550dp-port-v13/values-h550dp-port-v13.xml",
+                    "source": "/Users/applem2/.gradle/caches/transforms-3/6844eef171ccd99d2ce488b574eaada9/transformed/material-1.11.0/res/values-h550dp-port-v13/values-h550dp-port-v13.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
