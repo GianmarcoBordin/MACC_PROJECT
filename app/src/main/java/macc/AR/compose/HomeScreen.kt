@@ -40,8 +40,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import macc.AR.compose.navgraph.Route
 import macc.AR.data.BiometricState
+import macc.AR.data.api.DataRepositoryImpl
 import macc.AR.data.manager.AuthManagerImpl
 import macc.AR.data.manager.LocalUserManagerImpl
+import macc.AR.data.manager.RankManagerImpl
+import macc.AR.data.manager.SettingsManagerImpl
+import macc.AR.domain.usecase.Subscribe
 import macc.AR.domain.usecase.appEntry.AppEntryUseCases
 import macc.AR.domain.usecase.appEntry.ReadAppEntry
 import macc.AR.domain.usecase.appEntry.SaveAppEntry
@@ -50,7 +54,6 @@ import macc.AR.domain.usecase.auth.AuthenticationUseCases
 import macc.AR.domain.usecase.auth.BioSignIn
 import macc.AR.domain.usecase.auth.SignIn
 import macc.AR.domain.usecase.auth.SignUp
-import macc.AR.domain.usecase.auth.Subscribe
 import macc.signinup.R
 
 @Composable
@@ -75,11 +78,6 @@ fun ArHomeScreen( navController: NavController, viewModel: MainViewModel) {
                 .padding(16.dp)
             ){
                 UserGreeting(name = name, color = Color.White)
-                IconButton(onClick = {
-                    navController.navigate(Route.SettingsScreen.route)
-                }) {
-                    Icon(Icons.Default.Settings, contentDescription = "Settings")
-                }
             }
             Row(modifier = Modifier.fillMaxSize()) {
                 LogoImage()
@@ -174,12 +172,15 @@ data class BottomNavigationItemInfo(val title: String, val iconResId: Int)
 @Preview
 @Composable
 fun HomeScreen() {
-
+// TODO cambiare subscribe troppe dipendenze e null  safe for instatiations in app module
     val localUserManagerImpl=LocalUserManagerImpl(LocalContext.current)
     val authManager=
         AuthManagerImpl(biometricState = BiometricState("",""), firebaseAuth = null)
     val navController = rememberNavController()
-    val authUseCases = remember { AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), authCheck=AuthCheck(authManager), bioSignIn = BioSignIn(authManager), subscribe = Subscribe(authManager)) }
+    val dataRepository= DataRepositoryImpl(rankApi = null)
+    val rankManager= RankManagerImpl(dataRepository = dataRepository)
+    val settingsManager= SettingsManagerImpl(biometricState = BiometricState("",""), firebaseAuth = null)
+    val authUseCases = remember { AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), authCheck=AuthCheck(authManager), bioSignIn = BioSignIn(authManager), subscribe = Subscribe(settingsManager, authManager, rankManager)) }
     val appEntryUseCases=AppEntryUseCases(ReadAppEntry(localUserManagerImpl), SaveAppEntry(localUserManagerImpl))
     val viewmodel = remember{MainViewModel(authenticationUseCases =authUseCases , appEntryUseCases = appEntryUseCases )}
     ArHomeScreen(  navController =navController , viewModel = viewmodel )

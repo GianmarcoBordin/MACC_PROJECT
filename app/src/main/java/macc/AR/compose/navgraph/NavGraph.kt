@@ -16,6 +16,8 @@ import macc.AR.compose.authentication.AuthenticationViewModel
 import macc.AR.compose.authentication.SettingsViewModel
 import macc.AR.compose.onboarding.OnBoardingViewModel
 import macc.AR.compose.onboarding.screens.OnBoardingScreen
+import macc.AR.compose.rank.RankScreen
+import macc.AR.compose.rank.RankViewModel
 import macc.AR.compose.settings.SettingsScreen
 
 @Composable
@@ -75,6 +77,13 @@ fun NavGraph(
                 // set screen as the node state
                 val viewModel : ARViewModel = hiltViewModel()
                 ARScreen()
+            }
+            composable(
+                route = Route.RankScreen.route
+            ) {
+                // set screen as the node state
+                val viewModel : RankViewModel = hiltViewModel()
+                RankScreen( viewModel = viewModel, navController = navController)
             }
             // more nodes...
 

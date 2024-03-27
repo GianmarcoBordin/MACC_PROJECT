@@ -8,11 +8,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import macc.AR.compose.UserProfileBundle
 import macc.AR.compose.settings.events.SignOutEvent
 import macc.AR.compose.settings.events.UpdateEvent
+import macc.AR.data.UserProfileBundle
 import macc.AR.data.manager.UpdateListener
 import macc.AR.domain.usecase.settings.SettingsUseCases
+import macc.AR.util.Constants.USER_SETTINGS
 import javax.inject.Inject
 
 /* Class responsible for handling authentication related events. It relies on the appEntryUseCases dependency
@@ -35,7 +36,7 @@ class SettingsViewModel  @Inject constructor(
 
     init {
         // Set ViewModel as the listener for updates
-        settingsUseCases.subscribe.invoke(this)
+        settingsUseCases.subscribe.invoke(this,USER_SETTINGS)
         viewModelScope.launch {
             _userProfile.value = settingsUseCases.fetch.invoke()
         }

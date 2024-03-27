@@ -1,13 +1,14 @@
 package macc.AR.domain.usecase.settings
 
-import macc.AR.compose.UserProfileBundle
+
+import macc.AR.data.UserProfileBundle
 import macc.AR.domain.manager.SettingsManager
 
 
 class FetchUserProfile(
-    private val settingsUsecase: SettingsManager
+    private val settingsManager: SettingsManager
 ) {
      suspend operator fun invoke() : UserProfileBundle? {
-        return settingsUsecase.fetch()
+        return settingsManager.fetch()
     }
 }

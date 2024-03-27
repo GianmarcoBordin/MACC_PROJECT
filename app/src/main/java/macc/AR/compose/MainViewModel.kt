@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onEach
 import macc.AR.compose.navgraph.Route
+import macc.AR.data.UserProfileBundle
 import macc.AR.domain.usecase.appEntry.AppEntryUseCases
 import macc.AR.domain.usecase.auth.AuthenticationUseCases
 import javax.inject.Inject
@@ -45,8 +46,3 @@ class MainViewModel @Inject constructor(
 
 
 }
-
-data class UserProfileBundle(
-    val displayName: String?,
-    val email: String?
-)

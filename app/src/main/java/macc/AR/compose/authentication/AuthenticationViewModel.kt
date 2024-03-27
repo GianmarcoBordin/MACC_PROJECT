@@ -11,6 +11,7 @@ import macc.AR.compose.authentication.events.SignInEvent
 import macc.AR.compose.authentication.events.SignUpEvent
 import macc.AR.data.manager.UpdateListener
 import macc.AR.domain.usecase.auth.AuthenticationUseCases
+import macc.AR.util.Constants.USER_AUTH
 import javax.inject.Inject
 
 /* Class responsible for handling authentication related events. It relies on the appEntryUseCases dependency
@@ -30,7 +31,7 @@ class AuthenticationViewModel  @Inject constructor(
 
     init {
         // Set ViewModel as the listener for updates
-        authenticationUseCases.subscribe.invoke(this)
+        authenticationUseCases.subscribe.invoke(this,USER_AUTH)
     }
 
     fun onSignInEvent(event: SignInEvent) {

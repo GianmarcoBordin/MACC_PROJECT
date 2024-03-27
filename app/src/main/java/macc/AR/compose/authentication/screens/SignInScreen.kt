@@ -48,13 +48,16 @@ import macc.AR.compose.authentication.events.BioSignInEvent
 import macc.AR.compose.authentication.events.SignInEvent
 import macc.AR.compose.navgraph.Route
 import macc.AR.data.BiometricState
+import macc.AR.data.api.DataRepositoryImpl
 import macc.AR.data.manager.AuthManagerImpl
+import macc.AR.data.manager.RankManagerImpl
+import macc.AR.data.manager.SettingsManagerImpl
+import macc.AR.domain.usecase.Subscribe
 import macc.AR.domain.usecase.auth.AuthCheck
 import macc.AR.domain.usecase.auth.AuthenticationUseCases
 import macc.AR.domain.usecase.auth.BioSignIn
 import macc.AR.domain.usecase.auth.SignIn
 import macc.AR.domain.usecase.auth.SignUp
-import macc.AR.domain.usecase.auth.Subscribe
 
 @Composable
 fun SignInScreen(
@@ -232,7 +235,11 @@ fun SignInScreen(
 @Composable
 fun PreviewSignInScreen() {
     val authManager=AuthManagerImpl(biometricState = BiometricState("",""), firebaseAuth = null)
+    val dataRepository= DataRepositoryImpl(rankApi = null)
+    val rankManager= RankManagerImpl(dataRepository = dataRepository)
+    val settingsManager= SettingsManagerImpl(biometricState = BiometricState("",""), firebaseAuth = null)
+
     val navController = rememberNavController()
-    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), authCheck=AuthCheck(authManager), bioSignIn = BioSignIn(authManager), subscribe = Subscribe(authManager))) }
+    val viewModel = remember { AuthenticationViewModel(AuthenticationUseCases(signIn = SignIn(authManager = authManager), signUp = SignUp(authManager), authCheck=AuthCheck(authManager), bioSignIn = BioSignIn(authManager), subscribe = Subscribe(settingsManager,authManager,rankManager))) }
     SignInScreen(signInHandler = {}, viewModel = viewModel, bioSignInHandler = {}, navController = navController)
 }

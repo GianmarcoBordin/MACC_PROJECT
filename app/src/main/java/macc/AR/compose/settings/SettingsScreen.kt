@@ -40,11 +40,14 @@ import macc.AR.compose.navgraph.Route
 import macc.AR.compose.settings.events.SignOutEvent
 import macc.AR.compose.settings.events.UpdateEvent
 import macc.AR.data.BiometricState
+import macc.AR.data.api.DataRepositoryImpl
+import macc.AR.data.manager.AuthManagerImpl
+import macc.AR.data.manager.RankManagerImpl
 import macc.AR.data.manager.SettingsManagerImpl
+import macc.AR.domain.usecase.Subscribe
 import macc.AR.domain.usecase.settings.FetchUserProfile
 import macc.AR.domain.usecase.settings.SettingsUseCases
 import macc.AR.domain.usecase.settings.SignOut
-import macc.AR.domain.usecase.settings.Subscribe
 import macc.AR.domain.usecase.settings.Update
 
 @Composable
@@ -177,9 +180,12 @@ fun SettingsScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewSignInScreen() {
+fun PreviewSettingsScreen() {
+    val authManager= AuthManagerImpl(biometricState = BiometricState("",""), firebaseAuth = null)
+    val dataRepository= DataRepositoryImpl(rankApi = null)
+    val rankManager= RankManagerImpl(dataRepository = dataRepository)
     val settingsManager= SettingsManagerImpl(biometricState = BiometricState("",""), firebaseAuth = null)
-    val viewModel = remember { SettingsViewModel(SettingsUseCases(update = Update(settingsManager),fetch= FetchUserProfile(settingsManager), signOut = SignOut(settingsManager), subscribe=Subscribe(settingsManager)))}
+    val viewModel = remember { SettingsViewModel(SettingsUseCases(update = Update(settingsManager),fetch= FetchUserProfile(settingsManager), signOut = SignOut(settingsManager), subscribe=Subscribe(settingsManager,authManager, rankManager)))}
     val navController = rememberNavController()
     SettingsScreen(viewModel = viewModel,navController=navController,settingsHandler={}, signOutHandler = {})
 }

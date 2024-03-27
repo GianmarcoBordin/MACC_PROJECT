@@ -60,6 +60,10 @@ dependencies {
     // Kotlin
     implementation( "androidx.biometric:biometric-ktx:1.2.0-alpha05")
 
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
     // Security
     val security_version = "1.0.0-alpha02"
     implementation ("androidx.security:security-crypto:$security_version")

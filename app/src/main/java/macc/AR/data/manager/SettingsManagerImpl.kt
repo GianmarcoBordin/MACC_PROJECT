@@ -2,9 +2,9 @@ package macc.AR.data.manager
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
-import macc.AR.compose.UserProfileBundle
 
 import macc.AR.data.BiometricState
+import macc.AR.data.UserProfileBundle
 import macc.AR.domain.manager.SettingsManager
 import javax.inject.Inject
 

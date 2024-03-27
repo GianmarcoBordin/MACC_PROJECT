@@ -7,7 +7,7 @@
 7    <uses-sdk
 8        android:minSdkVersion="28"
 9        android:targetSdkVersion="33" />
-10
+10    <!-- adding permissions on below line -->
 11    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 11-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:5:5-72
 11-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:5:22-69
@@ -22,92 +22,92 @@
 15-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:8:5-60
 15-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:8:19-57
 16
-17    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- suppress DeprecatedClassUsageInspection -->
-17-->[com.google.firebase:firebase-auth:22.3.1] /Users/applem2/.gradle/caches/transforms-3/8cc4d54b9f1ce9fbfb3ffe055d596eab/transformed/firebase-auth-22.3.1/AndroidManifest.xml:26:5-79
-17-->[com.google.firebase:firebase-auth:22.3.1] /Users/applem2/.gradle/caches/transforms-3/8cc4d54b9f1ce9fbfb3ffe055d596eab/transformed/firebase-auth-22.3.1/AndroidManifest.xml:26:22-76
-18    <uses-permission android:name="android.permission.USE_FINGERPRINT" /> <!-- SceneView requires OpenGLES 3.0 or later for 3D rendering. -->
-18-->[androidx.biometric:biometric:1.2.0-alpha05] /Users/applem2/.gradle/caches/transforms-3/e16daed25deab96df0414bd028321083/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:25:5-74
-18-->[androidx.biometric:biometric:1.2.0-alpha05] /Users/applem2/.gradle/caches/transforms-3/e16daed25deab96df0414bd028321083/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:25:22-71
-19    <uses-feature
-19-->[io.github.sceneview:sceneview:2.0.4] /Users/applem2/.gradle/caches/transforms-3/cd441ef93d6bbe0f81329f510957a5db/transformed/sceneview-2.0.4/AndroidManifest.xml:11:5-13:35
-20        android:glEsVersion="0x00030000"
-20-->[io.github.sceneview:sceneview:2.0.4] /Users/applem2/.gradle/caches/transforms-3/cd441ef93d6bbe0f81329f510957a5db/transformed/sceneview-2.0.4/AndroidManifest.xml:12:9-41
-21        android:required="true" />
-21-->[io.github.sceneview:sceneview:2.0.4] /Users/applem2/.gradle/caches/transforms-3/cd441ef93d6bbe0f81329f510957a5db/transformed/sceneview-2.0.4/AndroidManifest.xml:13:9-32
-22
-23    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-23-->[com.google.android.recaptcha:recaptcha:18.4.0] /Users/applem2/.gradle/caches/transforms-3/8c5d74dd226c09103ba021697e40cae5/transformed/recaptcha-18.4.0/AndroidManifest.xml:9:5-98
-23-->[com.google.android.recaptcha:recaptcha:18.4.0] /Users/applem2/.gradle/caches/transforms-3/8c5d74dd226c09103ba021697e40cae5/transformed/recaptcha-18.4.0/AndroidManifest.xml:9:22-95
-24
-25    <permission
-25-->[androidx.core:core:1.12.0] /Users/applem2/.gradle/caches/transforms-3/d52ae8bbb865c990ed757727a0bb0f75/transformed/core-1.12.0/AndroidManifest.xml:22:5-24:47
-26        android:name="macc.signinup.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
-26-->[androidx.core:core:1.12.0] /Users/applem2/.gradle/caches/transforms-3/d52ae8bbb865c990ed757727a0bb0f75/transformed/core-1.12.0/AndroidManifest.xml:23:9-81
-27        android:protectionLevel="signature" />
-27-->[androidx.core:core:1.12.0] /Users/applem2/.gradle/caches/transforms-3/d52ae8bbb865c990ed757727a0bb0f75/transformed/core-1.12.0/AndroidManifest.xml:24:9-44
-28
-29    <uses-permission android:name="macc.signinup.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
-29-->[androidx.core:core:1.12.0] /Users/applem2/.gradle/caches/transforms-3/d52ae8bbb865c990ed757727a0bb0f75/transformed/core-1.12.0/AndroidManifest.xml:26:5-97
-29-->[androidx.core:core:1.12.0] /Users/applem2/.gradle/caches/transforms-3/d52ae8bbb865c990ed757727a0bb0f75/transformed/core-1.12.0/AndroidManifest.xml:26:22-94
-30
-31    <queries>
-31-->[com.google.ar:core:1.40.0] /Users/applem2/.gradle/caches/transforms-3/abf4043859db4f57db9f1a6f7b92aaab/transformed/core-1.40.0/AndroidManifest.xml:20:5-22:15
-32        <package android:name="com.google.ar.core" />
-32-->[com.google.ar:core:1.40.0] /Users/applem2/.gradle/caches/transforms-3/abf4043859db4f57db9f1a6f7b92aaab/transformed/core-1.40.0/AndroidManifest.xml:21:9-54
-32-->[com.google.ar:core:1.40.0] /Users/applem2/.gradle/caches/transforms-3/abf4043859db4f57db9f1a6f7b92aaab/transformed/core-1.40.0/AndroidManifest.xml:21:18-51
-33    </queries>
-34
-35    <application
-35-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:10:5-34:19
-36        android:name="macc.AR.ArApp"
-36-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:11:9-37
-37        android:allowBackup="true"
-37-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:12:9-35
-38        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-38-->[androidx.core:core:1.12.0] /Users/applem2/.gradle/caches/transforms-3/d52ae8bbb865c990ed757727a0bb0f75/transformed/core-1.12.0/AndroidManifest.xml:28:18-86
-39        android:dataExtractionRules="@xml/data_extraction_rules"
-39-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:13:9-65
-40        android:debuggable="true"
-41        android:extractNativeLibs="false"
-42        android:fullBackupContent="@xml/backup_rules"
-42-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:14:9-54
-43        android:icon="@mipmap/ic_launcher"
-43-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:15:9-43
-44        android:label="@string/app_name"
-44-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:16:9-41
-45        android:roundIcon="@mipmap/ic_launcher_round"
-45-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:17:9-54
-46        android:supportsRtl="true"
-46-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:18:9-35
-47        android:testOnly="true"
+17    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+17-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:9:5-79
+17-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:9:22-76
+18    <!-- suppress DeprecatedClassUsageInspection -->
+19    <uses-permission android:name="android.permission.USE_FINGERPRINT" /> <!-- SceneView requires OpenGLES 3.0 or later for 3D rendering. -->
+19-->[androidx.biometric:biometric:1.2.0-alpha05] /Users/applem2/.gradle/caches/transforms-3/e16daed25deab96df0414bd028321083/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:25:5-74
+19-->[androidx.biometric:biometric:1.2.0-alpha05] /Users/applem2/.gradle/caches/transforms-3/e16daed25deab96df0414bd028321083/transformed/biometric-1.2.0-alpha05/AndroidManifest.xml:25:22-71
+20    <uses-feature
+20-->[io.github.sceneview:sceneview:2.0.4] /Users/applem2/.gradle/caches/transforms-3/cd441ef93d6bbe0f81329f510957a5db/transformed/sceneview-2.0.4/AndroidManifest.xml:11:5-13:35
+21        android:glEsVersion="0x00030000"
+21-->[io.github.sceneview:sceneview:2.0.4] /Users/applem2/.gradle/caches/transforms-3/cd441ef93d6bbe0f81329f510957a5db/transformed/sceneview-2.0.4/AndroidManifest.xml:12:9-41
+22        android:required="true" />
+22-->[io.github.sceneview:sceneview:2.0.4] /Users/applem2/.gradle/caches/transforms-3/cd441ef93d6bbe0f81329f510957a5db/transformed/sceneview-2.0.4/AndroidManifest.xml:13:9-32
+23
+24    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+24-->[com.google.android.recaptcha:recaptcha:18.4.0] /Users/applem2/.gradle/caches/transforms-3/8c5d74dd226c09103ba021697e40cae5/transformed/recaptcha-18.4.0/AndroidManifest.xml:9:5-98
+24-->[com.google.android.recaptcha:recaptcha:18.4.0] /Users/applem2/.gradle/caches/transforms-3/8c5d74dd226c09103ba021697e40cae5/transformed/recaptcha-18.4.0/AndroidManifest.xml:9:22-95
+25
+26    <permission
+26-->[androidx.core:core:1.12.0] /Users/applem2/.gradle/caches/transforms-3/d52ae8bbb865c990ed757727a0bb0f75/transformed/core-1.12.0/AndroidManifest.xml:22:5-24:47
+27        android:name="macc.signinup.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+27-->[androidx.core:core:1.12.0] /Users/applem2/.gradle/caches/transforms-3/d52ae8bbb865c990ed757727a0bb0f75/transformed/core-1.12.0/AndroidManifest.xml:23:9-81
+28        android:protectionLevel="signature" />
+28-->[androidx.core:core:1.12.0] /Users/applem2/.gradle/caches/transforms-3/d52ae8bbb865c990ed757727a0bb0f75/transformed/core-1.12.0/AndroidManifest.xml:24:9-44
+29
+30    <uses-permission android:name="macc.signinup.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+30-->[androidx.core:core:1.12.0] /Users/applem2/.gradle/caches/transforms-3/d52ae8bbb865c990ed757727a0bb0f75/transformed/core-1.12.0/AndroidManifest.xml:26:5-97
+30-->[androidx.core:core:1.12.0] /Users/applem2/.gradle/caches/transforms-3/d52ae8bbb865c990ed757727a0bb0f75/transformed/core-1.12.0/AndroidManifest.xml:26:22-94
+31
+32    <queries>
+32-->[com.google.ar:core:1.40.0] /Users/applem2/.gradle/caches/transforms-3/abf4043859db4f57db9f1a6f7b92aaab/transformed/core-1.40.0/AndroidManifest.xml:20:5-22:15
+33        <package android:name="com.google.ar.core" />
+33-->[com.google.ar:core:1.40.0] /Users/applem2/.gradle/caches/transforms-3/abf4043859db4f57db9f1a6f7b92aaab/transformed/core-1.40.0/AndroidManifest.xml:21:9-54
+33-->[com.google.ar:core:1.40.0] /Users/applem2/.gradle/caches/transforms-3/abf4043859db4f57db9f1a6f7b92aaab/transformed/core-1.40.0/AndroidManifest.xml:21:18-51
+34    </queries>
+35
+36    <application
+36-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:11:5-35:19
+37        android:name="macc.AR.ArApp"
+37-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:12:9-37
+38        android:allowBackup="true"
+38-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:13:9-35
+39        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+39-->[androidx.core:core:1.12.0] /Users/applem2/.gradle/caches/transforms-3/d52ae8bbb865c990ed757727a0bb0f75/transformed/core-1.12.0/AndroidManifest.xml:28:18-86
+40        android:dataExtractionRules="@xml/data_extraction_rules"
+40-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:14:9-65
+41        android:debuggable="true"
+42        android:extractNativeLibs="false"
+43        android:fullBackupContent="@xml/backup_rules"
+43-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:15:9-54
+44        android:icon="@mipmap/ic_launcher"
+44-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:16:9-43
+45        android:label="@string/app_name"
+45-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:17:9-41
+46        android:roundIcon="@mipmap/ic_launcher_round"
+46-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:18:9-54
+47        android:supportsRtl="true"
+47-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:19:9-35
 48        android:theme="@style/Theme.SignInUp" >
-48-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:19:9-46
+48-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:20:9-46
 49        <activity
-49-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:21:9-29:20
+49-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:22:9-30:20
 50            android:name="macc.AR.MainActivity"
-50-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:22:13-48
+50-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:23:13-48
 51            android:exported="true"
-51-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:23:13-36
+51-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:24:13-36
 52            android:windowSoftInputMode="adjustResize" >
-52-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:24:13-55
+52-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:25:13-55
 53            <intent-filter>
-53-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:25:13-28:29
+53-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:26:13-29:29
 54                <action android:name="android.intent.action.MAIN" />
-54-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:26:17-69
-54-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:26:25-66
+54-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:27:17-69
+54-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:27:25-66
 55
 56                <category android:name="android.intent.category.LAUNCHER" />
-56-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:27:17-77
-56-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:27:27-74
+56-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:28:17-77
+56-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:28:27-74
 57            </intent-filter>
 58        </activity>
 59
 60        <meta-data
-60-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:31:9-33:71
+60-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:32:9-34:71
 61            android:name="com.google.android.ar.API_KEY"
-61-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:32:13-57
+61-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:33:13-57
 62            android:value="AIzaSyAiffezny5gwxflgn5HB9cNEX7E3GLr_Q8" />
-62-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:33:13-68
+62-->/Users/applem2/AndroidStudioProjects/SignInUp/app/src/main/AndroidManifest.xml:34:13-68
 63        <!--
 64        Indicates that this app requires Google Play Services for AR ("AR Required") and causes
 65        the Google Play Store to download and intall Google Play Services for AR along with the app.
