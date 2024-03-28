@@ -1,10 +1,9 @@
 package macc.AR.domain.api
 
-import androidx.lifecycle.LiveData
-
+import androidx.lifecycle.MutableLiveData
 
 
 interface DataRepository {
-    fun fetchData(): LiveData<String>
+    fun fetchData(): MutableLiveData<List<String>>
 }
 

@@ -27,16 +27,13 @@ class RankViewModel  @Inject constructor(
     private val _data = MutableLiveData<String>()
     val data: LiveData<String> = _data
 
-    private val _navigateToAnotherScreen = MutableLiveData<Boolean>()
-    val navigateToAnotherScreen: LiveData<Boolean> = _navigateToAnotherScreen
-
     init {
         // Set ViewModel as the listener for updates
         rankUseCases.subscribe.invoke(this,USER_RANK)
-    }
-
-    fun onNavigationComplete() {
-        _navigateToAnotherScreen.value = false
+        // fetch data for user
+        _rankData.value=rankUseCases.fetch().value
+        _isLoading.value=false
+        println("HERE view model"+_rankData.value.toString()+_data.value)
     }
 
     override fun onUpdate(data: String) {

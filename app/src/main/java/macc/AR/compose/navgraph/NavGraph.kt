@@ -11,7 +11,6 @@ import androidx.navigation.compose.rememberNavController
 import macc.AR.compose.ArHomeScreen
 import macc.AR.compose.MainViewModel
 import macc.AR.compose.ar.ARScreen
-import macc.AR.compose.ar.ARViewModel
 import macc.AR.compose.authentication.AuthenticationViewModel
 import macc.AR.compose.authentication.SettingsViewModel
 import macc.AR.compose.onboarding.OnBoardingViewModel
@@ -30,7 +29,7 @@ fun NavGraph(
         // construct a nested nav graph
         navigation(
             route = Route.AppStartNavigation.route,
-            startDestination = Route.SignInScreen.route
+            startDestination = Route.RankScreen.route
         ) {
             // a node of the graph
             composable(
@@ -75,7 +74,6 @@ fun NavGraph(
                 route = Route.ARScreen.route
             ) {
                 // set screen as the node state
-                val viewModel : ARViewModel = hiltViewModel()
                 ARScreen()
             }
             composable(

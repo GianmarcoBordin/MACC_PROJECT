@@ -1,5 +1,9 @@
 package macc.AR.compose.rank
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,8 +26,10 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -80,10 +86,8 @@ fun RankScreen(
 @Composable
 fun DefaultContent( viewModel: RankViewModel) {
     // mutable state
-    val userRankingsState: List<String> by viewModel.rankData.observeAsState(listOf())
-
-    val userRankings: List<String> = userRankingsState
-    val isLoading: Boolean by viewModel.isLoading.observeAsState(false)
+    val userRankingsState by viewModel.rankData.observeAsState()
+    val isLoading: Boolean by viewModel.isLoading.observeAsState(true)
     val errorMessage: String? by viewModel.data.observeAsState(null)
 
     Box(
@@ -91,8 +95,25 @@ fun DefaultContent( viewModel: RankViewModel) {
         contentAlignment = Alignment.Center
     ) {
         if (isLoading) {
-            CircularProgressIndicator()
-        } else if (errorMessage != null) {
+            val progress = remember { Animatable(0f) }
+            LaunchedEffect(Unit) {
+                progress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(durationMillis = 1000),
+                        repeatMode = RepeatMode.Reverse
+                    )
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator(progress = progress.value, color = Color.Blue)
+            }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -110,13 +131,15 @@ fun DefaultContent( viewModel: RankViewModel) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize()
             ) {
-                items(userRankings) { userRanking ->
-                    UserRankingItem(userRanking)
-                    Divider(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        color = Color.Gray,
-                        thickness = 1.dp
-                    )
+                userRankingsState?.let {
+                    items(it.toList()) { userRanking ->
+                        UserRankingItem(userRanking)
+                        Divider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = Color.Gray,
+                            thickness = 1.dp
+                        )
+                    }
                 }
             }
         }

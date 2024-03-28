@@ -8,6 +8,6 @@ object Constants {
     const val USER_RANK = "userRank"
     const val APP_ENTRY = "appEntry"
     const val CLOUD_ANCHOR_ID = "anchorId"
-    const val RANK_URL = "https://Gianm.pythonanywhere.com/"
+    const val RANK_URL = "https://gianm.pythonanywhere.com"
 
 }

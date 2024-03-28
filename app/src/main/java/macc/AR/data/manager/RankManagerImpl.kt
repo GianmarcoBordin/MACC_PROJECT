@@ -4,6 +4,7 @@ package macc.AR.data.manager
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import macc.AR.domain.api.DataRepository
 import macc.AR.domain.manager.RankManager
 import javax.inject.Inject
@@ -14,7 +15,7 @@ class RankManagerImpl @Inject constructor(private val dataRepository: DataReposi
     private lateinit var contxt: Context
 
 
-    override fun fetch(): LiveData<String> {
+    override fun fetch(): MutableLiveData<List<String>> {
         return dataRepository.fetchData()
     }
 

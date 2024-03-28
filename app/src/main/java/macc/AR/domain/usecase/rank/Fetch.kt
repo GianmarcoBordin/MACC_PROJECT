@@ -1,13 +1,13 @@
 package macc.AR.domain.usecase.rank
 
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import macc.AR.domain.manager.RankManager
 
 
 class Fetch(
     private val rankManager: RankManager
 ){
-    operator fun invoke(): LiveData<String> {
+    operator fun invoke(): MutableLiveData<List<String>> {
        return rankManager.fetch()
     }
 
