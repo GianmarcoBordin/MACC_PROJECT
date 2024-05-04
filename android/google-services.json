@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "213538345095",
+    "project_id": "signinup-e0bea",
+    "storage_bucket": "signinup-e0bea.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:213538345095:android:e8ca77dbd45f8ac89ea822",
+        "android_client_info": {
+          "package_name": "com.mygdx.game"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_hxKCAz39Pxc76lZsVVBVz_SX6AG_Jpg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

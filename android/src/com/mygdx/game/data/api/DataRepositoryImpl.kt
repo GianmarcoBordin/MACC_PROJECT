@@ -1,0 +1,113 @@
+package com.mygdx.game.data.api
+
+import android.content.ContentValues.TAG
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.squareup.okhttp.ResponseBody
+import com.mygdx.game.data.dao.Player
+import com.mygdx.game.data.dao.Rank
+import com.mygdx.game.domain.api.RankApi
+import com.mygdx.game.domain.api.DataRepository
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
+
+class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
+
+    override suspend fun fetchData(): LiveData<List<String>> {
+        val data = MutableLiveData<List<String>>()
+        try {
+                val response = suspendCoroutine { continuation ->
+                    rankApi?.fetchData()?.enqueue(object : Callback<List<Rank>> {
+                        override fun onResponse(call: Call<List<Rank>>, response: Response<List<Rank>>) {
+                            continuation.resume(response)
+                        }
+
+                        override fun onFailure(call: Call<List<Rank>>, t: Throwable) {
+                            continuation.resumeWithException(t)
+                        }
+                    })
+                }
+
+                if (response.isSuccessful) {
+                    val ranks = response.body()
+                    if (ranks != null) {
+                        val rankInfo = ranks.map {
+                            "${it.username} ${it.score}" }
+                        data.value = rankInfo
+                    } else {
+                        // Empty response body
+                        data.value = listOf("Empty response body")
+                    }
+                } else {
+                    // Unsuccessful response
+                    Log.d(TAG,"Error: ${response.code()}"+response)
+                    data.value = listOf("Error: ")
+                }
+        } catch (e: Exception) {
+                // Failure
+                Log.d(TAG,"Error: ${e.message}"+e.printStackTrace())
+                data.value = listOf("Error: ")
+            }
+
+
+        return data
+    }
+
+
+
+    override suspend fun postRank(request: Rank): LiveData<String> {
+            val resultLiveData = MutableLiveData<String>()
+
+            try {
+                val response = suspendCoroutine { continuation ->
+                    rankApi?.postRank(request)?.enqueue(object : Callback<Result<ResponseBody>> {
+                        override fun onResponse(
+                            call: Call<Result<ResponseBody>>,
+                            response: Response<Result<ResponseBody>>
+                        ) {
+                            continuation.resume(response)                        }
+
+                        override fun onFailure(call: Call<Result<ResponseBody>>, t: Throwable) {
+                            continuation.resumeWithException(t)
+                        }
+                    })
+                }
+                resultLiveData.value =response.isSuccessful.toString()
+            } catch (e: Exception) {
+                resultLiveData.value = e.message
+            }
+
+            return resultLiveData
+        }
+
+    override suspend fun postPlayer(request: Player): LiveData<String> {
+        val resultLiveData = MutableLiveData<String>()
+
+        try {
+            val response = suspendCoroutine { continuation ->
+                rankApi?.postPlayer(request)?.enqueue(object : Callback<Result<ResponseBody>> {
+                    override fun onResponse(
+                        call: Call<Result<ResponseBody>>,
+                        response: Response<Result<ResponseBody>>
+                    ) {
+                        continuation.resume(response)                        }
+
+                    override fun onFailure(call: Call<Result<ResponseBody>>, t: Throwable) {
+                        continuation.resumeWithException(t)
+                    }
+                })
+            }
+            resultLiveData.value =response.isSuccessful.toString()
+        } catch (e: Exception) {
+            resultLiveData.value = e.message
+        }
+
+        return resultLiveData
+    }
+
+}
