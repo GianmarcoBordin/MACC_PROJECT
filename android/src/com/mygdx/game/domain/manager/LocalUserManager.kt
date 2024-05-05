@@ -31,5 +31,5 @@ interface LocalUserManager {
     suspend fun saveGameItem(gameItem: GameItem)
     fun readGameMetadata(rarity: Int): String
     fun getObject(key: String): String
-    fun saveObject(key: String, item: Item)
+    fun saveObject(key: String, item: Any)
 }

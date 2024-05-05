@@ -10,27 +10,19 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c295d3a6-b052-4d12-bde7-ac3f0bec573b" name="Changes" comment="Temporal commit">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/ARViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/ARViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/CaptureScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/CaptureScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/GameState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/GameState.kt" afterDir="false" />
-    </list>
-    <list default="true" id="c295d3a6-b052-4d12-bde7-ac3f0bec573b" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gradle/8.5/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.5/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/checksums/md5-checksums.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.5/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/checksums/sha1-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.5/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.5/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/fileHashes/fileHashes.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.5/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/fileHashes/fileHashes.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/config.properties" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/config.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetDropDown.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/data/api/DataRepositoryImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/data/api/DataRepositoryImpl.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/data/manager/LocalUserManagerImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/data/manager/LocalUserManagerImpl.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/authentication/AuthenticationViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/authentication/AuthenticationViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/authentication/screens/SignInScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/authentication/screens/SignInScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/map/MapScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/map/MapScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/domain/api/DataRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/domain/api/DataRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/domain/api/RankApi.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/domain/api/RankApi.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/domain/manager/LocalUserManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/domain/manager/LocalUserManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/util/Constants.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/util/Constants.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assets/images/Background.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/images/Background.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,7 +33,6 @@
     <option name="formatViaClangd" value="false" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[/Users/applem2/.android/avd/Pixel_4a_API_34.avd]" />
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/home/carlo/.android/avd/Pixel_8_Pro_API_34.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -63,6 +54,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Kotlin Class" />
+        <option value="Kotlin Data Class" />
       </list>
     </option>
   </component>
@@ -100,16 +92,6 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"/>{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;external.system.has.shared.sources&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
@@ -258,6 +240,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="New version" />
+    <MESSAGE value="test" />
     <MESSAGE value="Temporal commit" />
     <option name="LAST_COMMIT_MESSAGE" value="Temporal commit" />
   </component>

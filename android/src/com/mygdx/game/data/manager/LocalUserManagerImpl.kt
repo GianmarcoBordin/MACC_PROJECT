@@ -48,7 +48,7 @@ class LocalUserManagerImpl(
 
 
 
-    override fun saveObject(key: String, item: Item) {
+    override fun saveObject(key: String, item: Any) {
         val jsonString = gson.toJson(item)
         sharedPreferences.edit().putString(key, jsonString).apply()
     }
@@ -147,6 +147,7 @@ class LocalUserManagerImpl(
             settings[PreferencesKeys.DISPLAY_NAME] = userProfile.displayName
             settings[PreferencesKeys.EMAIL] = userProfile.email
         }
+        saveObject(Constants.USER,userProfile.email)
     }
 
     override suspend fun saveGameItem(gameItem: GameItem) {
@@ -201,10 +202,3 @@ private object PreferencesKeys{
 
 }
 
-
-
-
-
-// TODO
-// save to cloud gameItem
-// ownership post and get
