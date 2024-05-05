@@ -27,6 +27,12 @@ class AuthenticationViewModel  @Inject constructor(
     private val _data = MutableLiveData<String?>()
     val data: MutableLiveData<String?> = _data
 
+    private val _isLoading = MutableLiveData<Boolean>()
+    val isLoading: LiveData<Boolean> = _isLoading
+
+    private val _isError = MutableLiveData<Boolean>()
+    val isError: LiveData<Boolean> = _isError
+
     private val _navigateToAnotherScreen = MutableLiveData<Boolean>()
     val navigateToAnotherScreen: LiveData<Boolean> = _navigateToAnotherScreen
 

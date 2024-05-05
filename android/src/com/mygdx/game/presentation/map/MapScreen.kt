@@ -329,15 +329,6 @@ fun OsmMap(
                                     longitude = clickedMarker.position.longitude
                                 }
                                 routeHandler(RouteEvent.Route(userLocation, to))
-                            } else {
-                                // If no marker is clicked, show clicked position coordinates
-                                val x = event.x
-                                val y = event.y
-                                val pointClicked = projection.fromPixels(x.toInt(), y.toInt())
-                                val latitude = pointClicked.latitude
-                                val longitude = pointClicked.longitude
-                                val message = "Clicked at: Latitude $latitude, Longitude $longitude"
-                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                             }
                             true // Consume the event
                         }

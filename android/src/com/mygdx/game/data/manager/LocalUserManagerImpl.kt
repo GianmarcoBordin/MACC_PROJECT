@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import com.mygdx.game.data.dao.Biometric
+import com.mygdx.game.data.dao.GameItem
 import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.dao.Rank
 import com.mygdx.game.data.dao.UserProfileBundle
@@ -130,6 +131,33 @@ class LocalUserManagerImpl(
         }
     }
 
+    override suspend fun saveGameItem(gameItem: GameItem) {
+        // serialise tu string
+        val jsonString = gameItem.toJson()
+        context.dataStore.edit { settings ->
+            settings[PreferencesKeys.GAME_ITEM] = jsonString
+        }
+    }
+
+    override fun readGameItem(): GameItem{
+        val data = context.dataStore.data
+        val preferences = runBlocking { data.first() } // Blocking operation to get the first emission
+        val gameItemString = preferences[PreferencesKeys.GAME_ITEM] ?: ""
+        return GameItem.fromJson(gameItemString)
+    }
+
+    override fun readGameMetadata(rarity : Int): String{
+        var key = Constants.RARITY_METADATA_1
+        when (rarity) {
+            1 -> key = Constants.RARITY_METADATA_1
+            2 -> key = Constants.RARITY_METADATA_2
+            3 -> key = Constants.RARITY_METADATA_3
+            4 -> key = Constants.RARITY_METADATA_4
+            5 -> key = Constants.RARITY_METADATA_5
+        }
+        return key
+    }
+
     override fun setUpdateListener(ref: UpdateListener) {
         updateListener=ref    }
 
@@ -145,6 +173,8 @@ private object PreferencesKeys{
     val APP_ENTRY = booleanPreferencesKey(name = Constants.APP_ENTRY)
     // ar entry preferences
     val CLOUD_ANCHOR_ID = stringPreferencesKey(name = Constants.CLOUD_ANCHOR_ID )
+    val GAME_ITEM = stringPreferencesKey(name = Constants.GAME_ITEM )
+
     // auth user
     val DISPLAY_NAME = stringPreferencesKey("display_name")
     val EMAIL = stringPreferencesKey("email")
@@ -154,3 +184,7 @@ private object PreferencesKeys{
 
 }
 
+// TODO save objects to in app db
+// CHANGE ITEMS AND PLAYER structures
+// process indicator login
+// biometric

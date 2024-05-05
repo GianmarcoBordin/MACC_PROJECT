@@ -3,6 +3,7 @@ package com.mygdx.game.domain.manager
 import android.location.Location
 import kotlinx.coroutines.flow.Flow
 import com.mygdx.game.data.dao.Biometric
+import com.mygdx.game.data.dao.GameItem
 import com.mygdx.game.data.dao.Rank
 import com.mygdx.game.data.dao.UserProfileBundle
 import com.mygdx.game.data.manager.UpdateListener
@@ -25,4 +26,7 @@ interface LocalUserManager {
     fun stopLocUpdates()
 
     fun setUpdateListener(ref: UpdateListener)
+    fun readGameItem(): GameItem
+    suspend fun saveGameItem(gameItem: GameItem)
+    fun readGameMetadata(rarity: Int): String
 }

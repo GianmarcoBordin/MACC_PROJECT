@@ -1,18 +1,30 @@
 package com.mygdx.game.presentation.authentication.screens
 
 import androidx.biometric.BiometricManager
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Divider
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.OutlinedTextField
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -21,6 +33,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -48,7 +61,14 @@ import com.mygdx.game.presentation.authentication.AuthenticationViewModel
 import com.mygdx.game.presentation.authentication.events.BioSignInEvent
 import com.mygdx.game.presentation.authentication.events.SignInEvent
 import com.mygdx.game.presentation.navgraph.Route
+import com.mygdx.game.presentation.rank.RankViewModel
+import com.mygdx.game.presentation.rank.UserRankingItem
+import com.mygdx.game.presentation.rank.events.RankUpdateEvent
+import com.mygdx.game.presentation.rank.events.RetryEvent
 import com.mygdx.game.ui.theme.ArAppTheme
+
+
+
 
 @Composable
 fun SignInScreen(
@@ -56,6 +76,43 @@ fun SignInScreen(
     bioSignInHandler:(BioSignInEvent.BioSignIn) -> Unit,
     viewModel: AuthenticationViewModel,
     navController: NavController) {
+    ArAppTheme {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            DefaultSignInContent(signInHandler,
+            bioSignInHandler,
+            viewModel,
+            navController)
+
+        }
+
+
+    }
+}
+
+
+@Composable
+fun DefaultSignInContent(
+    signInHandler: (SignInEvent.SignIn) -> Unit,
+    bioSignInHandler:(BioSignInEvent.BioSignIn) -> Unit,
+    viewModel: AuthenticationViewModel,
+    navController: NavController
+) {
+    // mutable state
+    val isLoading by viewModel.isLoading.observeAsState()
+    val isError by viewModel.isError.observeAsState()
 
     // fields of interest
     var email by remember { mutableStateOf("") }
@@ -66,20 +123,43 @@ fun SignInScreen(
     var authenticationResult by remember { mutableStateOf("") }
     // focus
     val focusManager = LocalFocusManager.current
-    ArAppTheme {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween    ){
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+
+
+    Box(
+        contentAlignment = Alignment.Center
+    ) {
+        if (isLoading == true) {
+            val progress = remember { Animatable(0f) }
+            LaunchedEffect(Unit) {
+
+                progress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(durationMillis = 1000),
+                        repeatMode = RepeatMode.Reverse
+                    )
+                )
+
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(300.dp))
+                CircularProgressIndicator(progress = progress.value, color = Color.Blue)
+                if (isError==true) {
+                    Text(
+                        text = "Check your internet connection and retry later",
+                        color = MaterialTheme.colorScheme.onError,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+        } else if (isLoading==false){
             Text(
                 text = "Login",
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
@@ -204,7 +284,7 @@ fun SignInScreen(
                         }
                     }) {
                     Text(text = "Authenticate with Biometric",style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                       )
+                    )
                 }
                 // Observe changes in data
                 if (data?.isNotEmpty() == true) {
@@ -233,8 +313,5 @@ fun SignInScreen(
                 )
             }
         }
-
     }
-
-
 }
