@@ -4,7 +4,39 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c295d3a6-b052-4d12-bde7-ac3f0bec573b" name="Changes" comment="" />
+    <list default="true" id="c295d3a6-b052-4d12-bde7-ac3f0bec573b" name="Changes" comment="New libGDX screen">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/Gunner_Black_image.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/Gunner_Blue_image.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/Gunner_Yellow_image.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assets/images/arena-background.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/screen/ChoosePlayerTypeScreen.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/screen/GameOverScreen.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/screen/component/HeadsUp.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/screen/component/HealthBar.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.5/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.5/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.5/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.5/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/AndroidLauncher.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/AndroidLauncher.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/data/manager/LocalUserManagerImpl.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/data/manager/LocalUserManagerImpl.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/atlas/images.atlas" beforeDir="false" afterPath="$PROJECT_DIR$/assets/atlas/images.atlas" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assets/atlas/images.png" beforeDir="false" afterPath="$PROJECT_DIR$/assets/atlas/images.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/mygdx/game/Constants.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/Constants.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/mygdx/game/Controller.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/screen/component/Controller.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/mygdx/game/GameManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/GameManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/mygdx/game/multiplayer/MultiplayerClient.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/multiplayer/MultiplayerClient.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/mygdx/game/player/HealthBar.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/mygdx/game/player/Player.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/player/Player.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/mygdx/game/screen/ConnectionScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/screen/ConnectionScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/mygdx/game/screen/GameScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/screen/GameScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/core/src/com/mygdx/game/screen/StartScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/core/src/com/mygdx/game/screen/StartScreen.kt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -31,15 +63,27 @@
       </state>
     </system>
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Kotlin Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "GabrieleLerani"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;GabrieleLerani&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubPullRequestsUISettings">
     <option name="selectedUrlAndAccountId">
       <UrlAndAccount>
@@ -59,17 +103,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "external.system.has.shared.sources": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;external.system.has.shared.sources&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/gabriele/StudioProjects/AndroidGame2/assets/images&quot;
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assets/images" />
+    </key>
+    <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
+      <recent name="com.mygdx.game.screen.component" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="android" type="AndroidRunConfigurationType" factoryName="Android App">
       <module name="AndroidGame2.android.main" />
@@ -164,7 +218,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714837746455</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="New version">
+      <option name="closed" value="true" />
+      <created>1714838373725</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1714838373725</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

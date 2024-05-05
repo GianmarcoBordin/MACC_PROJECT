@@ -13,15 +13,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mygdx.game.GameManager
-import com.mygdx.game.player.PlayerType
+import com.mygdx.game.multiplayer.MultiplayerClient
 
+class ChoosePlayerTypeScreen(private val game: GameManager) : ScreenAdapter()
+{
 
-class StartScreen(private val game: GameManager) : ScreenAdapter() {
     private val width = (Gdx.graphics.width/1.2).toFloat()
     private val height = (Gdx.graphics.height/1.2).toFloat()
 
-    private val userIdField =  TextField("", game.gameSkin)
-    private val connectButton = TextButton("Connect", game.gameSkin)
+    private val userIdField =  TextField("", game.gameSkin) // TODO
+    private val chooseButton = TextButton("Choose one player", game.gameSkin)
+
+
     private val errorLabel = Label("Please first insert user id!", game.gameSkin, "big-black")
     private val stage: Stage = Stage(FitViewport(width,height))
     private val table: Table = Table()
@@ -29,7 +32,7 @@ class StartScreen(private val game: GameManager) : ScreenAdapter() {
 
     init {
 
-        connectButton.isDisabled = true
+
         userIdField.messageText = "1234"
         addTitle()
 
@@ -42,9 +45,9 @@ class StartScreen(private val game: GameManager) : ScreenAdapter() {
         table.add(userIdField).width(width / 3).center().padBottom(40f).row()
 
 
-        connectButton.addListener(object : InputListener() {
+        chooseButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-                handleConnection()
+
             }
 
             override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
@@ -52,7 +55,7 @@ class StartScreen(private val game: GameManager) : ScreenAdapter() {
             }
         })
 
-        table.add(connectButton).fillX().center().padTop(40f).padBottom(20f) .row()
+        table.add(chooseButton).fillX().center().padTop(40f).padBottom(20f) .row()
 
 
         errorLabel.isVisible = false
@@ -64,7 +67,7 @@ class StartScreen(private val game: GameManager) : ScreenAdapter() {
     }
 
     private fun addTitle(){
-        val title = Label("Waiting room", game.gameSkin, "big-black")
+        val title = Label("Choose one player", game.gameSkin, "big-black")
         title.setFontScale(1.8f)
         title.setAlignment(Align.center)
         title.y = height * 4f / 5
@@ -72,18 +75,12 @@ class StartScreen(private val game: GameManager) : ScreenAdapter() {
         stage.addActor(title)
     }
 
-    fun handleConnection(){
-
-        // TODO condition to check userid
-        if (userIdField.text.isNotEmpty()){
-            errorLabel.isVisible = false
-            val playerId = userIdField.text
-
-            game.showConnectionScreen(playerId)
-
-        } else {
-            errorLabel.isVisible = true
-        }
+    private fun addButton(){
+        val greenType = TextButton("Choose one player", game.gameSkin)
+        val redType = TextButton("Choose one player", game.gameSkin)
+        val blackType = TextButton("Choose one player", game.gameSkin)
+        val blueType = TextButton("Choose one player", game.gameSkin)
+        val yellowType = TextButton("Choose one player", game.gameSkin)
 
     }
 
@@ -97,10 +94,6 @@ class StartScreen(private val game: GameManager) : ScreenAdapter() {
         stage.act(delta)
         stage.draw()
 
-        if(userIdField.text.isNotEmpty()){
-            connectButton.isDisabled = false
-
-        }
 
     }
 

@@ -128,6 +128,7 @@ class LocalUserManagerImpl(
             settings[PreferencesKeys.EMAIL] = userProfile.email
             userProfile.avatarUrl.let { settings[PreferencesKeys.AVATAR_URL] = it }
         }
+
     }
 
     override fun setUpdateListener(ref: UpdateListener) {

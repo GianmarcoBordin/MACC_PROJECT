@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.mygdx.game.Constants
+import com.mygdx.game.Constants.PLAYER_LIFE
+import com.mygdx.game.multiplayer.MultiplayerClient
 import java.util.LinkedList
 
 
@@ -18,11 +20,17 @@ data class Player(
     // graphics
     var playerTextureRegion: TextureRegion,
     var laserTextureRegion: TextureRegion,
-
+    var playerType: PlayerType
     )
 {
+    interface PlayerEventListener {
+        fun onGameOver(type: PlayerType)
+    }
 
-    var life = 5
+    var life = PLAYER_LIFE
+
+    // keep track of laser generate by users
+    var laserList: LinkedList<Laser> = LinkedList()
 
     // collision detection TODO
     private var playerBox: Rectangle = Rectangle(origin.x, origin.y, Constants.WORLD_WIDTH / 15, Constants.WORLD_WIDTH / 15)
@@ -30,8 +38,12 @@ data class Player(
     // position & dimension
     private var timeSinceLastShot = 1f
 
-    // keep track of laser generate by users
-    var laserList: LinkedList<Laser> = LinkedList()
+    private var playerEventListener: PlayerEventListener? = null
+
+    fun setPlayerEventListener(listener: PlayerEventListener) {
+        playerEventListener = listener
+    }
+
 
     fun xPosition(): Float{
         return playerBox.x
@@ -39,14 +51,6 @@ data class Player(
 
     fun yPosition(): Float{
         return playerBox.y
-    }
-
-    fun width(): Float{
-        return playerBox.width
-    }
-
-    fun height(): Float{
-        return playerBox.height
     }
 
 
@@ -93,9 +97,8 @@ data class Player(
 
     fun hit() {
         life--
-        if (life < 0) {
-            println("GAME OVER")
-            return
+        if (life <= 0) {
+            playerEventListener?.onGameOver(playerType)
         }
     }
 

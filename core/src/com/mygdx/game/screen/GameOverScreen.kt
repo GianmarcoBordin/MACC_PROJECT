@@ -1,5 +1,6 @@
 package com.mygdx.game.screen
 
+
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.GL20
@@ -13,38 +14,31 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mygdx.game.GameManager
-import com.mygdx.game.player.PlayerType
 
 
-class StartScreen(private val game: GameManager) : ScreenAdapter() {
+
+class GameOverScreen(private val game: GameManager, private val win: Boolean, private val otherId: String) : ScreenAdapter() {
+
     private val width = (Gdx.graphics.width/1.2).toFloat()
     private val height = (Gdx.graphics.height/1.2).toFloat()
 
-    private val userIdField =  TextField("", game.gameSkin)
-    private val connectButton = TextButton("Connect", game.gameSkin)
-    private val errorLabel = Label("Please first insert user id!", game.gameSkin, "big-black")
     private val stage: Stage = Stage(FitViewport(width,height))
     private val table: Table = Table()
+
+    private val playAgainButton = TextButton("Play again", game.gameSkin)
 
 
     init {
 
-        connectButton.isDisabled = true
-        userIdField.messageText = "1234"
-        addTitle()
-
+        addTitle(if (win) "You win!" else "You loose")
         // Set table properties
         table.setFillParent(true)
         table.center()
 
-        val userIdLabel = Label("Insert adversary user id", game.gameSkin, "big-black")
-        table.add(userIdLabel).left().padBottom(10f).padTop(30f).row()
-        table.add(userIdField).width(width / 3).center().padBottom(40f).row()
 
-
-        connectButton.addListener(object : InputListener() {
+        playAgainButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-                handleConnection()
+                game.showConnectionScreen(otherId)
             }
 
             override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
@@ -52,19 +46,15 @@ class StartScreen(private val game: GameManager) : ScreenAdapter() {
             }
         })
 
-        table.add(connectButton).fillX().center().padTop(40f).padBottom(20f) .row()
-
-
-        errorLabel.isVisible = false
-        table.add(errorLabel).left().padBottom(10f).row()
+        table.add(playAgainButton).fillX().center().padTop(40f).padBottom(20f) .row()
 
         stage.addActor(table)
 
 
     }
 
-    private fun addTitle(){
-        val title = Label("Waiting room", game.gameSkin, "big-black")
+    private fun addTitle(text: String){
+        val title = Label(text, game.gameSkin, "big-black")
         title.setFontScale(1.8f)
         title.setAlignment(Align.center)
         title.y = height * 4f / 5
@@ -72,20 +62,6 @@ class StartScreen(private val game: GameManager) : ScreenAdapter() {
         stage.addActor(title)
     }
 
-    fun handleConnection(){
-
-        // TODO condition to check userid
-        if (userIdField.text.isNotEmpty()){
-            errorLabel.isVisible = false
-            val playerId = userIdField.text
-
-            game.showConnectionScreen(playerId)
-
-        } else {
-            errorLabel.isVisible = true
-        }
-
-    }
 
     override fun show() {
         Gdx.input.inputProcessor = stage
@@ -96,11 +72,6 @@ class StartScreen(private val game: GameManager) : ScreenAdapter() {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
         stage.act(delta)
         stage.draw()
-
-        if(userIdField.text.isNotEmpty()){
-            connectButton.isDisabled = false
-
-        }
 
     }
 
