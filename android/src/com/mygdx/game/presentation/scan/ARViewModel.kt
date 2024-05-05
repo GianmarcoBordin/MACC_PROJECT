@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.core.graphics.scale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mygdx.game.data.dao.GameItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +16,7 @@ import kotlinx.coroutines.launch
 import com.mygdx.game.data.dao.Line
 import com.mygdx.game.data.dao.Message
 import com.mygdx.game.data.manager.UpdateListener
+import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.presentation.scan.events.BitmapEvent
 import com.mygdx.game.presentation.scan.events.DimensionsEvent
 import com.mygdx.game.presentation.scan.events.FocusEvent
@@ -29,6 +31,7 @@ import kotlin.random.Random
 
 @HiltViewModel
 class ARViewModel @Inject constructor(
+    private val localUserManager: LocalUserManager
 ) : ViewModel(), UpdateListener {
     // -> ARScreen
     var scanned = false
@@ -48,8 +51,9 @@ class ARViewModel @Inject constructor(
     private var direction = Vector2(0f, 0f)
     // counter for the presence of the bullets on the screen
     private var justShoot = 0
+    private var gameItem: GameItem = localUserManager.retrieveGameItem()
 
-    private val _state = MutableStateFlow(GameState())
+    private val _state = MutableStateFlow(GameState(gameItem))
     val state = _state.asStateFlow()
 
     fun onFocusEvent(event: FocusEvent) {
@@ -186,13 +190,13 @@ class ARViewModel @Inject constructor(
 
         // update the shoot position according to the item position
         val addition = Vector2(
-            state.value.bitmap!!.width.toFloat(),
-            (state.value.bitmap!!.height / 8).toFloat()
+            state.value.gameItem.bitmap.width.toFloat(),
+            (state.value.gameItem.bitmap.height / 8).toFloat()
         )
         val newShootPosition = newPosition.add(addition)
 
         // update item hitbox
-        val hitbox = updateHitbox(newPosition, currentGame.bitmap)
+        val hitbox = updateHitbox(newPosition, currentGame.gameItem.bitmap)
         // update shoot hitbox (if shoot is false, then return an empty list)
         val shootHitbox = if (shoot) updateHitbox(newShootPosition, currentGame.shootBitmap) else mutableListOf()
 

@@ -2,11 +2,12 @@ package com.mygdx.game.presentation.scan
 
 import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Offset
+import com.mygdx.game.data.dao.GameItem
 import com.mygdx.game.data.dao.Line
 import kotlin.math.sqrt
 
 data class GameState(
-    var bitmap: Bitmap? = null,
+    var gameItem: GameItem,
     // position of the top-left, not the center
     var position: Vector2 = Vector2(100.0f, 100.0f),
     var hitbox: MutableList<Vector2> = mutableListOf(),
