@@ -47,15 +47,25 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.scale
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
+import com.google.gson.Gson
+import com.mygdx.game.Constants
+import com.mygdx.game.R
+import com.mygdx.game.data.dao.GameItem
 import com.mygdx.game.presentation.components.BackButton
 import com.mygdx.game.presentation.map.events.LocationDeniedEvent
 import macc.ar.presentation.map.events.LocationGrantedEvent
@@ -329,15 +339,6 @@ fun OsmMap(
                                     longitude = clickedMarker.position.longitude
                                 }
                                 routeHandler(RouteEvent.Route(userLocation, to))
-                            } else {
-                                // If no marker is clicked, show clicked position coordinates
-                                val x = event.x
-                                val y = event.y
-                                val pointClicked = projection.fromPixels(x.toInt(), y.toInt())
-                                val latitude = pointClicked.latitude
-                                val longitude = pointClicked.longitude
-                                val message = "Clicked at: Latitude $latitude, Longitude $longitude"
-                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
                             }
                             true // Consume the event
                         }
@@ -388,10 +389,10 @@ fun OsmMap(
                     "%.2f meters".format(distanceInMeters)
                 }
                 if (obj.distance < thresholdButton){
-                    viewModel.update(obj.itemName,true)
+                    viewModel.update(obj,true)
                 }
                 objectMarker.title =
-                    "Item id: ${obj.itemId} Item Name: ${obj.itemName} Item Rarity: ${obj.itemRarity} Distance From Me: $distanceString"
+                    "Item id: ${obj.itemId} Item Name: ${obj.itemId} Item Rarity: ${obj.itemRarity} Distance From Me: $distanceString"
                 //objectMarker.icon.colorFilter= PorterDuffColorFilter(Color.Green.toArgb(), PorterDuff.Mode.OVERLAY)
                 mapView.overlays.add(objectMarker)
             }
@@ -418,18 +419,85 @@ fun OsmMap(
             verticalArrangement = Arrangement.Bottom,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val itemBitMap : ImageBitmap
+            val gson = Gson()
+            val gameItem : GameItem
+            val firstTrueItemKey = thresholdButtonFlag!!.entries.find { it.value }?.key
+            when (firstTrueItemKey?.itemRarity) {
+                "1" -> {
+                    itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_green)
+                    // Parse JSON string to Item object
+                    gameItem = gson.fromJson(com.mygdx.game.util.Constants.RARITY_METADATA_1, GameItem::class.java)
+                }
+                "2" -> {
+                    itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_red)
+                    gameItem = gson.fromJson(
+                        com.mygdx.game.util.Constants.RARITY_METADATA_2,
+                        GameItem::class.java
+                    )
+                }
+
+                "3" -> {
+                    itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_yellow)
+                    gameItem = gson.fromJson(
+                        com.mygdx.game.util.Constants.RARITY_METADATA_3,
+                        GameItem::class.java
+                    )
+                }
+
+                "4" -> {
+                    itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_blue)
+                    gameItem = gson.fromJson(
+                        com.mygdx.game.util.Constants.RARITY_METADATA_4,
+                        GameItem::class.java
+                    )
+                }
+
+                "5" -> {
+                    itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_black)
+                    gameItem = gson.fromJson(
+                        com.mygdx.game.util.Constants.RARITY_METADATA_5,
+                        GameItem::class.java
+                    )
+                }
+
+                else -> {
+                    itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_green)
+                    gameItem = gson.fromJson(
+                        com.mygdx.game.util.Constants.RARITY_METADATA_1,
+                        GameItem::class.java
+                    )
+                }
+
+            }
+            val configuration = LocalConfiguration.current
+            val screenWidth = with(LocalDensity.current) { configuration.screenWidthDp.dp.toPx().toInt() }
+
+
             Button(
                 colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.surface), // Set the background color of the button
                 shape = RoundedCornerShape(size = 20.dp),
                 onClick = {
+
+                    // -> bitmap of the item
+                    // convert to bitmap
+                    val itemBitmap = itemBitMap.asAndroidBitmap()
+                    // scale the item so that its width is 1/4 of the screen width,
+                    // but the ratio between its dimensions is maintained
+                    val itemWidth = screenWidth / 4
+                    val itemOriginalWidth = itemBitmap.width
+                    val itemRatio = itemWidth.toDouble() / itemOriginalWidth
+                    val itemHeight = (itemBitmap.height * itemRatio).toInt()
+                    val finalItemBitmap = itemBitmap.scale(itemWidth, itemHeight)
+                    val finalGameItem = GameItem(firstTrueItemKey!!.itemId,firstTrueItemKey.itemRarity.toInt(),gameItem.hp,gameItem.damage,finalItemBitmap)
+                    viewModel.saveGameItem(finalGameItem)
                     navController.navigate(Route.ARScreen.route)
                 },
                 enabled = thresholdButtonFlag!!.any { it.value },
 
                 ) {
-                val firstTrueKey = thresholdButtonFlag!!.entries.find { it.value }?.key
                 Text(
-                    text = "Catch $firstTrueKey",
+                    text = "Catch ${firstTrueItemKey?.itemId}",
                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.onSurface,
                 )

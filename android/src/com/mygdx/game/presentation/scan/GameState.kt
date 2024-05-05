@@ -2,20 +2,24 @@ package com.mygdx.game.presentation.scan
 
 import android.graphics.Bitmap
 import androidx.compose.ui.geometry.Offset
+import com.mygdx.game.data.dao.GameItem
 import com.mygdx.game.data.dao.Line
 import kotlin.math.sqrt
 
 data class GameState(
-    var bitmap: Bitmap? = null,
+    var gameItem: GameItem,
     // position of the top-left, not the center
     var position: Vector2 = Vector2(100.0f, 100.0f),
     var hitbox: MutableList<Vector2> = mutableListOf(),
+    // current hp of the item
+    var hp: Int,
     var shootBitmap: Bitmap? = null,
     var shootPosition: Vector2 = Vector2(0.0f, 0.0f),
     var shoot: Boolean = false,
     var shootHitbox: MutableList<Vector2> = mutableListOf(),
     var isStarted: Boolean = false,
     var isGameOver: Boolean = false,
+    var owned: Boolean = false,
     var lines: MutableList<Line> = mutableListOf()
 )
 

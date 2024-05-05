@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.core.graphics.scale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mygdx.game.data.dao.GameItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,12 +16,14 @@ import kotlinx.coroutines.launch
 import com.mygdx.game.data.dao.Line
 import com.mygdx.game.data.dao.Message
 import com.mygdx.game.data.manager.UpdateListener
+import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.presentation.scan.events.BitmapEvent
 import com.mygdx.game.presentation.scan.events.DimensionsEvent
 import com.mygdx.game.presentation.scan.events.FocusEvent
 import com.mygdx.game.presentation.scan.events.GameEvent
 import com.mygdx.game.presentation.scan.events.LineEvent
 import com.mygdx.game.presentation.scan.events.VisibilityEvent
+import macc.ar.domain.api.MapRepository
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.sqrt
@@ -29,6 +32,8 @@ import kotlin.random.Random
 
 @HiltViewModel
 class ARViewModel @Inject constructor(
+    private val localUserManager: LocalUserManager,
+    private val mapRepository: MapRepository
 ) : ViewModel(), UpdateListener {
     // -> ARScreen
     var scanned = false
@@ -48,8 +53,9 @@ class ARViewModel @Inject constructor(
     private var direction = Vector2(0f, 0f)
     // counter for the presence of the bullets on the screen
     private var justShoot = 0
+    private var gameItem: GameItem = localUserManager.readGameItem()
 
-    private val _state = MutableStateFlow(GameState())
+    private val _state = MutableStateFlow(GameState(gameItem = gameItem, hp = gameItem.hp))
     val state = _state.asStateFlow()
 
     fun onFocusEvent(event: FocusEvent) {
@@ -109,30 +115,22 @@ class ARViewModel @Inject constructor(
                 val imageHeightRatio = screenHeight / (bitmap?.height ?: 1).toFloat()
                 imageRatio = max(imageWidthRatio, imageHeightRatio)
 
-                // -> bitmap of the item
-                // convert to bitmap
-                val itemBitmap = event.item.asAndroidBitmap()
-                // scale the item so that its width is 1/4 of the screen width,
-                // but the ratio between its dimensions is maintained
-                val itemWidth = screenWidth / 4
-                val itemOriginalWidth = itemBitmap.width
-                val itemRatio = itemWidth.toDouble() / itemOriginalWidth
-                val itemHeight = (itemBitmap.height * itemRatio).toInt()
-                val finalItem = itemBitmap.scale(itemWidth, itemHeight)
-
                 // -> bitmap of the bullets
                 // convert to bitmap
                 val bulletsBitmap = event.bullets.asAndroidBitmap()
                 // scale the bullets so that its height is equal to the height of the item,
                 // but the ratio between its dimensions is maintained
-                val bulletsHeight = itemHeight
+                val bulletsHeight = state.value.gameItem.bitmap.height
                 val bulletsOriginalHeight = bulletsBitmap.height
                 val bulletsRatio = bulletsHeight.toDouble() / bulletsOriginalHeight
                 val bulletsWidth = (bulletsBitmap.width * bulletsRatio).toInt()
                 val finalBullets = bulletsBitmap.scale(bulletsWidth, bulletsHeight)
 
+                // set if the player already owns the item
+                //_state.value.owned = mapRepository.getOwnership()
+
                 // set the bitmap and make the game start
-                _state.value = state.value.copy(bitmap = finalItem, shootBitmap = finalBullets, isStarted = true)
+                _state.value = state.value.copy(shootBitmap = finalBullets, isStarted = true)
 
                 viewModelScope.launch {
                     while (!state.value.isGameOver) {
@@ -144,6 +142,7 @@ class ARViewModel @Inject constructor(
                     _state.value.lines.clear()
                 }
             }
+            else -> println()
         }
     }
 
@@ -186,22 +185,25 @@ class ARViewModel @Inject constructor(
 
         // update the shoot position according to the item position
         val addition = Vector2(
-            state.value.bitmap!!.width.toFloat(),
-            (state.value.bitmap!!.height / 8).toFloat()
+            state.value.gameItem.bitmap.width.toFloat(),
+            (state.value.gameItem.bitmap.height / 8).toFloat()
         )
         val newShootPosition = newPosition.add(addition)
 
         // update item hitbox
-        val hitbox = updateHitbox(newPosition, currentGame.bitmap)
+        val hitbox = updateHitbox(newPosition, currentGame.gameItem.bitmap)
         // update shoot hitbox (if shoot is false, then return an empty list)
         val shootHitbox = if (shoot) updateHitbox(newShootPosition, currentGame.shootBitmap) else mutableListOf()
 
         // detect collisions
-        if (detectCollision(hitbox, _state.value.lines) || detectCollision(shootHitbox, _state.value.lines)) {
+        if (detectCollision(hitbox, state.value.lines) || detectCollision(shootHitbox, state.value.lines)) {
             _state.value.lines.clear()
         } else {
             val circle = findFirstCircle(currentGame.lines)
             if (isGameObjectInsideCircle(currentGame.position.toOffset(), circle))
+                _state.value.hp--
+            // if the health is 0, then the item is captured
+            if (state.value.hp == 0)
                 return currentGame.copy(isGameOver = true)
         }
 

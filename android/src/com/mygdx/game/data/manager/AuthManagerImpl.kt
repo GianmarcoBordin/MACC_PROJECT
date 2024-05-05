@@ -20,7 +20,6 @@ import com.mygdx.game.domain.api.DataRepository
 import com.mygdx.game.domain.manager.AuthManager
 import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.framework.postPlayerToFirestore
-import com.mygdx.game.util.Constants.DEFAULT_AVATAR_URL
 import javax.inject.Inject
 
 interface UpdateListener {
@@ -42,10 +41,9 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
             try {
                 // Sign-in was successful,maybe I did a signOut and lost the local data so we fetch those data
                 val name = firebaseAuth?.currentUser?.displayName ?: ""
-                val avatarUrl = localUserManager.getUserProfile().avatarUrl
                 // save user profile application state
                 val userProfileBundle =
-                    UserProfileBundle(displayName = name, email = email, avatarUrl = avatarUrl)
+                    UserProfileBundle(displayName = name, email = email)
                 localUserManager.saveUserProfile(userProfileBundle)
                 // fetch rank data
                 val rankData = dataRepository.fetchData().value?.get(0)?.split(" ")
@@ -134,13 +132,20 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                                 try {
                                     runBlocking {
                                         // Save user profile application state and so player local state
-                                        val userProfileBundle = UserProfileBundle(displayName = name, email = email, avatarUrl = DEFAULT_AVATAR_URL)
+                                        val userProfileBundle = UserProfileBundle(
+                                            displayName = name,
+                                            email = email
+                                        )
                                         localUserManager.saveUserProfile(userProfileBundle)
                                         // Save user rank
                                         val rank = Rank(name, 0)
                                         localUserManager.saveScore(rank)
                                         // Post player data
-                                        val player= Player(username = name, location =Location("provider"), distance =0.0 ,avatarUrl = DEFAULT_AVATAR_URL)
+                                        val player= Player(
+                                            username = name,
+                                            location =Location("provider"),
+                                            distance =0.0
+                                        )
                                         //Log.d(TAG, dataRepository.postPlayer(player).toString())
                                         // Post rank data
                                         //Log.d(TAG, dataRepository.postRank(rank).toString())

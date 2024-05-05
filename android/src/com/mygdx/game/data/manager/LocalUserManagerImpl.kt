@@ -1,6 +1,7 @@
 package com.mygdx.game.data.manager
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.location.Location
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -9,6 +10,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +19,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import com.mygdx.game.data.dao.Biometric
+import com.mygdx.game.data.dao.GameItem
+import com.mygdx.game.data.dao.Item
 import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.dao.Rank
 import com.mygdx.game.data.dao.UserProfileBundle
@@ -27,6 +31,7 @@ import com.mygdx.game.framework.retrieveFirebaseUserIdAndBiometricCredentials
 import com.mygdx.game.framework.saveFirebaseUserIdAndBiometricCredentials
 import com.mygdx.game.util.Constants
 import com.mygdx.game.util.Constants.USER_SETTINGS
+import com.mygdx.game.util.Constants.USER_SETTINGS2
 
 /*
 * Implementation of user manager, it implements method to store user preferences on a datastore,
@@ -38,6 +43,22 @@ class LocalUserManagerImpl(
 
     private var updateListener: UpdateListener? = null
     val dataScope = CoroutineScope(Dispatchers.IO)
+    private val sharedPreferences: SharedPreferences = context.getSharedPreferences(USER_SETTINGS2, Context.MODE_PRIVATE)
+    private val gson = Gson()
+
+
+
+    override fun saveObject(key: String, item: Any) {
+        val jsonString = gson.toJson(item)
+        sharedPreferences.edit().putString(key, jsonString).apply()
+    }
+
+    override fun getObject(key: String): String {
+        val jsonString = sharedPreferences.getString(key, null)
+        return gson.fromJson(jsonString, String::class.java)
+    }
+
+
 
     override suspend fun saveAppEntry() {
         context.dataStore.edit { settings ->
@@ -104,7 +125,7 @@ class LocalUserManagerImpl(
             updateListener?.onUpdate(location)
             val userProfileBundle=getUserProfile()
             dataScope.launch {
-                val userPlayer= Player(userProfileBundle.displayName,location,0.0,userProfileBundle.avatarUrl)
+                val userPlayer= Player(userProfileBundle.displayName, location, 0.0)
                 postPlayerToFirestore(firestore,userPlayer) }
         }
     }
@@ -118,17 +139,42 @@ class LocalUserManagerImpl(
         val preferences = runBlocking { data.first() } // Blocking operation to get the first emission
         val displayName = preferences[PreferencesKeys.DISPLAY_NAME] ?: ""
         val email = preferences[PreferencesKeys.EMAIL] ?: ""
-        val avatarUrl = preferences[PreferencesKeys.AVATAR_URL] ?: ""
-        return UserProfileBundle(displayName, email, avatarUrl)
+        return UserProfileBundle(displayName, email)
     }
 
     override suspend fun saveUserProfile(userProfile: UserProfileBundle) {
         context.dataStore.edit { settings ->
             settings[PreferencesKeys.DISPLAY_NAME] = userProfile.displayName
             settings[PreferencesKeys.EMAIL] = userProfile.email
-            userProfile.avatarUrl.let { settings[PreferencesKeys.AVATAR_URL] = it }
         }
+        saveObject(Constants.USER,userProfile.email)
+    }
 
+    override suspend fun saveGameItem(gameItem: GameItem) {
+        // serialise tu string
+        val jsonString = gameItem.toJson()
+        context.dataStore.edit { settings ->
+            settings[PreferencesKeys.GAME_ITEM] = jsonString
+        }
+    }
+
+    override fun readGameItem(): GameItem {
+        val data = context.dataStore.data
+        val preferences = runBlocking { data.first() } // Blocking operation to get the first emission
+        val gameItemString = preferences[PreferencesKeys.GAME_ITEM] ?: ""
+        return GameItem.fromJson(gameItemString)
+    }
+
+    override fun readGameMetadata(rarity : Int): String{
+        var key = Constants.RARITY_METADATA_1
+        when (rarity) {
+            1 -> key = Constants.RARITY_METADATA_1
+            2 -> key = Constants.RARITY_METADATA_2
+            3 -> key = Constants.RARITY_METADATA_3
+            4 -> key = Constants.RARITY_METADATA_4
+            5 -> key = Constants.RARITY_METADATA_5
+        }
+        return key
     }
 
     override fun setUpdateListener(ref: UpdateListener) {
@@ -146,11 +192,12 @@ private object PreferencesKeys{
     val APP_ENTRY = booleanPreferencesKey(name = Constants.APP_ENTRY)
     // ar entry preferences
     val CLOUD_ANCHOR_ID = stringPreferencesKey(name = Constants.CLOUD_ANCHOR_ID )
+    val GAME_ITEM = stringPreferencesKey(name = Constants.GAME_ITEM )
+
     // auth user
     val DISPLAY_NAME = stringPreferencesKey("display_name")
     val EMAIL = stringPreferencesKey("email")
     // user ranking and player
-    val AVATAR_URL = stringPreferencesKey("avatar_url")
     val SCORE = stringPreferencesKey("score")
 
 }

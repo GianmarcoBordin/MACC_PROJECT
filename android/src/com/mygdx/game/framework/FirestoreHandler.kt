@@ -12,7 +12,6 @@ fun postPlayerToFirestore(firestore: FirebaseFirestore, player: Player): Boolean
         val documentRef = firestore.collection("players").document(player.username)
         documentRef.set(mapOf("username" to player.username,
             "location" to GeoPoint(player.location.latitude,player.location.longitude),
-            "avatarUrl" to player.avatarUrl
 
         ))// Update the document with player data
         true
