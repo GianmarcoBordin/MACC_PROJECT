@@ -15,14 +15,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.mygdx.game.data.dao.Line
 import com.mygdx.game.data.dao.Message
+import com.mygdx.game.data.dao.Ownership
 import com.mygdx.game.data.manager.UpdateListener
+import com.mygdx.game.domain.api.DataRepository
 import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.presentation.scan.events.BitmapEvent
 import com.mygdx.game.presentation.scan.events.DimensionsEvent
 import com.mygdx.game.presentation.scan.events.FocusEvent
 import com.mygdx.game.presentation.scan.events.GameEvent
 import com.mygdx.game.presentation.scan.events.LineEvent
+import com.mygdx.game.presentation.scan.events.UpdateDatabaseEvent
 import com.mygdx.game.presentation.scan.events.VisibilityEvent
+import kotlinx.coroutines.runBlocking
 import macc.ar.domain.api.MapRepository
 import javax.inject.Inject
 import kotlin.math.max
@@ -33,7 +37,7 @@ import kotlin.random.Random
 @HiltViewModel
 class ARViewModel @Inject constructor(
     private val localUserManager: LocalUserManager,
-    private val mapRepository: MapRepository
+    private val dataRepository: DataRepository
 ) : ViewModel(), UpdateListener {
     // -> ARScreen
     var scanned = false
@@ -107,7 +111,29 @@ class ARViewModel @Inject constructor(
         }
     }
 
-    fun onGameEvent(event: GameEvent) {
+    suspend fun onUpdateDatabaseEvent(event: UpdateDatabaseEvent) {
+        when (event) {
+            is UpdateDatabaseEvent.IncrementItemStats -> {
+                val updatedGameItem = GameItem(state.value.gameItem.id,
+                    state.value.gameItem.rarity,
+                    state.value.gameItem.hp + 1,
+                    state.value.gameItem.damage + 1,
+                    state.value.gameItem.bitmap)
+                dataRepository.postGameItem(updatedGameItem)
+            }
+
+            UpdateDatabaseEvent.AddItem -> {
+                val newGameItem = GameItem(state.value.gameItem.id,
+                    state.value.gameItem.rarity,
+                    state.value.gameItem.hp,
+                    state.value.gameItem.damage,
+                    state.value.gameItem.bitmap)
+                dataRepository.postGameItem(newGameItem)
+            }
+        }
+    }
+
+    suspend fun onGameEvent(event: GameEvent) {
         when (event) {
             is GameEvent.StartGame -> {
                 // compute the ratio of the background image
@@ -126,8 +152,16 @@ class ARViewModel @Inject constructor(
                 val bulletsWidth = (bulletsBitmap.width * bulletsRatio).toInt()
                 val finalBullets = bulletsBitmap.scale(bulletsWidth, bulletsHeight)
 
+                val username = localUserManager.getUserProfile().email
+                val itemId = state.value.gameItem.id
+                val ownership = Ownership(itemId.toInt(), username)
                 // set if the player already owns the item
-                //_state.value.owned = mapRepository.getOwnership()
+                runBlocking { if (dataRepository.getOwnership().isNotEmpty()) {
+
+                    } else {
+
+                    }
+                }
 
                 // set the bitmap and make the game start
                 _state.value = state.value.copy(shootBitmap = finalBullets, isStarted = true)
@@ -142,7 +176,6 @@ class ARViewModel @Inject constructor(
                     _state.value.lines.clear()
                 }
             }
-            else -> println()
         }
     }
 
