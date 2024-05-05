@@ -17,6 +17,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,11 +49,13 @@ import com.mygdx.game.data.dao.Line
 import com.mygdx.game.presentation.navgraph.Route
 import com.mygdx.game.presentation.scan.events.GameEvent
 import com.mygdx.game.presentation.scan.events.LineEvent
+import com.mygdx.game.presentation.scan.events.UpdateDatabaseEvent
 
 
 @Composable
 fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHandler: (GameEvent.StartGame) -> Unit,
-                  lineAddHandler: (LineEvent.AddNewLine) -> Unit, lineDeleteHandler: (LineEvent.DeleteAllLines) -> Unit) {
+                  lineAddHandler: (LineEvent.AddNewLine) -> Unit, lineDeleteHandler: (LineEvent.DeleteAllLines) -> Unit,
+                  updateDatabaseEventHandler: (UpdateDatabaseEvent.IncrementItemStats) -> Unit) {
     // collectAsState() allows Canvas' recomposition
     val gameState by viewModel.state.collectAsState()
 
@@ -61,7 +64,7 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
 
     if (!gameState.isStarted) {
         // start the game
-        gameHandler(GameEvent.StartGame(item, bullets))
+        gameHandler(GameEvent.StartGame(bullets))
     }
 
     Box(
@@ -80,6 +83,11 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
             )
         }
         if (!gameState.isGameOver) {
+            Text(
+                modifier = Modifier
+                        .fillMaxWidth(),
+                text = "HP left: ${gameState.hp}"
+            )
             Canvas(
                 modifier = Modifier
                     .fillMaxSize()
@@ -99,14 +107,12 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                         }
                     }
             ) {
-                gameState.bitmap?.let {
-                    drawItem(
-                        coordinates = gameState.position,
-                        itemImage = item,
-                        width = it.width,
-                        height = it.height
-                    )
-                }
+                drawItem(
+                    coordinates = gameState.position,
+                    itemImage = item,
+                    width = gameState.gameItem.bitmap.width,
+                    height = gameState.gameItem.bitmap.height
+                )
                 drawLines(
                     lines = gameState.lines
                 )
@@ -155,16 +161,22 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                             color = MaterialTheme.colorScheme.onSurface,
                             text = "Item captured!"
                         )
-                        // TODO
+                        var text = ""
+                        if (!gameState.owned)
+                            text = "Stats: \n" +
+                                    "- HP: ${gameState.gameItem.hp}\n" +
+                                    "- Damage: ${gameState.gameItem.damage}"
+                        else
+                            updateDatabaseEventHandler(UpdateDatabaseEvent.IncrementItemStats(1, 1))
+                            text = ""
+
                         Text(
                             modifier = Modifier
                                 .padding(16.dp),
                             textAlign = TextAlign.Center,
                             fontSize = 18.sp,
                             color = MaterialTheme.colorScheme.onSurface,
-                            text = "Stats: \n" +
-                                    "- HP: \n" +
-                                    "- Damage: \n"
+                            text = text
                         )
                         ElevatedButton(
                             modifier = Modifier

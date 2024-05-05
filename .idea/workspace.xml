@@ -9,21 +9,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c295d3a6-b052-4d12-bde7-ac3f0bec573b" name="Changes" comment="New version">
-      <change afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/data/dao/GameItem.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.5/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.5/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/checksums/md5-checksums.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.5/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/checksums/sha1-checksums.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.5/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/fileHashes/fileHashes.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.5/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/fileHashes/fileHashes.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/config.properties" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/config.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+    <list default="true" id="c295d3a6-b052-4d12-bde7-ac3f0bec573b" name="Changes" comment="Temporal commit">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/data/dao/Item.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/data/dao/Item.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/ARViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/ARViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/CaptureScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/CaptureScreen.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/GameState.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/GameState.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
     </list>
     <list default="true" id="c295d3a6-b052-4d12-bde7-ac3f0bec573b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.gradle/8.5/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/checksums/checksums.lock" afterDir="false" />
@@ -110,7 +100,7 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
+  <component name="PropertiesComponent"/>{
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
@@ -232,7 +222,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714837746455</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Temporal commit">
+      <option name="closed" value="true" />
+      <created>1714916489898</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1714916489898</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -260,6 +258,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="New version" />
-    <option name="LAST_COMMIT_MESSAGE" value="New version" />
+    <MESSAGE value="Temporal commit" />
+    <option name="LAST_COMMIT_MESSAGE" value="Temporal commit" />
   </component>
 </project>

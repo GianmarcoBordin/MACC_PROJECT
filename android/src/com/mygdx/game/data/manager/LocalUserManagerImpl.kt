@@ -157,7 +157,7 @@ class LocalUserManagerImpl(
         }
     }
 
-    override fun readGameItem(): GameItem{
+    override fun readGameItem(): GameItem {
         val data = context.dataStore.data
         val preferences = runBlocking { data.first() } // Blocking operation to get the first emission
         val gameItemString = preferences[PreferencesKeys.GAME_ITEM] ?: ""
