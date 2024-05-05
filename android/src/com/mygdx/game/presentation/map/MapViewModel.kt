@@ -9,6 +9,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mygdx.game.data.dao.GameItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -19,6 +20,7 @@ import com.mygdx.game.data.dao.Message
 import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.manager.UpdateListener
 import com.mygdx.game.domain.manager.ContextManager
+import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.domain.usecase.appEntry.AppEntryUseCases
 import com.mygdx.game.domain.usecase.map.MapUseCases
 import com.mygdx.game.presentation.map.events.LocationDeniedEvent
@@ -38,7 +40,8 @@ import javax.inject.Inject
 class MapViewModel  @Inject constructor(
     private val mapUseCases: MapUseCases,
     private val contextManager: ContextManager,
-    private val appEntryUseCases: AppEntryUseCases
+    private val appEntryUseCases: AppEntryUseCases,
+    private val localUserManager: LocalUserManager
 ): ViewModel(), UpdateListener {
 
     private val _isLoading = MutableLiveData<Boolean>()
@@ -62,13 +65,10 @@ class MapViewModel  @Inject constructor(
     private val _navPath = MutableLiveData<List<GeoPoint>?>()
     val navPath: LiveData<List<GeoPoint>?> = _navPath
 
-    private val _thresholdButtonFlag = MutableLiveData<HashMap<String, Boolean>?>()
-    val thresholdButtonFlag: LiveData<HashMap<String, Boolean>?> = _thresholdButtonFlag
+    private val _thresholdButtonFlag = MutableLiveData<HashMap<Item, Boolean>?>()
+    val thresholdButtonFlag: LiveData<HashMap<Item, Boolean>?> = _thresholdButtonFlag
 
     private val _to = MutableLiveData<Location?>()
-
-
-
 
     private val isActive = MutableLiveData<Boolean>()
 
@@ -88,11 +88,17 @@ class MapViewModel  @Inject constructor(
 
     }
 
-     fun update(item:String,value:Boolean) {
-          val _map = HashMap<String, Boolean>()
+     fun update(item:Item,value:Boolean) {
+          val _map = HashMap<Item, Boolean>()
          _map.set(item,value)
         _thresholdButtonFlag.value=_map
          Log.d("FUC>K","${_thresholdButtonFlag.value}")
+    }
+
+     fun saveGameItem(gameItem: GameItem){
+         viewModelScope.launch {
+             localUserManager.saveGameItem(gameItem)
+         }
     }
 
 
@@ -124,7 +130,11 @@ class MapViewModel  @Inject constructor(
             delay(1000)
             runCatching {
                 // Fetch user location
-                val player = Player(username = appEntryUseCases.readUser().displayName, location = userLoc, distance = 0.0, avatarUrl = null)
+                val player = Player(
+                    username = appEntryUseCases.readUser().displayName,
+                    location = userLoc,
+                    distance = 0.0
+                )
                 userLoc = mapUseCases.fetchUserLocation(player, context)
                     ?: throw IllegalStateException("User location is null")
 

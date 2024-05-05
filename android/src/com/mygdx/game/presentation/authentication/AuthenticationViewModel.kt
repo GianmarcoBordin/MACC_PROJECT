@@ -14,6 +14,7 @@ import com.mygdx.game.presentation.authentication.events.BioSignInEvent
 import com.mygdx.game.presentation.authentication.events.SignInEvent
 import com.mygdx.game.presentation.authentication.events.SignUpEvent
 import com.mygdx.game.util.Constants.USER_AUTH
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 /* Class responsible for handling authentication related events. It relies on the appEntryUseCases dependency
@@ -41,10 +42,10 @@ class AuthenticationViewModel  @Inject constructor(
         // Set ViewModel as the listener for updates
         authenticationUseCases.subscribe.invoke(this,USER_AUTH)
     }
-
     fun onSignInEvent(event: SignInEvent) {
         when (event) {
             is SignInEvent.SignIn -> {
+                _isLoading.value = true
                 goSignIn(event.email, event.password)
             }
 
@@ -96,7 +97,13 @@ class AuthenticationViewModel  @Inject constructor(
         // Update UI state with received data
         _data.value = data
         if (_data.value == "SignUp Success" || _data.value == "Login Success" || _data.value=="Confirmation Success") {
+            _isLoading.value=false
+            _isError.value = false
             _navigateToAnotherScreen.value = true
+        }
+        else{
+            _isLoading.value=false
+            _isError.value = true
         }
 
     }

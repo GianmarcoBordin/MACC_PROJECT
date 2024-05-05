@@ -53,8 +53,7 @@ class MapRepositoryImpl(
                 val updatePlayer= Player(
                     username = player.username,
                     location = userLocation,
-                    distance = 0.0,
-                    avatarUrl = localUserManager.getUserProfile().avatarUrl
+                    distance = 0.0
                 )
                 // Update last stored time
                 saveLastStoredTimeToPreferences(context, currentTime)
@@ -254,7 +253,7 @@ class MapRepositoryImpl(
                         location.longitude = locationGeoPoint.longitude
                         val avatarUrl = document.getString("avatarUrl")
                         val distance = calculateDistance(userLocation,location)
-                        val player = Player( username, location, distance,  avatarUrl)
+                        val player = Player(username, location, distance)
                         playersList.add(player)
                     }
                     Log.w(TAG, "Success getting documents. $playersList")
@@ -276,7 +275,6 @@ class MapRepositoryImpl(
                 player.location.latitude,
                 player.location.longitude
             ),
-            "avatarUrl" to player.avatarUrl
         )
 
 
@@ -323,7 +321,7 @@ class MapRepositoryImpl(
                         location.longitude = locationGeoPoint.longitude
                         val distance = calculateDistance(userLocation,location)
                         val imageUrl = document.getString("imageUrl")
-                        val obj = Item(itemId.toString(),itemName,itemRarity,distance,location,imageUrl)
+                        val obj = Item(itemId.toString(), itemRarity, distance, location)
                         objectsList.add(obj)
                     }
                     callback(objectsList)

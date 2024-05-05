@@ -128,38 +128,6 @@ fun DefaultSignInContent(
     Box(
         contentAlignment = Alignment.Center
     ) {
-        if (isLoading == true) {
-            val progress = remember { Animatable(0f) }
-            LaunchedEffect(Unit) {
-
-                progress.animateTo(
-                    targetValue = 1f,
-                    animationSpec = infiniteRepeatable(
-                        animation = tween(durationMillis = 1000),
-                        repeatMode = RepeatMode.Reverse
-                    )
-                )
-
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Spacer(modifier = Modifier.height(300.dp))
-                CircularProgressIndicator(progress = progress.value, color = Color.Blue)
-                if (isError==true) {
-                    Text(
-                        text = "Check your internet connection and retry later",
-                        color = MaterialTheme.colorScheme.onError,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-        } else if (isLoading==false){
             Text(
                 text = "Login",
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
@@ -286,6 +254,38 @@ fun DefaultSignInContent(
                     Text(text = "Authenticate with Biometric",style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
                     )
                 }
+                if (isLoading == true) {
+                    val progress = remember { Animatable(0f) }
+                    LaunchedEffect(Unit) {
+
+                        progress.animateTo(
+                            targetValue = 1f,
+                            animationSpec = infiniteRepeatable(
+                                animation = tween(durationMillis = 1000),
+                                repeatMode = RepeatMode.Reverse
+                            )
+                        )
+
+                    }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Spacer(modifier = Modifier.height(300.dp))
+                        CircularProgressIndicator(progress = progress.value, color = Color.Blue)
+                        if (isError==true) {
+                            Text(
+                                text = "Check your internet connection and retry later",
+                                color = MaterialTheme.colorScheme.onError,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                    }
+                }
                 // Observe changes in data
                 if (data?.isNotEmpty() == true) {
                     // Display data
@@ -312,6 +312,5 @@ fun DefaultSignInContent(
                     color = if (authenticationResult == "Biometric authentication successful") Color.Green else MaterialTheme.colorScheme.onError
                 )
             }
-        }
     }
 }

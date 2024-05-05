@@ -47,10 +47,9 @@ class SettingsManagerImpl @Inject constructor(
                         runBlocking {
                             val oldName= localUserManager.getUserProfile().displayName
                             authManager.updatePlayerFirestore(oldName,name)
-                            val avatarUrl = localUserManager.getUserProfile().avatarUrl
                             // save user profile application state
                             val userProfileBundle =
-                                UserProfileBundle(displayName = name, email = email, avatarUrl = avatarUrl)
+                                UserProfileBundle(displayName = name, email = email)
                             localUserManager.saveUserProfile(userProfileBundle)
                             // update local bio
                             val bio= Biometric(email,password)
@@ -82,10 +81,9 @@ class SettingsManagerImpl @Inject constructor(
 
                         val oldName= localUserManager.getUserProfile().displayName
                         authManager.updatePlayerFirestore(oldName,name)
-                        val avatarUrl = localUserManager.getUserProfile().avatarUrl
                         // save user profile application state
                         val userProfileBundle =
-                            UserProfileBundle(displayName = name, email = email, avatarUrl = avatarUrl)
+                            UserProfileBundle(displayName = name, email = email)
                         localUserManager.saveUserProfile(userProfileBundle)
                         // update local bio
                         val bio= Biometric(email,password)
@@ -108,16 +106,13 @@ class SettingsManagerImpl @Inject constructor(
         try {
             // clear firebase
             firebaseAuth?.signOut()
-            // clear bio state
-            val bio= Biometric("","")
-            localUserManager.saveBio(bio)
             // clear rank state
             val rank= Rank("",0)
             localUserManager.saveScore(rank)
             // clear anchor id
             localUserManager.saveAnchorId("")
             // clear user profile state
-            val userProfileBundle= UserProfileBundle("","","")
+            val userProfileBundle= UserProfileBundle("", "")
             localUserManager.saveUserProfile(userProfileBundle)
             // clear app entry state
             localUserManager.clearAppEntry()
