@@ -89,7 +89,9 @@ fun NavGraph(
                     navController = navController,
                     gameHandler = arViewModel::onGameEvent,
                     lineAddHandler = arViewModel::onLineEvent,
-                    lineDeleteHandler = arViewModel::onLineEvent)
+                    lineDeleteHandler = arViewModel::onLineEvent,
+                    updateDatabaseHandler = arViewModel::onUpdateDatabaseEvent
+                )
             }
 
             // more nodes...
