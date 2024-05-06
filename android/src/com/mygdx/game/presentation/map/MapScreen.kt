@@ -402,7 +402,7 @@ fun OsmMap(
             navPath?.let {
                 val boundingBox = BoundingBox.fromGeoPoints(navPath)
                 // Set the center and zoom level of the MapView based on the bounding box
-                mapView.zoomToBoundingBox(boundingBox, false)
+                mapView.zoomToBoundingBox(boundingBox, true)
                 val pathOverlay = Polyline()
                 pathOverlay.setPoints(navPath)
                 mapView.overlays.add(pathOverlay)

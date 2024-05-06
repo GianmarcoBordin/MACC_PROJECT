@@ -6,7 +6,6 @@ import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.domain.manager.RankManager
 import com.mygdx.game.domain.manager.SettingsManager
 import com.mygdx.game.util.Constants.MAP
-import com.mygdx.game.util.Constants.MP
 import com.mygdx.game.util.Constants.USER_AUTH
 import com.mygdx.game.util.Constants.USER_RANK
 import com.mygdx.game.util.Constants.USER_SETTINGS

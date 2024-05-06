@@ -60,6 +60,45 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
         return data
     }
 
+    override suspend fun fetchUserData(user : String): LiveData<List<String>> {
+        val data = MutableLiveData<List<String>>()
+        try {
+            val response = suspendCoroutine { continuation ->
+                rankApi?.fetchUserData(user)?.enqueue(object : Callback<List<Rank>> {
+                    override fun onResponse(call: Call<List<Rank>>, response: Response<List<Rank>>) {
+                        continuation.resume(response)
+                    }
+
+                    override fun onFailure(call: Call<List<Rank>>, t: Throwable) {
+                        continuation.resumeWithException(t)
+                    }
+                })
+            }
+
+            if (response.isSuccessful) {
+                val ranks = response.body()
+                if (ranks != null) {
+                    val rankInfo = ranks.map {
+                        "${it.username} ${it.score}" }
+                    data.value = rankInfo
+                } else {
+                    // Empty response body
+                    data.value = listOf("Empty response body")
+                }
+            } else {
+                // Unsuccessful response
+                Log.d(TAG,"Error: ${response.code()}"+response)
+                data.value = listOf("Error: ")
+            }
+        } catch (e: Exception) {
+            // Failure
+            Log.d(TAG,"Error: ${e.message}"+e.printStackTrace())
+            data.value = listOf("Error: ")
+        }
+
+
+        return data
+    }
 
 
     override suspend fun postRank(request: Rank): LiveData<String> {

@@ -90,7 +90,8 @@ fun NavGraph(
                     gameHandler = arViewModel::onGameEvent,
                     lineAddHandler = arViewModel::onLineEvent,
                     lineDeleteHandler = arViewModel::onLineEvent,
-                    updateDatabaseHandler = arViewModel::onUpdateDatabaseEvent
+                    updateDatabaseHandler = arViewModel::onUpdateDatabaseEvent,
+                    addDatabaseHandler = arViewModel::onUpdateDatabaseEvent
                 )
             }
 

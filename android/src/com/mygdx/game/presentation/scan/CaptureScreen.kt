@@ -170,8 +170,7 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                                     "- Damage: ${gameState.gameItem.damage}"
                         } else {
                             updateDatabaseHandler(UpdateDatabaseEvent.IncrementItemStats(1, 1))
-                            val rarity: String
-                            rarity = when(gameState.gameItem.id) {
+                            val rarity: String = when(gameState.gameItem.id) {
                                 "1" -> Constants.RARITY_1
                                 "2" -> Constants.RARITY_2
                                 "3" -> Constants.RARITY_3
@@ -179,8 +178,7 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                                 "5" -> Constants.RARITY_5
                                 else -> Constants.RARITY_1
                             }
-
-                            textStats = "Your $rarity Gunner has received an upgrade!"
+                            textStats = "Your $rarity Gunner has received an upgrade!" +
                                     "Updated Stats: \n" +
                                     "- HP: ${gameState.gameItem.hp + 1}\n" +
                                     "- Damage: ${gameState.gameItem.damage + 1}"

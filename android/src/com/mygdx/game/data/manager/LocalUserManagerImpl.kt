@@ -30,6 +30,7 @@ import com.mygdx.game.framework.postPlayerToFirestore
 import com.mygdx.game.framework.retrieveFirebaseUserIdAndBiometricCredentials
 import com.mygdx.game.framework.saveFirebaseUserIdAndBiometricCredentials
 import com.mygdx.game.util.Constants
+import com.mygdx.game.util.Constants.DEFAULT_GAME_ITEM
 import com.mygdx.game.util.Constants.USER_SETTINGS
 import com.mygdx.game.util.Constants.USER_SETTINGS2
 
@@ -161,7 +162,7 @@ class LocalUserManagerImpl(
     override fun readGameItem(): GameItem {
         val data = context.dataStore.data
         val preferences = runBlocking { data.first() } // Blocking operation to get the first emission
-        val gameItemString = preferences[PreferencesKeys.GAME_ITEM] ?: ""
+        val gameItemString = preferences[PreferencesKeys.GAME_ITEM] ?: DEFAULT_GAME_ITEM
         return GameItem.fromJson(gameItemString)
     }
 
@@ -201,4 +202,5 @@ private object PreferencesKeys{
     val SCORE = stringPreferencesKey("score")
 
 }
-
+// TODO add signup loading and biometric loading and focusa manager also in signin
+// TODO test map and rank and biometric and when repo called
