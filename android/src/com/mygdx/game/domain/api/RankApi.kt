@@ -9,10 +9,14 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface RankApi {
     @GET("/user_rankings")
     fun fetchData(): Call<List<Rank>>
+
+    @GET("/user_rankings")
+    fun fetchUserData(@Query("user") user: String): Call<List<Rank>>
 
     @POST("/user_rankings")
     fun postRank(@Body request: Rank): Call<Result<ResponseBody>>

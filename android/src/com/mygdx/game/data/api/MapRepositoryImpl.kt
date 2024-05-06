@@ -251,7 +251,6 @@ class MapRepositoryImpl(
                         val location = Location("provider")
                         location.latitude = locationGeoPoint.latitude
                         location.longitude = locationGeoPoint.longitude
-                        val avatarUrl = document.getString("avatarUrl")
                         val distance = calculateDistance(userLocation,location)
                         val player = Player(username, location, distance)
                         playersList.add(player)
@@ -312,7 +311,6 @@ class MapRepositoryImpl(
                     val objectsList = mutableListOf<Item>()
                     for (document in task.result!!) {
                         val itemId = document.get("itemId") ?: 0
-                        val itemName = document.getString("itemName") ?: ""
                         val itemRarity = document.getString("itemRarity") ?: ""
                         val locationGeoPoint = document.getGeoPoint("location") ?: defaultLocationGeoPoint
                         // conversion
@@ -320,7 +318,6 @@ class MapRepositoryImpl(
                         location.latitude = locationGeoPoint.latitude
                         location.longitude = locationGeoPoint.longitude
                         val distance = calculateDistance(userLocation,location)
-                        val imageUrl = document.getString("imageUrl")
                         val obj = Item(itemId.toString(), itemRarity, distance, location)
                         objectsList.add(obj)
                     }

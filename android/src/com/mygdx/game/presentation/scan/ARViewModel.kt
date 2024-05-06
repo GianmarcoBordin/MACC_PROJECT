@@ -111,7 +111,7 @@ class ARViewModel @Inject constructor(
         }
     }
 
-    suspend fun onUpdateDatabaseEvent(event: UpdateDatabaseEvent) {
+     fun onUpdateDatabaseEvent(event: UpdateDatabaseEvent) {
         when (event) {
             is UpdateDatabaseEvent.IncrementItemStats -> {
                 val updatedGameItem = GameItem(state.value.gameItem.id,
@@ -119,7 +119,13 @@ class ARViewModel @Inject constructor(
                     state.value.gameItem.hp + 1,
                     state.value.gameItem.damage + 1,
                     state.value.gameItem.bitmap)
-                dataRepository.postGameItem(updatedGameItem)
+                runBlocking {
+                    if(dataRepository.postGameItem(updatedGameItem).value?.isNotEmpty()  == true){
+                        // TODO
+                    }else{
+                        // TODO
+                    }
+                }
             }
 
             UpdateDatabaseEvent.AddItem -> {
@@ -128,12 +134,19 @@ class ARViewModel @Inject constructor(
                     state.value.gameItem.hp,
                     state.value.gameItem.damage,
                     state.value.gameItem.bitmap)
-                dataRepository.postGameItem(newGameItem)
+                runBlocking {
+                if(     dataRepository.postGameItem(newGameItem)
+                            .value?.isNotEmpty()  == true){
+                        // TODO
+                    }else{
+                        // TODO
+                    }
+                }
             }
         }
     }
 
-    suspend fun onGameEvent(event: GameEvent) {
+     fun onGameEvent(event: GameEvent) {
         when (event) {
             is GameEvent.StartGame -> {
                 // compute the ratio of the background image
@@ -156,10 +169,12 @@ class ARViewModel @Inject constructor(
                 val itemId = state.value.gameItem.id
                 val ownership = Ownership(itemId.toInt(), username)
                 // set if the player already owns the item
-                runBlocking { if (dataRepository.getOwnership().isNotEmpty()) {
+                runBlocking {
+                    if (dataRepository.getOwnership().value?.isNotEmpty() == true) {
+                        // TODO
 
                     } else {
-
+                            // TODO
                     }
                 }
 

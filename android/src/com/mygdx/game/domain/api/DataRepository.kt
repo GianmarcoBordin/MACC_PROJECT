@@ -19,5 +19,6 @@ interface DataRepository {
     suspend fun postOwnership(request: Rank): LiveData<String>
     suspend fun getOwnership(): LiveData<List<String>>
     suspend fun postOwnership(request: Ownership): LiveData<String>
+    suspend fun fetchUserData(user : String): LiveData<List<String>>
 }
 

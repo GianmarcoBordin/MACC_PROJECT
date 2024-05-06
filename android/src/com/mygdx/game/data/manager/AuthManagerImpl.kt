@@ -40,15 +40,21 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
         if (success) {
             try {
                 // Sign-in was successful,maybe I did a signOut and lost the local data so we fetch those data
-                val name = firebaseAuth?.currentUser?.displayName ?: ""
+                val name = firebaseAuth?.currentUser?.displayName ?: email
                 // save user profile application state
                 val userProfileBundle =
                     UserProfileBundle(displayName = name, email = email)
                 localUserManager.saveUserProfile(userProfileBundle)
                 // fetch rank data
-                val rankData = dataRepository.fetchData().value?.get(0)?.split(" ")
+                val rankData = dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
+                val rank:Rank
+                if(rankData == listOf("Error: ")){
+                     rank = Rank( name,  0)
+
+                }else{
+                     rank = Rank(rankData?.get(0) ?: name, rankData?.get(1)?.toInt() ?: 0)
+                }
                 // save user rank
-                val rank = Rank(rankData?.get(0) ?: name, rankData?.get(1)?.toInt() ?: 0)
                 localUserManager.saveScore(rank)
                 // save bio application state
                 val bio = Biometric(userEmail = email, userPass = password)
@@ -57,6 +63,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                 updateListener?.onUpdate("Login Success")
             } catch (e: Exception) {
                 // Handle exceptions within runBlocking block
+                Log.e("AUTH_MANAGER",e.toString())
                 updateListener?.onUpdate("Error: ${e.message}")
             }
         } else {
@@ -191,7 +198,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
 
 
     override fun authCheck(): Boolean {
-        return firebaseAuth?.currentUser != null
+        return firebaseAuth?.currentUser != null && localUserManager.getUserProfile().email.isNotEmpty()
     }
 
 
@@ -213,6 +220,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                 task?.user != null // Check if the user is not null to determine success
             } catch (e: Exception) {
                 // Handle any exceptions
+                Log.e("AUTH_MANAGER",e.message.toString())
                 false
             }
         } else {

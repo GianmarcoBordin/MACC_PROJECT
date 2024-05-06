@@ -125,9 +125,7 @@ fun DefaultSignInContent(
     val focusManager = LocalFocusManager.current
 
 
-    Box(
-        contentAlignment = Alignment.Center
-    ) {
+
             Text(
                 text = "Login",
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
@@ -272,7 +270,6 @@ fun DefaultSignInContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp),
-                        verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Spacer(modifier = Modifier.height(300.dp))
@@ -313,4 +310,3 @@ fun DefaultSignInContent(
                 )
             }
     }
-}
