@@ -1,2 +1,4 @@
 /build/
 /core/build/
+/android/build/
+/.gradle/

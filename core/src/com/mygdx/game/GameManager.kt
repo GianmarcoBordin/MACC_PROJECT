@@ -25,7 +25,8 @@ class GameManager(private val myId: String) : Game() {
 
     override fun create() {
         //showGameScreen(GameScreen(this, MultiplayerClient(this,"1","2"),PlayerType.GREEN,"me","other"))
-        setScreen(getStartScreen())
+        //setScreen(getStartScreen())
+        showChoosePlayerTypeScreen()
     }
 
     override fun dispose() {
@@ -35,7 +36,11 @@ class GameManager(private val myId: String) : Game() {
         choosePlayerTypeScreen?.dispose()
     }
 
-    fun showStartScreen() {
+    fun showStartScreen(adversaryId: String, disconnect: Boolean) {
+        // TODO disconnect the client could be improved
+        if (disconnect){
+            getConnectionScreen(adversaryId).multiplayerClient.disconnect()
+        }
         setScreen(getStartScreen())
     }
 
@@ -44,6 +49,8 @@ class GameManager(private val myId: String) : Game() {
             // Handle invalid input
             return
         }
+        // useful when you call the method from the game over screen and you need to disconnect the user
+
         setScreen(getConnectionScreen(otherId))
     }
 
@@ -59,16 +66,15 @@ class GameManager(private val myId: String) : Game() {
         setScreen(gameScreen)
     }
 
-    fun showChoosePlayerTypeScreen(newChoosePlayerTypeScreen: ChoosePlayerTypeScreen) {
-        choosePlayerTypeScreen?.dispose()
-        choosePlayerTypeScreen = newChoosePlayerTypeScreen
-        setScreen(choosePlayerTypeScreen)
+    fun showChoosePlayerTypeScreen() {
+        setScreen(getChoosePlayerTypeScreen())
     }
 
     private fun getStartScreen(): StartScreen {
         if (startScreen == null) {
             startScreen = StartScreen(this)
         }
+
         return startScreen!!
     }
 
@@ -76,8 +82,10 @@ class GameManager(private val myId: String) : Game() {
         if (connectionScreen == null) {
             connectionScreen = ConnectionScreen(this, myId, otherId)
         }
+
         return connectionScreen!!
     }
+
 
     private fun getChoosePlayerTypeScreen(): ChoosePlayerTypeScreen {
         if (choosePlayerTypeScreen == null) {

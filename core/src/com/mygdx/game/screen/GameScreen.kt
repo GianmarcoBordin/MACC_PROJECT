@@ -1,6 +1,7 @@
 package com.mygdx.game.screen
 
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -88,29 +89,32 @@ class GameScreen(
             redPlayerXPosition, 0.15f,
             textureAtlas.findRegion(if (playerType == PlayerType.GREEN) "Gunner_Red_image" else "Gunner_Green_image"),
             textureAtlas.findRegion(if (playerType == PlayerType.GREEN) "laserRed" else "laserGreen"),
-            playerType
+            playerType.opposite()
         )
 
         // listen only the first player, the second one sends the message through websocket
         firstPlayer.setPlayerEventListener(this)
-        //secondPlayer.setPlayerEventListener(this)
+        secondPlayer.setPlayerEventListener(this)
 
         // sound manager
         soundManager = SoundManager()
         soundManager.playBattle()
         controller = Controller(batch!!)
-        headsUp = HeadsUp(batch, myId, otherId)
+        headsUp = if (PlayerType.GREEN == playerType) HeadsUp(batch, myId, otherId) else HeadsUp(batch, otherId, myId)
 
         // generate health box for each user
         val healthTexture = textureAtlas.findRegion("blank")
-        firstPlayerHealthBar = HealthBar(healthTexture, FIRST_HEALTH_STARTING_X)
-        secondPlayerHealthBar = HealthBar(healthTexture, SECOND_HEALTH_STARTING_X)
+        firstPlayerHealthBar = if (PlayerType.GREEN == playerType) HealthBar(healthTexture, FIRST_HEALTH_STARTING_X) else HealthBar(healthTexture, SECOND_HEALTH_STARTING_X)
+
+        secondPlayerHealthBar = if (PlayerType.GREEN == playerType) HealthBar(healthTexture, SECOND_HEALTH_STARTING_X) else HealthBar(healthTexture, FIRST_HEALTH_STARTING_X)
 
     }
 
     override fun show() {
 
     }
+
+
 
     // Method used as a callback when the websocket client receives a movement message
     override fun onMovementMessage(newX: Float, newY: Float) {
@@ -175,6 +179,7 @@ class GameScreen(
     }
 
     override fun hide() {
+        //multiplayerClient.disconnect()
         batch!!.dispose()
         textureAtlas.dispose()
         soundManager.dispose()
@@ -275,7 +280,6 @@ class GameScreen(
 
 
 
-
     private fun detectPlayerCollision(player: Player, otherPlayer: Player) {
         val laserIterator: MutableListIterator<Laser> = player.laserList.listIterator()
 
@@ -283,6 +287,7 @@ class GameScreen(
             val laser = laserIterator.next()
 
             if (otherPlayer.intersects(laser.laserBox)) {
+
                 otherPlayer.hit()
                 laserIterator.remove()
                 break
@@ -293,7 +298,7 @@ class GameScreen(
     // called from player code when the current user looses or wins
     override fun onGameOver(type: PlayerType) {
         // you win
-        if (type == playerType){
+        if (type != playerType){
             game.showGameOverScreen(GameOverScreen(game,true, otherId))
         } else {
             game.showGameOverScreen(GameOverScreen(game,false, otherId))

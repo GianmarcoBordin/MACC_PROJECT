@@ -94,12 +94,13 @@ data class Player(
         return laser
     }
 
-
-    fun hit() {
+    // return true only when you loose
+    fun hit(){
         life--
         if (life <= 0) {
             playerEventListener?.onGameOver(playerType)
         }
+
     }
 
     fun move(newX:Float, newY:Float){
