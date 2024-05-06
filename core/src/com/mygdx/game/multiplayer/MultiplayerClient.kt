@@ -37,13 +37,12 @@ class MultiplayerClient(
 
     interface GameEventListener {
         fun onMovementMessage(newX: Float,newY: Float)
-        fun onLaserMessage(startX: Float, startY: Float)
+        fun onLaserMessage()
     }
 
     private lateinit var webSocket: WebSocket
-    private lateinit var gameScreen: GameScreen
     private var client : OkHttpClient = OkHttpClient()
-    private val webSocketUrl = "ws://192.168.1.15:9000"
+    private val webSocketUrl = "ws://192.168.1.104:9000"
     private var coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
     private var gson = Gson()
     private var otherPlayerStatus = PlayerStatus.OFFLINE
@@ -85,7 +84,7 @@ class MultiplayerClient(
                         }
 
                         MessageType.LASER -> {
-                            gameEventListener?.onLaserMessage(message.newX,message.newY)
+                            gameEventListener?.onLaserMessage()
                         }
 
                         MessageType.START -> {

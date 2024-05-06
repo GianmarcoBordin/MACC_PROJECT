@@ -17,7 +17,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,12 +49,13 @@ import com.mygdx.game.presentation.navgraph.Route
 import com.mygdx.game.presentation.scan.events.GameEvent
 import com.mygdx.game.presentation.scan.events.LineEvent
 import com.mygdx.game.presentation.scan.events.UpdateDatabaseEvent
+import com.mygdx.game.util.Constants
 
 
 @Composable
 fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHandler: (GameEvent.StartGame) -> Unit,
                   lineAddHandler: (LineEvent.AddNewLine) -> Unit, lineDeleteHandler: (LineEvent.DeleteAllLines) -> Unit,
-                  updateDatabaseEventHandler: (UpdateDatabaseEvent.IncrementItemStats) -> Unit) {
+                  addDatabaseHandler: (UpdateDatabaseEvent.AddItem) -> Unit, updateDatabaseHandler: (UpdateDatabaseEvent.IncrementItemStats) -> Unit) {
     // collectAsState() allows Canvas' recomposition
     val gameState by viewModel.state.collectAsState()
 
@@ -161,14 +161,30 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                             color = MaterialTheme.colorScheme.onSurface,
                             text = "Item captured!"
                         )
-                        var text = ""
-                        if (!gameState.owned)
-                            text = "Stats: \n" +
+
+                        val textStats: String
+                        if (!gameState.owned) {
+                            addDatabaseHandler(UpdateDatabaseEvent.AddItem)
+                            textStats = "Stats: \n" +
                                     "- HP: ${gameState.gameItem.hp}\n" +
                                     "- Damage: ${gameState.gameItem.damage}"
-                        else
-                            updateDatabaseEventHandler(UpdateDatabaseEvent.IncrementItemStats(1, 1))
-                            text = ""
+                        } else {
+                            updateDatabaseHandler(UpdateDatabaseEvent.IncrementItemStats(1, 1))
+                            val rarity: String
+                            rarity = when(gameState.gameItem.id) {
+                                "1" -> Constants.RARITY_1
+                                "2" -> Constants.RARITY_2
+                                "3" -> Constants.RARITY_3
+                                "4" -> Constants.RARITY_4
+                                "5" -> Constants.RARITY_5
+                                else -> Constants.RARITY_1
+                            }
+
+                            textStats = "Your $rarity Gunner has received an upgrade!"
+                                    "Updated Stats: \n" +
+                                    "- HP: ${gameState.gameItem.hp + 1}\n" +
+                                    "- Damage: ${gameState.gameItem.damage + 1}"
+                        }
 
                         Text(
                             modifier = Modifier
@@ -176,7 +192,7 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                             textAlign = TextAlign.Center,
                             fontSize = 18.sp,
                             color = MaterialTheme.colorScheme.onSurface,
-                            text = text
+                            text = textStats
                         )
                         ElevatedButton(
                             modifier = Modifier

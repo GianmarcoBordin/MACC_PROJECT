@@ -16,7 +16,7 @@ import com.mygdx.game.multiplayer.MultiplayerClient
 import com.mygdx.game.player.PlayerType
 
 
-class ConnectionScreen(private val gameManager: GameManager, myId: String, otherId: String) : ScreenAdapter(), MultiplayerClient.MultiplayerListener {
+class ConnectionScreen(private val gameManager: GameManager, private val myId: String, private val otherId: String) : ScreenAdapter(), MultiplayerClient.MultiplayerListener {
 
     private val width = (Gdx.graphics.width/1.2).toFloat()
     private val height = (Gdx.graphics.height/1.2).toFloat()
@@ -40,7 +40,7 @@ class ConnectionScreen(private val gameManager: GameManager, myId: String, other
 
         goBack.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-                //gameManager.showGameScreen(GameScreen(gameManager, multiplayerClient, PlayerType.GREEN))
+
                 multiplayerClient.disconnect()
                 gameManager.showStartScreen()
             }
@@ -60,10 +60,8 @@ class ConnectionScreen(private val gameManager: GameManager, myId: String, other
     // Called when you are ready to start the game between the players
     override fun onAdversaryPlayerTypeReceived(playerType: PlayerType) {
         Gdx.app.postRunnable{
-            gameManager.showGameScreen(GameScreen(gameManager, multiplayerClient, playerType))
+            gameManager.showGameScreen(GameScreen(gameManager, multiplayerClient, playerType, myId, otherId))
         }
-
-
     }
 
     // used when adversary disconnect

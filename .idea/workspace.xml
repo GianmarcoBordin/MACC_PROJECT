@@ -9,6 +9,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
+    <list default="true" id="c295d3a6-b052-4d12-bde7-ac3f0bec573b" name="Changes" comment="Temporal commit number 2">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/navgraph/NavGraph.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/navgraph/NavGraph.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/ARViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/ARViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/CaptureScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/CaptureScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/events/UpdateDatabaseEvent.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/presentation/scan/events/UpdateDatabaseEvent.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/src/com/mygdx/game/util/Constants.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/com/mygdx/game/util/Constants.kt" afterDir="false" />
     <list default="true" id="c295d3a6-b052-4d12-bde7-ac3f0bec573b" name="Changes" comment="Temporal commit">
       <change beforePath="$PROJECT_DIR$/.gradle/8.5/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.5/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.5/fileHashes/fileHashes.bin" afterDir="false" />
@@ -32,6 +39,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/home/carlo/.android/avd/Pixel_8_Pro_API_34.avd)]" />
   <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[/Users/applem2/.android/avd/Pixel_4a_API_34.avd]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
@@ -242,6 +250,7 @@
     <MESSAGE value="New version" />
     <MESSAGE value="test" />
     <MESSAGE value="Temporal commit" />
-    <option name="LAST_COMMIT_MESSAGE" value="Temporal commit" />
+    <MESSAGE value="Temporal commit number 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="Temporal commit number 2" />
   </component>
 </project>

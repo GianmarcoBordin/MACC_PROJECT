@@ -1,4 +1,4 @@
-package com.mygdx.game
+package com.mygdx.game.screen.component
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
@@ -11,11 +11,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
+import com.badlogic.gdx.utils.Disposable
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 
-class Controller(gameBatch: SpriteBatch) {
+class Controller(gameBatch: SpriteBatch): Disposable {
     private var viewport: Viewport
     private var stage: Stage
     private var cam: OrthographicCamera = OrthographicCamera()
@@ -155,6 +156,10 @@ class Controller(gameBatch: SpriteBatch) {
 
     fun isMoving(): Boolean{
         return isLeftPressed || isRightPressed || isUpPressed || isDownPressed
+    }
+
+    override fun dispose() {
+        stage.dispose()
     }
 
 }

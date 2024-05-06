@@ -21,6 +21,11 @@ object Constants {
     const val RARITY_METADATA_3 = "{\"id\":\"3\",\"rarity\":\"3\",\"hp\":3\",\"damage\":\"3\",\"bitmap\":\"yellow}"
     const val RARITY_METADATA_4 = "{\"id\":\"4\",\"rarity\":\"4\",\"hp\":4\",\"damage\":\"4\",\"bitmap\":\"blue}"
     const val RARITY_METADATA_5 = "{\"id\":\"5\",\"rarity\":\"5\",\"hp\":5\",\"damage\":\"5\",\"bitmap\":\"black}"
+    const val RARITY_1 = "Green"
+    const val RARITY_2 = "Red"
+    const val RARITY_3 = "Yellow"
+    const val RARITY_4 = "Blue"
+    const val RARITY_5 = "Black"
     const val MINIMUM_TIME_BETWEEN_LOCATION_UPDATES = 300000L // 5 minutes in milliseconds
     const val DEFAULT_LATITUDE = 0.0
     const val DEFAULT_LONGITUDE = 0.0
