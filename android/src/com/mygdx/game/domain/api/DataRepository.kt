@@ -16,7 +16,7 @@ interface DataRepository {
     suspend fun postPlayer(request: Player): LiveData<String>
 
     suspend fun postGameItem(request: GameItem): LiveData<String>
-    suspend fun getGameItem(): LiveData<List<String>>
+    suspend fun getGameItem(user: String,rarity:String): LiveData<List<String>>
     suspend fun postOwnership(request: Ownership): LiveData<String>
     suspend fun fetchUserData(user : String): LiveData<List<String>>
     suspend fun getOwnership(user: String, item: String): LiveData<List<String>>

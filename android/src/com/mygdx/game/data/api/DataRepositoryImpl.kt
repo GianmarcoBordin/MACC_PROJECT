@@ -178,11 +178,11 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
 
         return resultLiveData
     }
-    override suspend fun getGameItem(): LiveData<List<String>> {
+    override suspend fun getGameItem(user: String,rarity:String): LiveData<List<String>> {
         val data = MutableLiveData<List<String>>()
         try {
             val response = suspendCoroutine { continuation ->
-                rankApi?.getGameItem()?.enqueue(object : Callback<List<GameItem>> {
+                rankApi?.getGameItem(user, rarity)?.enqueue(object : Callback<List<GameItem>> {
                     override fun onResponse(call: Call<List<GameItem>>, response: Response<List<GameItem>>) {
                         continuation.resume(response)
                     }

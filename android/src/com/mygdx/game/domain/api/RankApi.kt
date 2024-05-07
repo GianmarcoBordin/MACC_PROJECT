@@ -25,7 +25,7 @@ interface RankApi {
     fun postPlayer(@Body request: Player): Call<Result<ResponseBody>>
 
     @GET("/game_items")
-    fun getGameItem(): Call<List<GameItem>>
+    fun getGameItem(@Query("user") user: String, @Query("rarity") rarity: String): Call<List<GameItem>>
 
     @POST("/game_items")
     fun postGameItem(@Body request: GameItem): Call<Result<ResponseBody>>
