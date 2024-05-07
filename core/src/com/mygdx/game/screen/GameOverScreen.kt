@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
-import com.badlogic.gdx.scenes.scene2d.ui.TextField
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mygdx.game.GameManager
@@ -26,7 +25,7 @@ class GameOverScreen(private val game: GameManager, private val win: Boolean, pr
     private val table: Table = Table()
 
     private val playAgainButton = TextButton("Play again", game.gameSkin)
-
+    private val changeAdversaryButton = TextButton("Change adversary", game.gameSkin)
 
     init {
 
@@ -38,7 +37,8 @@ class GameOverScreen(private val game: GameManager, private val win: Boolean, pr
 
         playAgainButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-                game.showConnectionScreen(otherId)
+                //TODO here should disconnect
+                game.showConnectionScreen(otherId = otherId)
             }
 
             override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
@@ -46,7 +46,18 @@ class GameOverScreen(private val game: GameManager, private val win: Boolean, pr
             }
         })
 
-        table.add(playAgainButton).fillX().center().padTop(40f).padBottom(20f) .row()
+        changeAdversaryButton.addListener(object : InputListener() {
+            override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
+                game.showStartScreen(otherId,disconnect = true)
+            }
+
+            override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
+                return true
+            }
+        })
+
+        table.add(playAgainButton).fillX().center().padTop(40f).padBottom(20f).row()
+        table.add(changeAdversaryButton).fillX().center().padTop(40f).padBottom(20f).row()
 
         stage.addActor(table)
 

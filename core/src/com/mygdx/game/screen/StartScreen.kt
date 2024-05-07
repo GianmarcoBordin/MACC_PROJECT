@@ -41,7 +41,6 @@ class StartScreen(private val game: GameManager) : ScreenAdapter() {
         table.add(userIdLabel).left().padBottom(10f).padTop(30f).row()
         table.add(userIdField).width(width / 3).center().padBottom(40f).row()
 
-
         connectButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
                 handleConnection()

@@ -42,10 +42,10 @@ class MultiplayerClient(
 
     private lateinit var webSocket: WebSocket
     private var client : OkHttpClient = OkHttpClient()
-    private val webSocketUrl = "ws://192.168.1.104:9000"
+    private val webSocketUrl = "ws://192.168.1.34:9000"
     private var coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
     private var gson = Gson()
-    private var otherPlayerStatus = PlayerStatus.OFFLINE
+
 
     private var multiplayerListener: MultiplayerListener? = null
     private var gameEventListener: GameEventListener? = null
@@ -63,12 +63,13 @@ class MultiplayerClient(
         webSocket = client.newWebSocket(Request.Builder().url(webSocketUrl).build(),
             object : WebSocketListener(){
                 override fun onOpen(webSocket: WebSocket, response: Response) {
-
+                    Gdx.app.log(debugTag, "INIT MESSAGE")
                     val message : Message = InitMessage(myPlayerId, adversaryId, PlayerType.GREEN)
                     val json = gson.toJson(message)
-                    coroutineScope.launch {
-                        webSocket.send(json)
-                    }
+
+                    // note: you cannot send it into a coroutine because in this way we need a blocking call to server
+                    webSocket.send(json)
+
                 }
 
                 override fun onMessage(webSocket: WebSocket, text: String) {
@@ -93,10 +94,6 @@ class MultiplayerClient(
                             if(message.senderId == adversaryId){
                                 Gdx.app.log(debugTag, "connection established, you can start sending messages")
 
-                                otherPlayerStatus = PlayerStatus.ONLINE
-
-                                println("changing game screen")
-
                                 Gdx.app.postRunnable{
                                     multiplayerListener?.onAdversaryPlayerTypeReceived(message.playerType)
                                 }
@@ -112,8 +109,7 @@ class MultiplayerClient(
                         MessageType.DISCONNECTED -> {
                             // Handle DISCONNECTED message
                             Gdx.app.log(debugTag, "${message.senderId} disconnected, you cannot play")
-                            otherPlayerStatus = PlayerStatus.OFFLINE
-                            // TODO listener for connection screen
+
                             multiplayerListener?.onDisconnectedAdversary()
                         }
 
@@ -128,19 +124,21 @@ class MultiplayerClient(
 
                 override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
                     // WebSocket connection closed
-                    otherPlayerStatus = PlayerStatus.OFFLINE
                     Gdx.app.log(debugTag, "connection closed: $reason")
                     
                 }
 
                 override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
                     // WebSocket connection failure
-                    Gdx.app.log(debugTag, "connection failure $response - ${t}")
+                    Gdx.app.log(debugTag, "connection failure: $response - $t")
                     // go back to menu screen
-                    gameManager.showStartScreen()
+                    this@MultiplayerClient.disconnect()
+                    gameManager.showStartScreen(adversaryId, false)
 
 
                 }
+
+
             }
         )
 
@@ -160,9 +158,8 @@ class MultiplayerClient(
         val message = GenericMessage(MessageType.MOVEMENT, myPlayerId, adversaryId, newX, newY, PlayerType.GREEN)
         val json = gson.toJson(message)
 
-        coroutineScope.launch {
-            webSocket.send(json)
-        }
+        webSocket.send(json)
+
 
     }
 
@@ -170,9 +167,7 @@ class MultiplayerClient(
         val message = GenericMessage(MessageType.LASER, myPlayerId, adversaryId, startX, startY, PlayerType.GREEN)
         val json = gson.toJson(message)
 
-        coroutineScope.launch {
-            webSocket.send(json)
-        }
+        webSocket.send(json)
 
     }
 

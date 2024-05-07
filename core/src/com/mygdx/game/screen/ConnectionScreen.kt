@@ -27,12 +27,9 @@ class ConnectionScreen(private val gameManager: GameManager, private val myId: S
     private val stage: Stage = Stage(FitViewport(width,height))
     private val table: Table = Table()
 
-    private var multiplayerClient : MultiplayerClient = MultiplayerClient(gameManager, myId, otherId)
+    var multiplayerClient : MultiplayerClient = MultiplayerClient(gameManager, myId, otherId)
 
     init {
-
-        multiplayerClient.setMultiplayerListener(this)
-        multiplayerClient.connect()
 
 
         table.setFillParent(true)
@@ -42,7 +39,7 @@ class ConnectionScreen(private val gameManager: GameManager, private val myId: S
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
 
                 multiplayerClient.disconnect()
-                gameManager.showStartScreen()
+                gameManager.showStartScreen(otherId, false)
             }
 
             override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
@@ -66,13 +63,28 @@ class ConnectionScreen(private val gameManager: GameManager, private val myId: S
 
     // used when adversary disconnect
     override fun onDisconnectedAdversary() {
-        // TODO implement score screen where user check if he has win or not
+
         multiplayerClient.disconnect()
-        gameManager.showStartScreen()
+        gameManager.showStartScreen(otherId, false)
     }
 
     override fun show() {
+        multiplayerClient.setMultiplayerListener(this)
+        multiplayerClient.connect()
+
         Gdx.input.inputProcessor = stage
+    }
+
+    override fun hide() {
+        super.hide()
+    }
+
+    override fun pause() {
+        super.pause()
+    }
+
+    override fun resume() {
+        super.resume()
     }
 
     override fun render(delta: Float) {

@@ -151,7 +151,7 @@ fun ArHomeScreen(
                                 }
                                 Spacer(modifier = Modifier.width(24.dp))
                                 Button(
-                                    onClick = {navController.navigate(Route.MapScreen.route)},
+                                    onClick = { navController.navigate(Route.MapScreen.route) },
                                     modifier = Modifier
                                         .size(width = 150.dp, height = 50.dp)
                                         .clip(RoundedCornerShape(16.dp))

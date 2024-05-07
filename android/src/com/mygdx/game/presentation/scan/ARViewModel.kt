@@ -120,11 +120,7 @@ class ARViewModel @Inject constructor(
                     state.value.gameItem.damage + 1,
                     state.value.gameItem.bitmap)
                 runBlocking {
-                    if(dataRepository.postGameItem(updatedGameItem).value?.isNotEmpty()  == true){
-                        // TODO
-                    }else{
-                        // TODO
-                    }
+                    dataRepository.postGameItem(updatedGameItem)
                 }
             }
 
@@ -135,12 +131,7 @@ class ARViewModel @Inject constructor(
                     state.value.gameItem.damage,
                     state.value.gameItem.bitmap)
                 runBlocking {
-                if(     dataRepository.postGameItem(newGameItem)
-                            .value?.isNotEmpty()  == true){
-                        // TODO
-                    }else{
-                        // TODO
-                    }
+                    dataRepository.postGameItem(newGameItem)
                 }
             }
         }
@@ -165,16 +156,12 @@ class ARViewModel @Inject constructor(
                 val bulletsWidth = (bulletsBitmap.width * bulletsRatio).toInt()
                 val finalBullets = bulletsBitmap.scale(bulletsWidth, bulletsHeight)
 
-                val username = localUserManager.getUserProfile().email
-                val itemId = state.value.gameItem.id
-                val ownership = Ownership(itemId.toInt(), username)
                 // set if the player already owns the item
                 runBlocking {
                     if (dataRepository.getOwnership().value?.isNotEmpty() == true) {
-                        // TODO
-
+                        _state.value.owned = true
                     } else {
-                            // TODO
+                        _state.value.owned = true
                     }
                 }
 
