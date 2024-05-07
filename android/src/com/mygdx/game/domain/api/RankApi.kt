@@ -30,7 +30,7 @@ interface RankApi {
     @POST("/game_items")
     fun postGameItem(@Body request: GameItem): Call<Result<ResponseBody>>
     @GET("/ownerships")
-    fun getOwnership(): Call<List<Ownership>>
+    fun getOwnership(@Query("user") user: String, @Query("item") item: String): Call<List<Ownership>>
 
     @POST("/ownerships")
     fun postOwnership(@Body request: Ownership): Call<Result<ResponseBody>>

@@ -45,19 +45,19 @@ class MainActivity : ComponentActivity(){
             ) {
 
                 Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
-                    
 
                     val startDestination = viewModel.startDestination
                     NavGraph(
                         object: Multiplayer{ override fun onSetMultiplayer() { setMultiplayer() } },
                         startDestination = startDestination
                     )
+                    /*
                     Button(onClick = {
                         startActivity(intent)
                     }) {
                         Text(text = "Multiplayer")
                     }
-
+                    */
                 }
 
             }

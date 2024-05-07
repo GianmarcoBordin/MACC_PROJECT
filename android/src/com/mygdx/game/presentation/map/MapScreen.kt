@@ -420,49 +420,48 @@ fun OsmMap(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val itemBitMap : ImageBitmap
-            val gameItem : GameItem
+            val hp: Int
+            val damage: Int
             val firstTrueItemKey = thresholdButtonFlag!!.entries.find { it.value }?.key
             when (firstTrueItemKey?.itemRarity) {
                 "1" -> {
                     itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_green)
                     // Parse JSON string to Item object
-                    gameItem = GameItem.fromJson(com.mygdx.game.util.Constants.RARITY_METADATA_1)
+                    hp = com.mygdx.game.util.Constants.RARITY_1_HP
+                    damage = com.mygdx.game.util.Constants.RARITY_1_DAMAGE
                 }
                 "2" -> {
                     itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_red)
-                    gameItem = GameItem.fromJson(
-                        com.mygdx.game.util.Constants.RARITY_METADATA_2)
+                    hp = com.mygdx.game.util.Constants.RARITY_2_HP
+                    damage = com.mygdx.game.util.Constants.RARITY_2_DAMAGE
                 }
 
                 "3" -> {
                     itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_yellow)
-                    gameItem = GameItem.fromJson(
-                        com.mygdx.game.util.Constants.RARITY_METADATA_3
-                    )
+                    hp = com.mygdx.game.util.Constants.RARITY_3_HP
+                    damage = com.mygdx.game.util.Constants.RARITY_3_DAMAGE
                 }
 
                 "4" -> {
                     itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_blue)
-                    gameItem = GameItem.fromJson(
-                        com.mygdx.game.util.Constants.RARITY_METADATA_4
-                    )
+                    hp = com.mygdx.game.util.Constants.RARITY_4_HP
+                    damage = com.mygdx.game.util.Constants.RARITY_4_DAMAGE
                 }
 
                 "5" -> {
                     itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_black)
-                    gameItem = GameItem.fromJson(
-                        com.mygdx.game.util.Constants.RARITY_METADATA_5
-                    )
+                    hp = com.mygdx.game.util.Constants.RARITY_5_HP
+                    damage = com.mygdx.game.util.Constants.RARITY_5_DAMAGE
                 }
 
                 else -> {
                     itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_green)
-                    gameItem = GameItem.fromJson(
-                        com.mygdx.game.util.Constants.RARITY_METADATA_1
-                    )
+                    hp = com.mygdx.game.util.Constants.RARITY_1_HP
+                    damage = com.mygdx.game.util.Constants.RARITY_1_DAMAGE
                 }
 
             }
+
             val configuration = LocalConfiguration.current
             val screenWidth = with(LocalDensity.current) { configuration.screenWidthDp.dp.toPx().toInt() }
 
@@ -482,7 +481,7 @@ fun OsmMap(
                     val itemRatio = itemWidth.toDouble() / itemOriginalWidth
                     val itemHeight = (itemBitmap.height * itemRatio).toInt()
                     val finalItemBitmap = itemBitmap.scale(itemWidth, itemHeight)
-                    val finalGameItem = GameItem(firstTrueItemKey!!.itemId,firstTrueItemKey.itemRarity.toInt(),gameItem.hp,gameItem.damage,finalItemBitmap)
+                    val finalGameItem = GameItem(firstTrueItemKey!!.itemId,firstTrueItemKey.itemRarity.toInt(),hp,damage,finalItemBitmap)
                     viewModel.saveGameItem(finalGameItem)
                     navController.navigate(Route.ARScreen.route)
                 },

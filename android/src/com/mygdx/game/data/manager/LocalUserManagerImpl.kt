@@ -20,7 +20,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import com.mygdx.game.data.dao.Biometric
 import com.mygdx.game.data.dao.GameItem
-import com.mygdx.game.data.dao.Item
 import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.dao.Rank
 import com.mygdx.game.data.dao.UserProfileBundle
@@ -30,7 +29,6 @@ import com.mygdx.game.framework.postPlayerToFirestore
 import com.mygdx.game.framework.retrieveFirebaseUserIdAndBiometricCredentials
 import com.mygdx.game.framework.saveFirebaseUserIdAndBiometricCredentials
 import com.mygdx.game.util.Constants
-import com.mygdx.game.util.Constants.DEFAULT_GAME_ITEM
 import com.mygdx.game.util.Constants.USER_SETTINGS
 import com.mygdx.game.util.Constants.USER_SETTINGS2
 
@@ -162,20 +160,8 @@ class LocalUserManagerImpl(
     override fun readGameItem(): GameItem {
         val data = context.dataStore.data
         val preferences = runBlocking { data.first() } // Blocking operation to get the first emission
-        val gameItemString = preferences[PreferencesKeys.GAME_ITEM] ?: DEFAULT_GAME_ITEM
+        val gameItemString = preferences[PreferencesKeys.GAME_ITEM] ?: ""
         return GameItem.fromJson(gameItemString)
-    }
-
-    override fun readGameMetadata(rarity : Int): String{
-        var key = Constants.RARITY_METADATA_1
-        when (rarity) {
-            1 -> key = Constants.RARITY_METADATA_1
-            2 -> key = Constants.RARITY_METADATA_2
-            3 -> key = Constants.RARITY_METADATA_3
-            4 -> key = Constants.RARITY_METADATA_4
-            5 -> key = Constants.RARITY_METADATA_5
-        }
-        return key
     }
 
     override fun setUpdateListener(ref: UpdateListener) {

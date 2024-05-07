@@ -244,11 +244,11 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
         return resultLiveData
     }
 
-    override suspend fun getOwnership(): LiveData<List<String>> {
+    override suspend fun getOwnership(user: String, item: String): LiveData<List<String>> {
         val data = MutableLiveData<List<String>>()
         try {
             val response = suspendCoroutine { continuation ->
-                rankApi?.getOwnership()?.enqueue(object : Callback<List<Ownership>> {
+                rankApi?.getOwnership(user, item)?.enqueue(object : Callback<List<Ownership>> {
                     override fun onResponse(call: Call<List<Ownership>>, response: Response<List<Ownership>>) {
                         continuation.resume(response)
                     }
@@ -263,7 +263,7 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
                 val ranks = response.body()
                 if (ranks != null) {
                     val rankInfo = ranks.map {
-                        "${it.user} ${it.itemId}" }
+                        "${it.username} ${it.itemId}" }
                     data.value = rankInfo
                 } else {
                     // Empty response body

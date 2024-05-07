@@ -7,20 +7,20 @@ import com.mygdx.game.data.dao.Line
 import kotlin.math.sqrt
 
 data class GameState(
-    var gameItem: GameItem,
+    var gameItem: GameItem = GameItem(), // default
     // position of the top-left, not the center
-    var position: Vector2 = Vector2(100.0f, 100.0f),
-    var hitbox: MutableList<Vector2> = mutableListOf(),
+    var position: Vector2 = Vector2(100.0f, 100.0f), // default
+    var hitbox: MutableList<Vector2> = mutableListOf(), // default
     // current hp of the item
-    var hp: Int,
-    var shootBitmap: Bitmap? = null,
-    var shootPosition: Vector2 = Vector2(0.0f, 0.0f),
-    var shoot: Boolean = false,
-    var shootHitbox: MutableList<Vector2> = mutableListOf(),
-    var isStarted: Boolean = false,
+    var hp: Int = -1, // default
+    var shootBitmap: Bitmap? = null, // default
+    var shootPosition: Vector2 = Vector2(0.0f, 0.0f), // default
+    var shoot: Boolean = false, // default
+    var shootHitbox: MutableList<Vector2> = mutableListOf(), // default
+    var isStarted: Boolean = false, // default
     var isGameOver: Boolean = false,
-    var owned: Boolean = false,
-    var lines: MutableList<Line> = mutableListOf()
+    var owned: Boolean = false, // default
+    var lines: MutableList<Line> = mutableListOf() // default
 )
 
 data class Vector2 (

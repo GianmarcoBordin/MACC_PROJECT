@@ -3,6 +3,7 @@ package com.mygdx.game.data.dao
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
+import android.util.Base64
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import java.io.ByteArrayInputStream
@@ -22,15 +23,16 @@ data class GameItem(
         jsonObject.addProperty("rarity", rarity)
         jsonObject.addProperty("hp", hp)
         jsonObject.addProperty("damage", damage)
-        val bitmapByteArray = convertBitmapToByteArray(bitmap)
-        jsonObject.addProperty("bitmap", bitmapByteArray.toString())
+        val bitmapBase64 = convertBitmapToBase64(bitmap)
+        jsonObject.addProperty("bitmap", bitmapBase64)
         return gson.toJson(jsonObject)
     }
 
-    private fun convertBitmapToByteArray(bitmap: Bitmap): ByteArray {
-        val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-        return stream.toByteArray()
+    private fun convertBitmapToBase64(bitmap: Bitmap): String {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream)
+        val byteArray: ByteArray = byteArrayOutputStream.toByteArray()
+        return Base64.encodeToString(byteArray, Base64.DEFAULT)
     }
 
     companion object {
@@ -41,42 +43,16 @@ data class GameItem(
             val rarity = jsonObject.getAsJsonPrimitive("rarity").asInt
             val hp = jsonObject.getAsJsonPrimitive("hp").asInt
             val damage = jsonObject.getAsJsonPrimitive("damage").asInt
-            val colorString = jsonObject.getAsJsonPrimitive("bitmap").asString
-            val color : Int
-            when(colorString){
-                "green" -> color = Color.GREEN
-                "red" -> color = Color.RED
-                "yellow" -> color = Color.YELLOW
-                "blue" -> color = Color.BLUE
-                "black" -> color = Color.BLACK
-                else->{
-                    color = Color.GREEN
-                }
-
-            }
-            val bitmapByteArray = getBitmapByteArray(color)
-            val bitmap = convertByteArrayToBitmap(bitmapByteArray)
+            val bitmapString = jsonObject.getAsJsonPrimitive("bitmap").asString
+            val bitmap = convertBitmapStringToBitmap(bitmapString)
             return GameItem(id, rarity, hp, damage, bitmap)
         }
 
-        private fun convertByteArrayToBitmap(byteArray: ByteArray): Bitmap {
-            if (byteArray.isEmpty()){
-
-            }
-            val inputStream = ByteArrayInputStream(byteArray)
-            return BitmapFactory.decodeStream(inputStream)
+        private fun convertBitmapStringToBitmap(bitmapString: String): Bitmap {
+            // Decode the Base64 string into a ByteArray
+            val decodedBytes: ByteArray = Base64.decode(bitmapString, Base64.DEFAULT)
+            // Decode the ByteArray into a Bitmap
+            return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
         }
-
-        private fun getBitmapByteArray(color: Int): ByteArray {
-            // Create a bitmap with a single pixel of the specified color
-            val bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888)
-            bitmap.setPixel(0, 0, color)
-
-            // Convert the bitmap to a byte array
-            val stream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-            return stream.toByteArray()
-        }
-
     }
 }

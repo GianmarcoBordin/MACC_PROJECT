@@ -2,6 +2,7 @@ package com.mygdx.game.domain.api
 
 import androidx.lifecycle.LiveData
 import com.mygdx.game.data.dao.GameItem
+import com.mygdx.game.data.dao.Item
 import com.mygdx.game.data.dao.Ownership
 import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.dao.Rank
@@ -16,8 +17,8 @@ interface DataRepository {
 
     suspend fun postGameItem(request: GameItem): LiveData<String>
     suspend fun getGameItem(): LiveData<List<String>>
-    suspend fun getOwnership(): LiveData<List<String>>
     suspend fun postOwnership(request: Ownership): LiveData<String>
     suspend fun fetchUserData(user : String): LiveData<List<String>>
+    suspend fun getOwnership(user: String, item: String): LiveData<List<String>>
 }
 
