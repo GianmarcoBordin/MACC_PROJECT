@@ -2,11 +2,13 @@ package com.mygdx.game.presentation.scan
 
 import android.graphics.Bitmap
 import android.location.Location
+import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.core.graphics.scale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mygdx.game.data.dao.GameItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -57,9 +59,8 @@ class ARViewModel @Inject constructor(
     private var direction = Vector2(0f, 0f)
     // counter for the presence of the bullets on the screen
     private var justShoot = 0
-    private var gameItem: GameItem = localUserManager.readGameItem()
 
-    private val _state = MutableStateFlow(GameState(gameItem = gameItem, hp = gameItem.hp))
+    private val _state = MutableStateFlow(GameState())
     val state = _state.asStateFlow()
 
     fun onFocusEvent(event: FocusEvent) {
@@ -116,10 +117,10 @@ class ARViewModel @Inject constructor(
             is UpdateDatabaseEvent.IncrementItemStats -> {
                 val updatedGameItem = GameItem(state.value.gameItem.id,
                     state.value.gameItem.rarity,
-                    state.value.gameItem.hp + 1,
-                    state.value.gameItem.damage + 1,
+                    state.value.gameItem.hp + event.hpIncrement,
+                    state.value.gameItem.damage + event.damageIncrement,
                     state.value.gameItem.bitmap)
-                runBlocking {
+                viewModelScope.launch {
                     dataRepository.postGameItem(updatedGameItem)
                 }
             }
@@ -130,8 +131,22 @@ class ARViewModel @Inject constructor(
                     state.value.gameItem.hp,
                     state.value.gameItem.damage,
                     state.value.gameItem.bitmap)
-                runBlocking {
+                viewModelScope.launch {
                     dataRepository.postGameItem(newGameItem)
+                }
+            }
+
+            UpdateDatabaseEvent.GetItem -> {
+                viewModelScope.launch {
+                    dataRepository.getGameItem()
+                }
+            }
+
+            is UpdateDatabaseEvent.AddOwnership -> {
+                val username = localUserManager.getUserProfile().displayName
+                val ownership = Ownership(event.itemId, username)
+                viewModelScope.launch {
+                    dataRepository.postOwnership(ownership)
                 }
             }
         }
@@ -145,30 +160,34 @@ class ARViewModel @Inject constructor(
                 val imageHeightRatio = screenHeight / (bitmap?.height ?: 1).toFloat()
                 imageRatio = max(imageWidthRatio, imageHeightRatio)
 
+                val gameItem: GameItem = localUserManager.readGameItem()
+
                 // -> bitmap of the bullets
                 // convert to bitmap
                 val bulletsBitmap = event.bullets.asAndroidBitmap()
                 // scale the bullets so that its height is equal to the height of the item,
                 // but the ratio between its dimensions is maintained
-                val bulletsHeight = state.value.gameItem.bitmap.height
+                val bulletsHeight = gameItem.bitmap.height
+                Log.e("DEBUG", "$bulletsHeight")
                 val bulletsOriginalHeight = bulletsBitmap.height
                 val bulletsRatio = bulletsHeight.toDouble() / bulletsOriginalHeight
                 val bulletsWidth = (bulletsBitmap.width * bulletsRatio).toInt()
                 val finalBullets = bulletsBitmap.scale(bulletsWidth, bulletsHeight)
 
-                // set if the player already owns the item
-                runBlocking {
-                    if (dataRepository.getOwnership().value?.isNotEmpty() == true) {
-                        _state.value.owned = true
-                    } else {
-                        _state.value.owned = true
-                    }
-                }
-
                 // set the bitmap and make the game start
-                _state.value = state.value.copy(shootBitmap = finalBullets, isStarted = true)
+                _state.value = state.value.copy(gameItem = gameItem, hp = gameItem.hp, shootBitmap = finalBullets, isStarted = true)
+
+                val username = localUserManager.getUserProfile().displayName
+                val itemId = state.value.gameItem.id
 
                 viewModelScope.launch {
+                    // set if the player already owns the item
+                    if (dataRepository.getOwnership(username, itemId).value?.isNotEmpty() == true) {
+                        _state.value.owned = true
+                    } else {
+                        _state.value.owned = false
+                    }
+
                     while (!state.value.isGameOver) {
                         // update each 16 milliseconds (60Hz)
                         delay(16L)
@@ -235,8 +254,10 @@ class ARViewModel @Inject constructor(
             _state.value.lines.clear()
         } else {
             val circle = findFirstCircle(currentGame.lines)
-            if (isGameObjectInsideCircle(currentGame.position.toOffset(), circle))
+            if (isGameObjectInsideCircle(currentGame.position.toOffset(), circle)) {
                 _state.value.hp--
+                _state.value.lines.clear()
+            }
             // if the health is 0, then the item is captured
             if (state.value.hp == 0)
                 return currentGame.copy(isGameOver = true)

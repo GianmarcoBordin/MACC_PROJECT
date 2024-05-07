@@ -91,7 +91,8 @@ fun NavGraph(
                     lineAddHandler = arViewModel::onLineEvent,
                     lineDeleteHandler = arViewModel::onLineEvent,
                     updateDatabaseHandler = arViewModel::onUpdateDatabaseEvent,
-                    addDatabaseHandler = arViewModel::onUpdateDatabaseEvent
+                    addDatabaseHandler = arViewModel::onUpdateDatabaseEvent,
+                    addOwnershipHandler = arViewModel::onUpdateDatabaseEvent
                 )
             }
 

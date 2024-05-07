@@ -55,11 +55,19 @@ import com.mygdx.game.util.Constants
 @Composable
 fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHandler: (GameEvent.StartGame) -> Unit,
                   lineAddHandler: (LineEvent.AddNewLine) -> Unit, lineDeleteHandler: (LineEvent.DeleteAllLines) -> Unit,
-                  addDatabaseHandler: (UpdateDatabaseEvent.AddItem) -> Unit, updateDatabaseHandler: (UpdateDatabaseEvent.IncrementItemStats) -> Unit) {
+                  addDatabaseHandler: (UpdateDatabaseEvent.AddItem) -> Unit, updateDatabaseHandler: (UpdateDatabaseEvent.IncrementItemStats) -> Unit,
+                  addOwnershipHandler: (UpdateDatabaseEvent.AddOwnership) -> Unit) {
     // collectAsState() allows Canvas' recomposition
     val gameState by viewModel.state.collectAsState()
 
-    val item = ImageBitmap.imageResource(id = R.drawable.gunner_green)
+    val item = when(gameState.gameItem.rarity) {
+        1 -> ImageBitmap.imageResource(id = R.drawable.gunner_green)
+        2 -> ImageBitmap.imageResource(id = R.drawable.gunner_red)
+        3 -> ImageBitmap.imageResource(id = R.drawable.gunner_yellow)
+        4 -> ImageBitmap.imageResource(id = R.drawable.gunner_blue)
+        5 -> ImageBitmap.imageResource(id = R.drawable.gunner_black)
+        else -> ImageBitmap.imageResource(id = R.drawable.gunner_green)
+    }
     val bullets = ImageBitmap.imageResource(id = R.drawable.bullet_stream)
 
     if (!gameState.isStarted) {
@@ -164,21 +172,23 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
 
                         val textStats: String
                         if (!gameState.owned) {
+                            addOwnershipHandler(UpdateDatabaseEvent.AddOwnership(gameState.gameItem.id))
                             addDatabaseHandler(UpdateDatabaseEvent.AddItem)
                             textStats = "Stats: \n" +
                                     "- HP: ${gameState.gameItem.hp}\n" +
                                     "- Damage: ${gameState.gameItem.damage}"
                         } else {
+
                             updateDatabaseHandler(UpdateDatabaseEvent.IncrementItemStats(1, 1))
-                            val rarity: String = when(gameState.gameItem.id) {
-                                "1" -> Constants.RARITY_1
-                                "2" -> Constants.RARITY_2
-                                "3" -> Constants.RARITY_3
-                                "4" -> Constants.RARITY_4
-                                "5" -> Constants.RARITY_5
-                                else -> Constants.RARITY_1
+                            val rarity: String = when(gameState.gameItem.rarity) {
+                                1 -> Constants.RARITY_1_COLOR
+                                2 -> Constants.RARITY_2_COLOR
+                                3 -> Constants.RARITY_3_COLOR
+                                4 -> Constants.RARITY_4_COLOR
+                                5 -> Constants.RARITY_5_COLOR
+                                else -> Constants.RARITY_1_COLOR
                             }
-                            textStats = "Your $rarity Gunner has received an upgrade!" +
+                            textStats = "Your $rarity Gunner has received an upgrade!\n" +
                                     "Updated Stats: \n" +
                                     "- HP: ${gameState.gameItem.hp + 1}\n" +
                                     "- Damage: ${gameState.gameItem.damage + 1}"

@@ -195,6 +195,7 @@ fun Screen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (Visibil
                                 materialLoader = materialLoader,
                                 modelInstances = modelInstances,
                                 anchor = anchor,
+                                rarity = viewModel.state.value.gameItem.rarity
                             )
                         }
                 }
@@ -366,9 +367,17 @@ fun createAnchorNode(
     modelLoader: ModelLoader,
     materialLoader: MaterialLoader,
     modelInstances: MutableList<ModelInstance>,
-    anchor: Anchor
+    anchor: Anchor,
+    rarity: Int
 ): AnchorNode {
-    val kModelFile = "models/gunner_green.glb"
+    val kModelFile = when (rarity) {
+        1 -> "models/gunner_green.glb"
+        2 -> "models/gunner_red.glb"
+        3 -> "models/gunner_yellow.glb"
+        4 -> "models/gunner_blue.glb"
+        5 -> "models/gunner_black.glb"
+        else -> "models/gunner_green.glb"
+    }
     val kMaxModelInstances = 3
 
     val anchorNode = AnchorNode(engine = engine, anchor = anchor)
