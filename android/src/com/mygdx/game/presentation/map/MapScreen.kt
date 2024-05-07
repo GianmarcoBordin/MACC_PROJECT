@@ -307,7 +307,7 @@ fun OsmMap(
     val players by viewModel.players.observeAsState()
     val objects by viewModel.objects.observeAsState()
     val navPath by viewModel.navPath.observeAsState()
-    val thresholdButton = 5
+    val thresholdButton = 50
     val thresholdButtonFlag by viewModel.thresholdButtonFlag.observeAsState()
 
 
@@ -321,8 +321,6 @@ fun OsmMap(
                 setTileSource(TileSourceFactory.MAPNIK)
                 setMultiTouchControls(true)
                 controller.setZoom(18.0)
-                val centerPoint = GeoPoint(37.42426170291941, -122.08503063023716)
-                controller.setCenter(centerPoint)
 
                 // Register a touch event listener
                 setOnTouchListener { _, event ->
@@ -339,8 +337,10 @@ fun OsmMap(
                                     longitude = clickedMarker.position.longitude
                                 }
                                 routeHandler(RouteEvent.Route(userLocation, to))
+                                true
+                            }else{
+                                false
                             }
-                            true // Consume the event
                         }
                         else -> false // Continue processing other touch events
                     }

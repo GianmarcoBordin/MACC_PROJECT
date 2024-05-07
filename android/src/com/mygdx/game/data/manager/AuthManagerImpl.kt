@@ -48,7 +48,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                 // fetch rank data
                 val rankData = dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
                 val rank:Rank
-                if(rankData == listOf("Error: ")){
+                if(rankData == listOf("Error: ") || rankData?.isEmpty() == true){
                      rank = Rank( name,  0)
 
                 }else{
