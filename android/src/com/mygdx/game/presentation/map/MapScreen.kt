@@ -420,52 +420,45 @@ fun OsmMap(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val itemBitMap : ImageBitmap
-            val gson = Gson()
             val gameItem : GameItem
             val firstTrueItemKey = thresholdButtonFlag!!.entries.find { it.value }?.key
             when (firstTrueItemKey?.itemRarity) {
                 "1" -> {
                     itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_green)
                     // Parse JSON string to Item object
-                    gameItem = gson.fromJson(com.mygdx.game.util.Constants.RARITY_METADATA_1, GameItem::class.java)
+                    gameItem = GameItem.fromJson(com.mygdx.game.util.Constants.RARITY_METADATA_1)
                 }
                 "2" -> {
                     itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_red)
-                    gameItem = gson.fromJson(
-                        com.mygdx.game.util.Constants.RARITY_METADATA_2,
-                        GameItem::class.java
-                    )
+                    gameItem = GameItem.fromJson(
+                        com.mygdx.game.util.Constants.RARITY_METADATA_2)
                 }
 
                 "3" -> {
                     itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_yellow)
-                    gameItem = gson.fromJson(
-                        com.mygdx.game.util.Constants.RARITY_METADATA_3,
-                        GameItem::class.java
+                    gameItem = GameItem.fromJson(
+                        com.mygdx.game.util.Constants.RARITY_METADATA_3
                     )
                 }
 
                 "4" -> {
                     itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_blue)
-                    gameItem = gson.fromJson(
-                        com.mygdx.game.util.Constants.RARITY_METADATA_4,
-                        GameItem::class.java
+                    gameItem = GameItem.fromJson(
+                        com.mygdx.game.util.Constants.RARITY_METADATA_4
                     )
                 }
 
                 "5" -> {
                     itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_black)
-                    gameItem = gson.fromJson(
-                        com.mygdx.game.util.Constants.RARITY_METADATA_5,
-                        GameItem::class.java
+                    gameItem = GameItem.fromJson(
+                        com.mygdx.game.util.Constants.RARITY_METADATA_5
                     )
                 }
 
                 else -> {
                     itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_green)
-                    gameItem = gson.fromJson(
-                        com.mygdx.game.util.Constants.RARITY_METADATA_1,
-                        GameItem::class.java
+                    gameItem = GameItem.fromJson(
+                        com.mygdx.game.util.Constants.RARITY_METADATA_1
                     )
                 }
 

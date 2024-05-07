@@ -45,6 +45,7 @@ class AuthenticationViewModel  @Inject constructor(
     fun onSignInEvent(event: SignInEvent) {
         when (event) {
             is SignInEvent.SignIn -> {
+                _isError.value = false
                 _isLoading.value = true
                 goSignIn(event.email, event.password)
             }
@@ -56,6 +57,8 @@ class AuthenticationViewModel  @Inject constructor(
     fun onSignUpEvent(event: SignUpEvent) {
         when (event) {
             is SignUpEvent.SignUp -> {
+                _isError.value = false
+                _isLoading.value = true
                 goSignUp(event.name, event.email, event.password, event.confirmPass)
             }
 
@@ -67,6 +70,8 @@ class AuthenticationViewModel  @Inject constructor(
     fun onBioSignInEvent(event: BioSignInEvent) {
         when (event) {
             is BioSignInEvent.BioSignIn -> {
+                _isError.value = false
+                _isLoading.value = true
                 goBioSignIn(event.context, event.callback)
             }
 
@@ -96,7 +101,7 @@ class AuthenticationViewModel  @Inject constructor(
     override fun onUpdate(data: String) {
         // Update UI state with received data
         _data.value = data
-        if (_data.value == "SignUp Success" || _data.value == "Login Success" || _data.value=="Confirmation Success") {
+        if (_data.value == "SignUp Success" || _data.value == "Login Success" || _data.value == "Bio Auth Success") {
             _isLoading.value=false
             _isError.value = false
             _navigateToAnotherScreen.value = true

@@ -202,5 +202,4 @@ private object PreferencesKeys{
     val SCORE = stringPreferencesKey("score")
 
 }
-// TODO add signup loading and biometric loading and focusa manager also in signin
-// TODO test map and rank and biometric and when repo called
+

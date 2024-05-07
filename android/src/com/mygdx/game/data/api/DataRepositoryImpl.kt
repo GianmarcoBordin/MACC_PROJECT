@@ -218,10 +218,6 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
         return data
     }
 
-    override suspend fun postOwnership(request: Rank): LiveData<String> {
-        TODO("Not yet implemented")
-    }
-
 
     override suspend fun postOwnership(request: Ownership): LiveData<String> {
         val resultLiveData = MutableLiveData<String>()
