@@ -3,17 +3,15 @@ package com.mygdx.game.multiplayer
 import com.badlogic.gdx.Gdx
 import com.google.gson.Gson
 import com.mygdx.game.GameManager
-import com.mygdx.game.dto.GenericMessage
+import com.mygdx.game.dto.CharacterType
+import com.mygdx.game.dto.WebSocketMessage
 import com.mygdx.game.dto.InitMessage
 import com.mygdx.game.dto.Message
 import com.mygdx.game.dto.MessageType
-import com.mygdx.game.player.PlayerStatus
-import com.mygdx.game.player.PlayerType
-import com.mygdx.game.screen.GameScreen
+import com.mygdx.game.player.PlayerPosition
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
@@ -27,11 +25,12 @@ const val debugTag = "CLIENT"
 class MultiplayerClient(
     private val gameManager: GameManager,
     private var myPlayerId: String,
-    private var adversaryId: String
+    private var adversaryId: String,
+    private val characterType: CharacterType
 ) {
 
     interface MultiplayerListener {
-        fun onAdversaryPlayerTypeReceived(playerType: PlayerType)
+        fun onAdversaryPlayerTypeReceived(playerPosition: PlayerPosition, playerType: CharacterType)
         fun onDisconnectedAdversary()
     }
 
@@ -64,7 +63,7 @@ class MultiplayerClient(
             object : WebSocketListener(){
                 override fun onOpen(webSocket: WebSocket, response: Response) {
                     Gdx.app.log(debugTag, "INIT MESSAGE")
-                    val message : Message = InitMessage(myPlayerId, adversaryId, PlayerType.GREEN)
+                    val message : Message = InitMessage(myPlayerId, adversaryId, PlayerPosition.LEFT, characterType)
                     val json = gson.toJson(message)
 
                     // note: you cannot send it into a coroutine because in this way we need a blocking call to server
@@ -74,13 +73,15 @@ class MultiplayerClient(
 
                 override fun onMessage(webSocket: WebSocket, text: String) {
 
-                    val message = gson.fromJson(text, GenericMessage::class.java)
+                    val message = gson.fromJson(text, WebSocketMessage::class.java)
 
                     when (message.type) {
 
                         MessageType.MOVEMENT -> {
-
-                            gameEventListener?.onMovementMessage(message.newX,message.newY)
+                            // used to avoid null value
+                            message.newX?.let { message.newY?.let { it1 ->
+                                gameEventListener?.onMovementMessage(it, it1)
+                            } }
 
                         }
 
@@ -90,12 +91,18 @@ class MultiplayerClient(
 
                         MessageType.START -> {
                             // Handle START message
-
+                            println(message)
                             if(message.senderId == adversaryId){
                                 Gdx.app.log(debugTag, "connection established, you can start sending messages")
 
                                 Gdx.app.postRunnable{
-                                    multiplayerListener?.onAdversaryPlayerTypeReceived(message.playerType)
+                                    message.playerType?.let {
+                                        message.playerPosition?.let { it1 ->
+                                            multiplayerListener?.onAdversaryPlayerTypeReceived(
+                                                it1,it
+                                            )
+                                        }
+                                    }
                                 }
 
 
@@ -155,7 +162,8 @@ class MultiplayerClient(
     }
     
     fun sendPlayerMovementMessage(newX: Float, newY: Float) {
-        val message = GenericMessage(MessageType.MOVEMENT, myPlayerId, adversaryId, newX, newY, PlayerType.GREEN)
+        // Last two are dummy
+        val message = WebSocketMessage(MessageType.MOVEMENT, receiverId = adversaryId, newX = newX, newY = newY)
         val json = gson.toJson(message)
 
         webSocket.send(json)
@@ -163,8 +171,9 @@ class MultiplayerClient(
 
     }
 
-    fun sendLaserMessage(startX: Float, startY: Float) {
-        val message = GenericMessage(MessageType.LASER, myPlayerId, adversaryId, startX, startY, PlayerType.GREEN)
+    fun sendLaserMessage() {
+
+        val message = WebSocketMessage(type = MessageType.LASER, receiverId = adversaryId)
         val json = gson.toJson(message)
 
         webSocket.send(json)

@@ -12,11 +12,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mygdx.game.GameManager
+import com.mygdx.game.dto.CharacterType
 import com.mygdx.game.multiplayer.MultiplayerClient
-import com.mygdx.game.player.PlayerType
+import com.mygdx.game.player.PlayerPosition
 
 
-class ConnectionScreen(private val gameManager: GameManager, private val myId: String, private val otherId: String) : ScreenAdapter(), MultiplayerClient.MultiplayerListener {
+class ConnectionScreen(private val gameManager: GameManager, private val myId: String, private val otherId: String, private val characterType: CharacterType ) : ScreenAdapter(), MultiplayerClient.MultiplayerListener {
 
     private val width = (Gdx.graphics.width/1.2).toFloat()
     private val height = (Gdx.graphics.height/1.2).toFloat()
@@ -27,10 +28,9 @@ class ConnectionScreen(private val gameManager: GameManager, private val myId: S
     private val stage: Stage = Stage(FitViewport(width,height))
     private val table: Table = Table()
 
-    var multiplayerClient : MultiplayerClient = MultiplayerClient(gameManager, myId, otherId)
+    var multiplayerClient : MultiplayerClient = MultiplayerClient(gameManager, myId, otherId, characterType)
 
     init {
-
 
         table.setFillParent(true)
         table.center()
@@ -55,9 +55,19 @@ class ConnectionScreen(private val gameManager: GameManager, private val myId: S
     }
 
     // Called when you are ready to start the game between the players
-    override fun onAdversaryPlayerTypeReceived(playerType: PlayerType) {
+    override fun onAdversaryPlayerTypeReceived(playerPosition: PlayerPosition, playerType: CharacterType) {
         Gdx.app.postRunnable{
-            gameManager.showGameScreen(GameScreen(gameManager, multiplayerClient, playerType, myId, otherId))
+
+            val gameScreen = GameScreen(
+                gameManager,
+                multiplayerClient,
+                playerPosition,
+                myId,
+                otherId,
+                myPlayerType = characterType,
+                otherPlayerType = playerType
+            )
+            gameManager.showGameScreen(gameScreen)
         }
     }
 

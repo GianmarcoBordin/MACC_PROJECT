@@ -5,14 +5,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.math.Vector2
 import com.mygdx.game.Constants
-import com.mygdx.game.Constants.PLAYER_LIFE
-import com.mygdx.game.multiplayer.MultiplayerClient
 import java.util.LinkedList
 
 
 data class Player(
     var origin: Vector2,
-
 
     // it's the frequency of shoots
     var timeBetweenShots: Float,
@@ -20,14 +17,16 @@ data class Player(
     // graphics
     var playerTextureRegion: TextureRegion,
     var laserTextureRegion: TextureRegion,
-    var playerType: PlayerType
+    var playerPosition: PlayerPosition,
+    var life: Int,
+    var damage: Int
     )
 {
     interface PlayerEventListener {
-        fun onGameOver(type: PlayerType)
+        fun onGameOver(position: PlayerPosition)
     }
 
-    var life = PLAYER_LIFE
+
 
     // keep track of laser generate by users
     var laserList: LinkedList<Laser> = LinkedList()
@@ -78,9 +77,8 @@ data class Player(
     }
 
 
-    fun fireLasers(playerType: PlayerType): Laser {
-
-        val xStart = if (playerType == PlayerType.RED) playerBox.x else playerBox.x + playerBox.width
+    fun fireLasers(playerPosition: PlayerPosition): Laser {
+        val xStart = if (playerPosition == PlayerPosition.RIGHT) playerBox.x else playerBox.x + playerBox.width
 
         val laser = Laser(
             xStart,
@@ -95,10 +93,10 @@ data class Player(
     }
 
     // return true only when you loose
-    fun hit(){
-        life--
+    fun hit(damage: Int){
+        life -= damage
         if (life <= 0) {
-            playerEventListener?.onGameOver(playerType)
+            playerEventListener?.onGameOver(playerPosition)
         }
 
     }

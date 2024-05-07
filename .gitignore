@@ -1,4 +1,11 @@
 /build/
 /core/build/
 /android/build/
+
 /.gradle/
+/.gradle/8.5/
+/.gradle/buildOutputCleanup/
+/.gradle/kotlin/
+/.gradle/vcs-1/
+/.gradle/config.properties
+/.gradle/file-system.probe

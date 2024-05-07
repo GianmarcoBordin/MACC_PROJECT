@@ -1,4 +1,4 @@
-package com.mygdx.game.screen.component
+package com.mygdx.game.screen.components
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -12,9 +12,8 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.mygdx.game.Constants.WORLD_HEIGHT
 import com.mygdx.game.Constants.WORLD_WIDTH
-import com.mygdx.game.GameManager
 
-// TODO use gameManager to change text skin
+
 class HeadsUp(batch: SpriteBatch?, firstPlayerId: String, secondPlayerId: String) : Disposable {
 
     private var stage: Stage

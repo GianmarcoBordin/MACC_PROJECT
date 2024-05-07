@@ -37,7 +37,7 @@ class GameOverScreen(private val game: GameManager, private val win: Boolean, pr
 
         playAgainButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-                //TODO here should disconnect
+
                 game.showConnectionScreen(otherId = otherId)
             }
 

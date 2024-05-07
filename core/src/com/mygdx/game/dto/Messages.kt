@@ -1,30 +1,32 @@
 package com.mygdx.game.dto
 
-import com.mygdx.game.player.PlayerType
+import com.mygdx.game.player.PlayerPosition
 
 
 enum class MessageType {
     INIT,
     START,
+    DISCONNECTED,
     MOVEMENT,
-    LASER,
-    DISCONNECTED
+    LASER
 }
 
-data class GenericMessage(
+data class WebSocketMessage(
     val type: MessageType,
-    val senderId: String,
-    val receiverId: String,
-    val newX: Float,
-    val newY: Float,
-    val playerType: PlayerType
+    val senderId: String? = null,
+    val receiverId: String? = null,
+    val newX: Float? = null,
+    val newY: Float? = null,
+    val playerPosition: PlayerPosition? = null,
+    val playerType: CharacterType? = null
 )
 
 
 data class InitMessage(
     val senderId: String,
     val receiverId: String,
-    val playerType: PlayerType
+    val playerPosition: PlayerPosition,
+    val playerType: CharacterType
 ) : Message(MessageType.INIT)
 
 

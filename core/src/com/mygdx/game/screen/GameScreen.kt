@@ -18,24 +18,27 @@ import com.mygdx.game.Constants.SECOND_HEALTH_STARTING_X
 import com.mygdx.game.Constants.UP_LIMIT
 import com.mygdx.game.Constants.WORLD_HEIGHT
 import com.mygdx.game.Constants.WORLD_WIDTH
-import com.mygdx.game.screen.component.Controller
+import com.mygdx.game.screen.components.Controller
 import com.mygdx.game.GameManager
+import com.mygdx.game.dto.CharacterType
 import com.mygdx.game.multiplayer.MultiplayerClient
-import com.mygdx.game.screen.component.HealthBar
+import com.mygdx.game.screen.components.HealthBar
 import com.mygdx.game.player.Laser
 import com.mygdx.game.player.Player
-import com.mygdx.game.player.PlayerType
+import com.mygdx.game.player.PlayerPosition
 import com.mygdx.game.player.SoundManager
-import com.mygdx.game.screen.component.HeadsUp
+import com.mygdx.game.screen.components.HeadsUp
 
 
-// TODO use the GameManager to change screen when something happen
+
 class GameScreen(
     private val game: GameManager,
-    val multiplayerClient: MultiplayerClient,
-    private var playerType: PlayerType,
-    private val myId: String,
-    private val otherId: String
+    private val multiplayerClient: MultiplayerClient,
+    private var playerPosition: PlayerPosition,
+    myId: String,
+    private val otherId: String,
+    private val myPlayerType: CharacterType,
+    private val otherPlayerType: CharacterType
 ) : ScreenAdapter(), MultiplayerClient.GameEventListener, Player.PlayerEventListener
 {
 
@@ -53,14 +56,22 @@ class GameScreen(
     private var secondPlayer: Player
     private var soundManager: SoundManager
 
-    private val firstPlayerLaserDirection = if (playerType == PlayerType.RED) -1f else 1f
+    private val firstPlayerLaserDirection = if (playerPosition == PlayerPosition.RIGHT) -1f else 1f
     private val secondPlayerLaserDirection = -1 * firstPlayerLaserDirection
 
     private var firstPlayerHealthBar : HealthBar
     private var secondPlayerHealthBar : HealthBar
     private var headsUp: HeadsUp
 
+    private lateinit var firstPlayerTexture: TextureRegion
+    private lateinit var secondPlayerTexture: TextureRegion
+    private lateinit var firstPlayerLaserTexture: TextureRegion
+    private lateinit var secondPlayerLaserTexture: TextureRegion
+
     init {
+        Gdx.app.log("GAME","MY PLAYER POSITION: $playerPosition")
+        Gdx.app.log("GAME","ME: ${myPlayerType.type} ${myPlayerType.hp} ${myPlayerType.damage}")
+        Gdx.app.log("GAME","OTHER: ${otherPlayerType.type} ${otherPlayerType.hp} ${otherPlayerType.damage}")
 
         multiplayerClient.setGameEventListener(this)
 
@@ -73,23 +84,32 @@ class GameScreen(
 
         background = textureAtlas.findRegion("arena-background")
 
-        val greenPlayerXPosition = if (playerType == PlayerType.GREEN) PLAYER_1_POSITION else PLAYER_2_POSITION
-        val redPlayerXPosition = if (playerType == PlayerType.GREEN) PLAYER_2_POSITION else PLAYER_1_POSITION
+        val leftPlayerXPosition = if (playerPosition == PlayerPosition.LEFT) PLAYER_1_POSITION else PLAYER_2_POSITION
+        val rightPlayerXPosition = if (playerPosition == PlayerPosition.LEFT) PLAYER_2_POSITION else PLAYER_1_POSITION
+
+        // set player texture according to the player received in input
+        setPlayerTexture()
+
 
         // Create player 1
         firstPlayer = Player(
-            greenPlayerXPosition, 0.15f,
-            textureAtlas.findRegion(if (playerType == PlayerType.GREEN) "Gunner_Green_image" else "Gunner_Red_image"),
-            textureAtlas.findRegion(if (playerType == PlayerType.GREEN) "laserGreen" else "laserRed"),
-            playerType
+            leftPlayerXPosition, 0.15f,
+            firstPlayerTexture,
+            firstPlayerLaserTexture,
+            playerPosition,
+            myPlayerType.hp,
+            myPlayerType.damage
+
         )
 
         // Create player 2
         secondPlayer = Player(
-            redPlayerXPosition, 0.15f,
-            textureAtlas.findRegion(if (playerType == PlayerType.GREEN) "Gunner_Red_image" else "Gunner_Green_image"),
-            textureAtlas.findRegion(if (playerType == PlayerType.GREEN) "laserRed" else "laserGreen"),
-            playerType.opposite()
+            rightPlayerXPosition, 0.15f,
+            secondPlayerTexture,
+            secondPlayerLaserTexture,
+            playerPosition.opposite(),
+            otherPlayerType.hp,
+            otherPlayerType.damage
         )
 
         // listen only the first player, the second one sends the message through websocket
@@ -100,20 +120,38 @@ class GameScreen(
         soundManager = SoundManager()
         soundManager.playBattle()
         controller = Controller(batch!!)
-        headsUp = if (PlayerType.GREEN == playerType) HeadsUp(batch, myId, otherId) else HeadsUp(batch, otherId, myId)
+        headsUp = if (PlayerPosition.LEFT == playerPosition) HeadsUp(batch, myId, otherId) else HeadsUp(batch, otherId, myId)
 
         // generate health box for each user
         val healthTexture = textureAtlas.findRegion("blank")
-        firstPlayerHealthBar = if (PlayerType.GREEN == playerType) HealthBar(healthTexture, FIRST_HEALTH_STARTING_X) else HealthBar(healthTexture, SECOND_HEALTH_STARTING_X)
-
-        secondPlayerHealthBar = if (PlayerType.GREEN == playerType) HealthBar(healthTexture, SECOND_HEALTH_STARTING_X) else HealthBar(healthTexture, FIRST_HEALTH_STARTING_X)
+        firstPlayerHealthBar = if (PlayerPosition.LEFT == playerPosition) HealthBar(healthTexture, FIRST_HEALTH_STARTING_X, myPlayerType.hp) else HealthBar(healthTexture, SECOND_HEALTH_STARTING_X, myPlayerType.hp)
+        secondPlayerHealthBar = if (PlayerPosition.LEFT == playerPosition) HealthBar(healthTexture, SECOND_HEALTH_STARTING_X, otherPlayerType.hp) else HealthBar(healthTexture, FIRST_HEALTH_STARTING_X, otherPlayerType.hp)
 
     }
+
+    private fun setPlayerTexture(){
+        val myTextureName = myPlayerType.type.getSkinRegionName()
+        val otherTextureName = otherPlayerType.type.getSkinRegionName()
+        firstPlayerTexture = textureAtlas.findRegion(myTextureName)
+        secondPlayerTexture = textureAtlas.findRegion(otherTextureName)
+
+        firstPlayerLaserTexture = textureAtlas.findRegion(if (playerPosition == PlayerPosition.LEFT) "laserGreen" else "laserRed")
+        secondPlayerLaserTexture = textureAtlas.findRegion(if (playerPosition == PlayerPosition.LEFT) "laserRed" else "laserGreen")
+
+        if (playerPosition == PlayerPosition.RIGHT){
+            firstPlayerTexture.flip(true,false)
+        }
+        else {
+            secondPlayerTexture.flip(true,false)
+        }
+
+    }
+
+
 
     override fun show() {
 
     }
-
 
 
     // Method used as a callback when the websocket client receives a movement message
@@ -123,8 +161,8 @@ class GameScreen(
 
     // Method used as a callback when the websocket client receives a new laser message
     override fun onLaserMessage() {
-        // TODO I don't know if startX and startY are useful
-        val laser = secondPlayer.fireLasers(PlayerType.RED)
+
+        val laser = secondPlayer.fireLasers(playerPosition.opposite())
         secondPlayer.laserList.add(laser)
         soundManager.playShoot()
     }
@@ -195,8 +233,8 @@ class GameScreen(
         val playerX = firstPlayer.xPosition()
         val playerY = firstPlayer.yPosition()
 
-        val leftLimit: Float = if (playerType == PlayerType.GREEN) -playerX else - playerX + WORLD_WIDTH / 2
-        val rightLimit = if (playerType == PlayerType.GREEN) WORLD_WIDTH / 2f - playerX - PLAYER_BOX_WIDTH else WORLD_WIDTH - playerX - PLAYER_BOX_WIDTH
+        val leftLimit: Float = if (playerPosition == PlayerPosition.LEFT) -playerX else - playerX + WORLD_WIDTH / 2
+        val rightLimit = if (playerPosition == PlayerPosition.LEFT) WORLD_WIDTH / 2f - playerX - PLAYER_BOX_WIDTH else WORLD_WIDTH - playerX - PLAYER_BOX_WIDTH
         val downLimit = -playerY
         val upLimit = UP_LIMIT - playerY - PLAYER_BOX_HEIGHT
 
@@ -228,12 +266,12 @@ class GameScreen(
     private fun renderFirstPlayerLaser(deltaTime: Float){
 
         if (controller.isFightPressed && firstPlayer.canFireLaser()) {
-            val laser = firstPlayer.fireLasers(playerType)
+            val laser = firstPlayer.fireLasers(playerPosition)
             firstPlayer.laserList.add(laser)
             soundManager.playShoot()
 
 
-            multiplayerClient.sendLaserMessage(laser.laserBox.x, laser.laserBox.y)
+            multiplayerClient.sendLaserMessage()
         }
 
 
@@ -288,7 +326,7 @@ class GameScreen(
 
             if (otherPlayer.intersects(laser.laserBox)) {
 
-                otherPlayer.hit()
+                otherPlayer.hit(player.damage)
                 laserIterator.remove()
                 break
             }
@@ -296,9 +334,9 @@ class GameScreen(
     }
 
     // called from player code when the current user looses or wins
-    override fun onGameOver(type: PlayerType) {
+    override fun onGameOver(position: PlayerPosition) {
         // you win
-        if (type != playerType){
+        if (position != playerPosition){
             game.showGameOverScreen(GameOverScreen(game,true, otherId))
         } else {
             game.showGameOverScreen(GameOverScreen(game,false, otherId))
