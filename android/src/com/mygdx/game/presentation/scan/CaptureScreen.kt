@@ -56,7 +56,7 @@ import com.mygdx.game.util.Constants
 fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHandler: (GameEvent.StartGame) -> Unit,
                   lineAddHandler: (LineEvent.AddNewLine) -> Unit, lineDeleteHandler: (LineEvent.DeleteAllLines) -> Unit,
                   addDatabaseHandler: (UpdateDatabaseEvent.AddItem) -> Unit, updateDatabaseHandler: (UpdateDatabaseEvent.IncrementItemStats) -> Unit,
-                  addOwnershipHandler: (UpdateDatabaseEvent.AddOwnership) -> Unit) {
+                  addOwnershipHandler: (UpdateDatabaseEvent.AddOwnership) -> Unit, getItemDatabaseHandler: (UpdateDatabaseEvent.GetItem) -> Unit) {
     // collectAsState() allows Canvas' recomposition
     val gameState by viewModel.state.collectAsState()
 
@@ -178,7 +178,7 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                                     "- HP: ${gameState.gameItem.hp}\n" +
                                     "- Damage: ${gameState.gameItem.damage}"
                         } else {
-
+                            getItemDatabaseHandler(UpdateDatabaseEvent.GetItem(gameState.gameItem.rarity.toString()))
                             updateDatabaseHandler(UpdateDatabaseEvent.IncrementItemStats(1, 1))
                             val rarity: String = when(gameState.gameItem.rarity) {
                                 1 -> Constants.RARITY_1_COLOR

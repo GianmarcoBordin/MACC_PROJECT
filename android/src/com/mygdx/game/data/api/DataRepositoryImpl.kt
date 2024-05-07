@@ -178,7 +178,7 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
 
         return resultLiveData
     }
-    override suspend fun getGameItem(user: String,rarity:String): LiveData<List<String>> {
+    override suspend fun getGameItem(user: String, rarity:String): LiveData<List<String>> {
         val data = MutableLiveData<List<String>>()
         try {
             val response = suspendCoroutine { continuation ->
@@ -213,7 +213,6 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
             Log.d(TAG,"Error: ${e.message}"+e.printStackTrace())
             data.value = listOf("Error: ")
         }
-
 
         return data
     }
