@@ -46,13 +46,14 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                     UserProfileBundle(displayName = name, email = email)
                 localUserManager.saveUserProfile(userProfileBundle)
                 // fetch rank data
-                val rankData = dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
+                val result = dataRepository.fetchUserData(name).value
                 val rank:Rank
-                if(rankData == listOf("Error: ") || rankData?.isEmpty() == true){
-                     rank = Rank( name,  0)
+                if(result?.isNotEmpty() == true){
+                    val rankData = dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
+                    rank = Rank(rankData?.get(0) ?: name, rankData?.get(1)?.toInt() ?: 0)
 
-                }else{
-                     rank = Rank(rankData?.get(0) ?: name, rankData?.get(1)?.toInt() ?: 0)
+                }else {
+                    rank = Rank( name,  0)
                 }
                 // save user rank
                 localUserManager.saveScore(rank)
