@@ -20,6 +20,10 @@ import com.mygdx.game.domain.api.DataRepository
 import com.mygdx.game.domain.manager.AuthManager
 import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.framework.postPlayerToFirestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface UpdateListener {
@@ -74,7 +78,8 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
     }
 
     override suspend fun bioSignIn(context: Context, callbacks: (String) -> Unit) {
-            // User is logged in
+
+        // User is logged in
             contxt=context
             val biometricPrompt = BiometricPrompt.Builder(context)
                 .setTitle("Biometric Authentication")
@@ -91,12 +96,24 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                 object : BiometricPrompt.AuthenticationCallback() {
                     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                         super.onAuthenticationSucceeded(result)
-                        runBlocking {
-                            val bio = localUserManager.readBio()
-                            if (doSignIn(bio.first, bio.second)){
+                        CoroutineScope(Dispatchers.Main).launch {
+                            // Use withContext to switch to a background thread for blocking operation
+                            val bio = withContext(Dispatchers.IO) {
+                                localUserManager.readBio()
+                            }
+
+                            // Perform the authentication
+                            val result = withContext(Dispatchers.Default) {
+                                doSignIn(bio.first, bio.second)
+                            }
+
+                            // Invoke the callback with the authentication result
+                            if (result) {
                                 callbacks.invoke("Bio Auth Success")
-                            }else{
+                                updateListener?.onUpdate("Bio Auth Success")
+                            } else {
                                 callbacks.invoke("Bio Auth Failed")
+                                updateListener?.onUpdate("Bio Auth Failed")
                             }
                         }
                     }
@@ -104,11 +121,15 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                     override fun onAuthenticationFailed() {
                         super.onAuthenticationFailed()
                         callbacks.invoke("Bio Auth failed")
+                        updateListener?.onUpdate("Bio Auth Failed")
+
                     }
 
                     override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                         super.onAuthenticationError(errorCode, errString)
                         callbacks.invoke("Bio Auth failed")
+                        updateListener?.onUpdate("Bio Auth Failed")
+
                     }
                 }
             )

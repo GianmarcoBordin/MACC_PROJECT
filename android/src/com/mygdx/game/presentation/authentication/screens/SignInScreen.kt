@@ -261,10 +261,18 @@ fun DefaultSignInContent(
             // Observe changes in data
             if (data?.isNotEmpty() == true) {
                 // Display data
-                Text(
-                    text = data!!.toString(),
-                    color = if (data.equals("Login Success")) Color.Green else MaterialTheme.colorScheme.onError,
-                )
+                if(data?.equals("Login Success") == true) {
+                    Text(
+                        text = data!!.toString(),
+                        color = if (data.equals("Login Success")) Color.Green else MaterialTheme.colorScheme.onError,
+                    )
+                }
+                if(data?.equals("Bio Auth Success") == true) {
+                    Text(
+                        text = authenticationResult,
+                        color = if (data.equals("Bio Auth Success")) Color.Green else MaterialTheme.colorScheme.onError,
+                    )
+                }
                 // Change page if all ok
                 if (viewModel.navigateToAnotherScreen.value == true) {
                     navController.navigate(Route.HomeScreen.route)
@@ -272,17 +280,7 @@ fun DefaultSignInContent(
                 }
 
             }
-            // Observe changes in data
-            if (authenticationResult == "Biometric authentication successful") {
-                navController.navigate(Route.HomeScreen.route)
-                viewModel.onNavigationComplete()
-            }
-            Text(
-                text = authenticationResult,
-                fontSize = 16.sp,
-                modifier = Modifier.padding(top = 16.dp),
-                color = if (authenticationResult == "Biometric authentication successful") Color.Green else MaterialTheme.colorScheme.onError
-            )
+
             if (isLoading == true) {
                 val progress = remember { Animatable(0f) }
                 LaunchedEffect(Unit) {
