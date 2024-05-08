@@ -20,16 +20,12 @@ fun OnBoardingButton(
 ){
     Button(
         onClick = onClick,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        ),
-        shape = RoundedCornerShape(size = 6.dp)
+        shape = RoundedCornerShape(size = 16.dp)
         ) {
         Text(
             text = text,
             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-            color = MaterialTheme.colorScheme.onSurface
+            //color = MaterialTheme.colorScheme.onSurface
         )
     }
 }
@@ -44,7 +40,7 @@ fun OnBoardingTextButton(
         Text(
             text = text,
             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-            color = MaterialTheme.colorScheme.onSurface
+            //color = MaterialTheme.colorScheme.onSurface
         )
     }
 }

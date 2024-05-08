@@ -15,6 +15,8 @@ import com.mygdx.game.data.manager.UpdateListener
 import com.mygdx.game.domain.usecase.settings.SettingsUseCases
 import com.mygdx.game.presentation.settings.events.SignOutEvent
 import com.mygdx.game.presentation.settings.events.UpdateEvent
+import com.mygdx.game.util.Constants.SIGN_OUT_SUCCESS
+import com.mygdx.game.util.Constants.UPDATE_SUCCESS
 import com.mygdx.game.util.Constants.USER_SETTINGS
 import javax.inject.Inject
 
@@ -73,7 +75,7 @@ class SettingsViewModel  @Inject constructor(
     override fun onUpdate(data: String) {
         // Update UI state with received data
         _data.value= data
-        if (_data.value == "Update Success" || _data.value == "SignOut Success" ) {
+        if (_data.value == UPDATE_SUCCESS || _data.value == SIGN_OUT_SUCCESS ) {
             _navigateToAnotherScreen.value = true
         }
     }

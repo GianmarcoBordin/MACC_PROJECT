@@ -44,7 +44,8 @@ fun OnBoardingScreen(
                     when (pagerState.currentPage) {
                         0 -> listOf("", "Next")
                         1 -> listOf("Back", "Next")
-                        2 -> listOf("Back", "Get Started")
+                        2 -> listOf("Back", "Next")
+                        3 -> listOf("Back", "Get Started")
                         else -> listOf("", "")
                     }
                 }
@@ -88,7 +89,7 @@ fun OnBoardingScreen(
                         text = buttonsState.value[1],
                         onClick = {
                             scope.launch {
-                                if (pagerState.currentPage == 2){
+                                if (pagerState.currentPage == 3){
                                     // save a value in datastore preferences
                                     // we launch an event that will be captured by the view model
                                     event(OnBoardingEvent.SaveAppEntry)

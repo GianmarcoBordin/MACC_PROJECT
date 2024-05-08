@@ -13,9 +13,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Button
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.OutlinedTextField
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -38,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
+import com.mygdx.game.presentation.Dimension.ButtonCornerShape
 
 import com.mygdx.game.presentation.components.BackButton
 import com.mygdx.game.presentation.components.LogoUserImage
@@ -46,7 +51,8 @@ import com.mygdx.game.presentation.navgraph.Route
 import com.mygdx.game.presentation.settings.events.SignOutEvent
 import com.mygdx.game.presentation.settings.events.UpdateEvent
 import com.mygdx.game.ui.theme.ArAppTheme
-
+import com.mygdx.game.util.Constants.SIGN_OUT_SUCCESS
+import com.mygdx.game.util.Constants.UPDATE_SUCCESS
 
 
 @Composable
@@ -130,7 +136,7 @@ fun SettingsScreen(
             }
             // Name field
             OutlinedTextField(
-                value = newName ?:"" ,
+                value = newName,
                 onValueChange = { newValue ->
                     newName = newValue },
                 label = { Text( "New Name", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
@@ -187,7 +193,7 @@ fun SettingsScreen(
                     onClick = {
                         signOutHandler(SignOutEvent.SignOut)
                     },
-                    shape = RoundedCornerShape(size = 18.dp),
+                    shape = RoundedCornerShape(size = ButtonCornerShape),
                     modifier = Modifier
                         .padding(16.dp)
                         .weight(1f)
@@ -199,7 +205,7 @@ fun SettingsScreen(
                     onClick = {
                         settingsHandler(UpdateEvent.Update(newName ,newEmail, newPassword))
                     },
-                    shape = RoundedCornerShape(size = 18.dp),
+                    shape = RoundedCornerShape(size = ButtonCornerShape),
                     modifier = Modifier
                         .padding(16.dp)
                         .weight(1f)
@@ -212,11 +218,11 @@ fun SettingsScreen(
                 // Display data
                 Text(
                     text = data!!.toString(),
-                    color = if (data.equals("Update Success") || data.equals("Signout Success")) Color.Green else MaterialTheme.colorScheme.onError
+                    color = if (data.equals(UPDATE_SUCCESS) || data.equals(SIGN_OUT_SUCCESS)) Color.Green else MaterialTheme.colorScheme.onError
                 )
                 // Change page if all ok
                 if (viewModel.navigateToAnotherScreen.value == true) {
-                    val route:String = if (data.equals("Signout Success")){
+                    val route:String = if (data.equals(SIGN_OUT_SUCCESS)){
                         Route.SignInScreen.route
                     }else{
                         Route.HomeScreen.route

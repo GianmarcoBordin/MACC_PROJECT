@@ -3,6 +3,20 @@ package com.mygdx.game.util
 /*
 * Object to hold constant in all the application*/
 object Constants {
+
+    const val LOGIN_SUCCESS = "Login success"
+    const val LOGIN_FAILED = "Login Failed"
+
+    const val BIO_AUTH_SUCCESS = "Bio Auth Success"
+    const val BIO_AUTH_FAILED = "Bio Auth Failed"
+
+    const val UPDATE_SUCCESS = "Update success"
+    const val SIGN_OUT_SUCCESS = "Sign-out success"
+
+    const val SIGN_UP_SUCCESS = "SignUp Success"
+
+    const val EMAIL_IS_IN_USE = "Email is already in use"
+
     const val USER_SETTINGS = "userSettings"
     const val USER_SETTINGS2 = "userSettings2"
     const val USER = "user"

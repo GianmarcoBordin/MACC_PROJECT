@@ -22,7 +22,7 @@ val pages = listOf(
         image = R.drawable.onboarding2
     ),
     Page(
-        title = "Play multiplayer battle",
+        title = "Play real-time multiplayer battle",
         description = "Play against other player with your collected skins.",
         image = R.drawable.onboarding3
     ),

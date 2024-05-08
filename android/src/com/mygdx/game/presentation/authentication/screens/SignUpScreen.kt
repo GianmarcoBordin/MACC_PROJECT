@@ -62,6 +62,9 @@ import com.mygdx.game.presentation.authentication.events.SignInEvent
 import com.mygdx.game.presentation.authentication.events.SignUpEvent
 import com.mygdx.game.presentation.navgraph.Route
 import com.mygdx.game.ui.theme.ArAppTheme
+import com.mygdx.game.util.Constants.SIGN_UP_SUCCESS
+import com.mygdx.game.util.cleanUpString
+import com.mygdx.game.util.isValidEmail
 
 // Presentation Layer
 @Composable
@@ -222,7 +225,11 @@ fun DefaultSignUpContent(
         Button(
             onClick = {
                 focusManager.clearFocus()
-                signInHandler(SignUpEvent.SignUp(name, email, password, confirmPass))
+                cleanUpString(name)
+                if (isValidEmail(email)){
+                    signInHandler(SignUpEvent.SignUp(name, email, password, confirmPass))
+                }
+
             },
             shape = RoundedCornerShape(size = 20.dp),
             modifier = Modifier
@@ -291,7 +298,7 @@ fun DefaultSignUpContent(
             // Display data
             Text(
                 text = data!!.toString(),
-                color = if (data.equals("SignUp Success")) Color.Green else MaterialTheme.colorScheme.onError
+                color = if (data.equals(SIGN_UP_SUCCESS)) Color.Green else MaterialTheme.colorScheme.onError
             )
             // Change page if all ok
             if (viewModel.navigateToAnotherScreen.value==true) {

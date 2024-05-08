@@ -5,33 +5,36 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
+
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
+
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Button
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Divider
+
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.OutlinedTextField
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material.Text
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -47,6 +50,7 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -59,17 +63,16 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.mygdx.game.R
+import com.mygdx.game.presentation.Dimension.ButtonCornerShape
 import com.mygdx.game.presentation.authentication.AuthenticationViewModel
 import com.mygdx.game.presentation.authentication.events.BioSignInEvent
 import com.mygdx.game.presentation.authentication.events.SignInEvent
 import com.mygdx.game.presentation.navgraph.Route
-import com.mygdx.game.presentation.rank.RankViewModel
-import com.mygdx.game.presentation.rank.UserRankingItem
-import com.mygdx.game.presentation.rank.events.RankUpdateEvent
-import com.mygdx.game.presentation.rank.events.RetryEvent
 import com.mygdx.game.ui.theme.ArAppTheme
-
-
+import com.mygdx.game.util.Constants.BIO_AUTH_FAILED
+import com.mygdx.game.util.Constants.BIO_AUTH_SUCCESS
+import com.mygdx.game.util.Constants.LOGIN_SUCCESS
 
 
 @Composable
@@ -144,7 +147,7 @@ fun DefaultSignInContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
-            shape = RoundedCornerShape(size = 20.dp),
+            shape = RoundedCornerShape(size = ButtonCornerShape),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colorScheme.onSurface, // Set the contour color when focused
                 unfocusedBorderColor = MaterialTheme.colorScheme.onSurface // Set the contour color when not focused
@@ -176,7 +179,7 @@ fun DefaultSignInContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 10.dp),
-            shape = RoundedCornerShape(size = 20.dp),
+            shape = RoundedCornerShape(size = ButtonCornerShape),
             colors = TextFieldDefaults.outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colorScheme.onSurface, // Set the contour color when focused
                 unfocusedBorderColor = MaterialTheme.colorScheme.onSurface // Set the contour color when not focused
@@ -187,7 +190,7 @@ fun DefaultSignInContent(
                 focusManager.clearFocus()
                 signInHandler(SignInEvent.SignIn(email, password))
             },
-            shape = RoundedCornerShape(size = 20.dp),
+            shape = RoundedCornerShape(size = ButtonCornerShape),
             modifier = Modifier
                 .fillMaxWidth()
         ) {
@@ -195,6 +198,7 @@ fun DefaultSignInContent(
                 text = "Sign In",
                 style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
             )
+
         }
         val text = AnnotatedString.Builder().apply {
             pushStringAnnotation(
@@ -228,7 +232,7 @@ fun DefaultSignInContent(
             verticalArrangement = Arrangement.Bottom
         ) {
             Button(
-                shape = RoundedCornerShape(size = 20.dp),
+                shape = RoundedCornerShape(size = ButtonCornerShape),
                 modifier = Modifier
                     .fillMaxWidth(),
                 onClick = {
@@ -236,11 +240,11 @@ fun DefaultSignInContent(
                     if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS) {
                         bioSignInHandler(BioSignInEvent.BioSignIn(context) { success ->
                             authenticationResult = when (success) {
-                                "Bio Auth Success" -> {
+                                BIO_AUTH_SUCCESS -> {
                                     "Biometric authentication successful"
                                 }
 
-                                "Bio Auth Failed" -> {
+                                BIO_AUTH_FAILED -> {
                                     "Biometric authentication failed"
                                 }
 
@@ -253,18 +257,30 @@ fun DefaultSignInContent(
                         authenticationResult = "Biometric authentication not available"
                     }
                 }) {
-                Text(
-                    text = "Authenticate with Biometric",
-                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+
+                    Text(
+                        text = "Authenticate with Biometric",
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                        fontWeight = FontWeight.SemiBold
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp)) // Add some space between the image and text
+
+                    Image(
+                        painter = painterResource(id = R.drawable.fingerprint), // Assuming fingerprint_icon is the image resource for the fingerprint
+                        contentDescription = "Fingerprint Icon",
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
             // Observe changes in data
-            if (data?.isNotEmpty() == true || authenticationResult == "Bio Auth Success") {
+            if (data?.isNotEmpty() == true || authenticationResult == BIO_AUTH_SUCCESS) {
                 // Display data
 
                     Text(
                         text = data!!.toString(),
-                        color = if (data.equals("Login Success") ||data.equals("Bio Auth Success") || authenticationResult.equals("Bio Auth Success")) Color.Green else MaterialTheme.colorScheme.onError,
+                        color = if (data.equals(LOGIN_SUCCESS) ||data.equals(BIO_AUTH_SUCCESS) || authenticationResult == BIO_AUTH_SUCCESS) Color.Green else MaterialTheme.colorScheme.onError,
                     )
 
                 // Change page if all ok

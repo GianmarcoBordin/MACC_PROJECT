@@ -8,4 +8,5 @@ object Dimension {
     val MediumPadding2 = 30.dp
     val IndicatorSize = 14.dp
     val PageIndicatorPadding = 8.dp
+    val ButtonCornerShape = 18.dp
 }

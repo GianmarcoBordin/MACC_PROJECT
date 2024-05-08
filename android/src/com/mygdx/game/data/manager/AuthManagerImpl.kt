@@ -20,6 +20,12 @@ import com.mygdx.game.domain.api.DataRepository
 import com.mygdx.game.domain.manager.AuthManager
 import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.framework.postPlayerToFirestore
+import com.mygdx.game.util.Constants.BIO_AUTH_FAILED
+import com.mygdx.game.util.Constants.BIO_AUTH_SUCCESS
+import com.mygdx.game.util.Constants.EMAIL_IS_IN_USE
+import com.mygdx.game.util.Constants.LOGIN_FAILED
+import com.mygdx.game.util.Constants.LOGIN_SUCCESS
+import com.mygdx.game.util.Constants.SIGN_UP_SUCCESS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -64,9 +70,9 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                 // save bio application state
                 val bio = Biometric(userEmail = email, userPass = password)
                 localUserManager.saveBio(bio)
-                if(update == true) {
+                if(update) {
                     // Notify listener of successful sign-up
-                    updateListener?.onUpdate("Login Success")
+                    updateListener?.onUpdate(LOGIN_SUCCESS)
                 }
                 return true
             } catch (e: Exception) {
@@ -82,7 +88,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
             // Sign-in failed or fields were empty, handle accordingly
             if(update) {
                 // Notify listener of successful sign-up
-                updateListener?.onUpdate("Login Failed")
+                updateListener?.onUpdate(LOGIN_FAILED)
             }
             return false
         }
@@ -91,80 +97,80 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
     override suspend fun bioSignIn(context: Context, callbacks: (String) -> Unit) {
 
         // User is logged in
-            contxt=context
-            val biometricPrompt = BiometricPrompt.Builder(context)
-                .setTitle("Biometric Authentication")
-                .setSubtitle("Please authenticate to continue")
-                .setNegativeButton(
-                    "Cancel",
-                    context.mainExecutor
-                ) { _, _ -> callbacks.invoke("Bio Auth failed") }
-                .build()
+        contxt=context
+        val biometricPrompt = BiometricPrompt.Builder(context)
+            .setTitle("Biometric Authentication")
+            .setSubtitle("Please authenticate to continue")
+            .setNegativeButton(
+                "Cancel",
+                context.mainExecutor
+            ) { _, _ -> callbacks.invoke("Bio Auth failed") }
+            .build()
 
-            biometricPrompt.authenticate(
-                android.os.CancellationSignal(),
-                context.mainExecutor,
-                object : BiometricPrompt.AuthenticationCallback() {
-                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                        super.onAuthenticationSucceeded(result)
-                        CoroutineScope(Dispatchers.Main).launch {
-                            // Use withContext to switch to a background thread for blocking operation
-                            val bio = withContext(Dispatchers.IO) {
-                                localUserManager.readBio()
-                            }
-                            println(bio)
-                            // Perform the authentication
-                            val result = withContext(Dispatchers.Default) {
-                                doSignIn(bio.first, bio.second)
-                            }
-
-
-                            // Invoke the callback with the authentication result
-                            if (result) {
-                                // Sign-in was successful,maybe I did a signOut and lost the local data so we fetch those data
-                                val name = firebaseAuth?.currentUser?.displayName ?: bio.first
-                                // save user profile application state
-                                val userProfileBundle =
-                                    UserProfileBundle(displayName = name, email = bio.first)
-                                localUserManager.saveUserProfile(userProfileBundle)
-                                // fetch rank data
-                                val result = dataRepository.fetchUserData(name).value
-                                val rank:Rank
-                                if(result?.isNotEmpty() == true){
-                                    val rankData = dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
-                                    rank = Rank(rankData?.get(0) ?: name, rankData?.get(1)?.toInt() ?: 0)
-
-                                }else {
-                                    rank = Rank( name,  0)
-                                }
-                                // save user rank
-                                localUserManager.saveScore(rank)
-
-                                callbacks.invoke("Bio Auth Success")
-                                updateListener?.onUpdate("Bio Auth Success")
-                            } else {
-                                callbacks.invoke("Bio Auth Failed")
-                                updateListener?.onUpdate("Bio Auth Failed")
-                            }
-
+        biometricPrompt.authenticate(
+            android.os.CancellationSignal(),
+            context.mainExecutor,
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    CoroutineScope(Dispatchers.Main).launch {
+                        // Use withContext to switch to a background thread for blocking operation
+                        val bio = withContext(Dispatchers.IO) {
+                            localUserManager.readBio()
                         }
-                    }
+                        println(bio)
+                        Log.d("DEBUG","bio from local user manager: $bio")
+                        // Perform the authentication
+                        val result = withContext(Dispatchers.Default) {
+                            doSignIn(bio.first, bio.second)
+                        }
 
-                    override fun onAuthenticationFailed() {
-                        super.onAuthenticationFailed()
-                        callbacks.invoke("Bio Auth failed")
-                        updateListener?.onUpdate("Bio Auth Failed")
 
-                    }
+                        // Invoke the callback with the authentication result
+                        if (result) {
+                            // Sign-in was successful,maybe I did a signOut and lost the local data so we fetch those data
+                            val name = firebaseAuth?.currentUser?.displayName ?: bio.first
+                            // save user profile application state
+                            val userProfileBundle =
+                                UserProfileBundle(displayName = name, email = bio.first)
+                            localUserManager.saveUserProfile(userProfileBundle)
+                            // fetch rank data
+                            val userDataResult = dataRepository.fetchUserData(name).value
+                            val rank:Rank = if(userDataResult?.isNotEmpty() == true){
+                                val rankData = dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
+                                Rank(rankData?.get(0) ?: name, rankData?.get(1)?.toInt() ?: 0)
 
-                    override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                        super.onAuthenticationError(errorCode, errString)
-                        callbacks.invoke("Bio Auth failed")
-                        updateListener?.onUpdate("Bio Auth Failed")
+                            }else {
+                                Rank( name,  0)
+                            }
+                            // save user rank
+                            localUserManager.saveScore(rank)
+
+                            callbacks.invoke(BIO_AUTH_SUCCESS)
+                            updateListener?.onUpdate(BIO_AUTH_SUCCESS)
+                        } else {
+                            callbacks.invoke(BIO_AUTH_FAILED)
+                            updateListener?.onUpdate(BIO_AUTH_FAILED)
+                        }
 
                     }
                 }
-            )
+
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
+                    callbacks.invoke(BIO_AUTH_FAILED)
+                    updateListener?.onUpdate(BIO_AUTH_FAILED)
+
+                }
+
+                override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                    callbacks.invoke(BIO_AUTH_FAILED)
+                    updateListener?.onUpdate(BIO_AUTH_FAILED)
+
+                }
+            }
+        )
 
     }
 
@@ -217,7 +223,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                                         localUserManager.saveBio(bio)
                                     }
                                     // Notify listener of successful sign-up
-                                    updateListener?.onUpdate("SignUp Success")
+                                    updateListener?.onUpdate(SIGN_UP_SUCCESS)
                                 } catch (e: Exception) {
                                     Log.d(TAG, "Failed to set user state: ${e.message}")
                                     // Handle exceptions within runBlocking block
@@ -240,7 +246,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                 // Handle exceptions
                 if (exception is FirebaseAuthUserCollisionException) {
                     // User already exists with the same email
-                    updateListener?.onUpdate("Email is already in use")
+                    updateListener?.onUpdate(EMAIL_IS_IN_USE)
                 } else {
                     // Other exceptions
                     updateListener?.onUpdate(exception.message.toString())
@@ -259,7 +265,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
 
 
     override fun setUpdateListener(ref: UpdateListener) {
-       updateListener=ref
+        updateListener=ref
     }
 
     override suspend fun updatePlayerFirestore(name: String, newName: String): String {

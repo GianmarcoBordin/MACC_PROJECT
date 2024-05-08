@@ -22,10 +22,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Button
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.CircularProgressIndicator
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Divider
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Surface
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -43,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
+import com.mygdx.game.presentation.Dimension.ButtonCornerShape
 import com.mygdx.game.presentation.components.BackButton
 import com.mygdx.game.presentation.rank.events.RankUpdateEvent
 import com.mygdx.game.presentation.rank.events.RetryEvent
@@ -88,7 +94,7 @@ fun RankScreen(
         }
     }
     ArAppTheme {
-        Surface(color = androidx.compose.material3.MaterialTheme.colorScheme.surface) {
+        Surface(color = MaterialTheme.colorScheme.surface) {
             Column(modifier = Modifier.fillMaxSize()) {
                 BackButton(onClick = {  navController.popBackStack()})
                 DefaultContent(
@@ -141,11 +147,10 @@ fun DefaultContent(
                 Spacer(modifier = Modifier.height(300.dp))
                 CircularProgressIndicator(progress = progress.value, color = Color.Blue)
                 Button(
-                    shape = RoundedCornerShape(size = 20.dp),
+                    shape = RoundedCornerShape(size = ButtonCornerShape),
                     onClick = { retryHandler(RetryEvent.Retry())
                     }) {
-                    Text(text = "Retry",style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = MaterialTheme.colorScheme.onSurface,)
+                    Text(text = "Retry")
                 }
 
                 if (isError==true) {
@@ -207,11 +212,10 @@ fun DefaultContent(
                     }
                 }
                 Button(
-                    shape = RoundedCornerShape(size = 20.dp),
+                    shape = RoundedCornerShape(size = ButtonCornerShape),
                     onClick = { updateHandler(RankUpdateEvent.RankUpdate())
                     }) {
-                    Text(text = "Refresh",style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = MaterialTheme.colorScheme.onSurface,)
+                    Text(text = "Refresh")
                 }
             }
 
@@ -219,7 +223,6 @@ fun DefaultContent(
         }
     }
 }
-
 
 
 

@@ -234,11 +234,11 @@ fun DefaultMapContent(
                 Spacer(modifier = Modifier.height(300.dp))
                 CircularProgressIndicator(progress = progress.value, color = Color.Blue)
                 Button(
-                    shape = RoundedCornerShape(size = 20.dp),
+                    shape = RoundedCornerShape(size = 16.dp),
                     onClick = { mapRetryHandler(RetryMapEvent.MapRetry)
                     }) {
-                    Text(text = "Retry",style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = MaterialTheme.colorScheme.onSurface,)
+                    Text(text = "Retry")
+
                 }
 
                 if (isError==true) {
@@ -270,12 +270,13 @@ fun DefaultMapContent(
                         BackButton(onClick = { navController.popBackStack() })
 
                         Button(
-                            shape = RoundedCornerShape(size = 20.dp),
+                            shape = RoundedCornerShape(size = 16.dp),
                             onClick = {
                                 mapUpdateHandler(UpdateMapEvent.MapUpdate)
                             }) {
-                            Text(text = "Refresh",style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                                color = MaterialTheme.colorScheme.onSurface,)
+                            Text(
+                                text = "Refresh"
+                            )
                         }
                     }
                 }
@@ -367,6 +368,8 @@ fun OsmMap(
                 val playerGeoPoint = GeoPoint(player.location.latitude, player.location.longitude)
                 val playerMarker = Marker(mapView)
                 playerMarker.position = playerGeoPoint
+
+
                 val distanceString = if (player.distance > thresholdKm) {
                     "%.0f km".format(player.distance)
                 } else {
@@ -382,11 +385,12 @@ fun OsmMap(
                 val objectGeoPoint = GeoPoint(obj.location.latitude, obj.location.longitude)
                 val objectMarker = Marker(mapView)
                 objectMarker.position = objectGeoPoint
+
+                Log.d("DEBUG","${obj.distance} $thresholdKm")
                 val distanceString = if (obj.distance > thresholdKm) {
                 "%.0f km".format(obj.distance)
                 } else {
-                    val distanceInMeters = obj.distance * 1000 // Convert kilometers to meters
-                    "%.2f meters".format(distanceInMeters)
+                    "%.2f meters".format(obj.distance)
                 }
                 if (obj.distance < thresholdButton){
                     viewModel.update(obj,true)

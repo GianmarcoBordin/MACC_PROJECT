@@ -5,6 +5,7 @@ package com.mygdx.game.data.manager
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.mygdx.game.R
 import kotlinx.coroutines.runBlocking
 import com.mygdx.game.data.dao.Biometric
 import com.mygdx.game.data.dao.Rank
@@ -12,6 +13,8 @@ import com.mygdx.game.data.dao.UserProfileBundle
 import com.mygdx.game.domain.manager.AuthManager
 import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.domain.manager.SettingsManager
+import com.mygdx.game.util.Constants.SIGN_OUT_SUCCESS
+import com.mygdx.game.util.Constants.UPDATE_SUCCESS
 import javax.inject.Inject
 
 class SettingsManagerImpl @Inject constructor(
@@ -57,7 +60,7 @@ class SettingsManagerImpl @Inject constructor(
                             localUserManager.saveBio(bio)
                         }
                         // All updates were successful
-                        updateListener?.onUpdate("Update Success")
+                        updateListener?.onUpdate(UPDATE_SUCCESS)
                     } catch (e: Exception) {
                         // Handle exceptions within runBlocking block
                         updateListener?.onUpdate("Error: ${e.message}")
@@ -92,7 +95,7 @@ class SettingsManagerImpl @Inject constructor(
                         localUserManager.saveBio(bio)
                     }
                     // All updates were successful
-                    updateListener?.onUpdate("Update Success")
+                    updateListener?.onUpdate(UPDATE_SUCCESS)
                 } else {
                     // Handle the failure, you can access the exception from combinedTask.exception
                     updateListener?.onUpdate("Something went wrong, retry later")
@@ -119,7 +122,7 @@ class SettingsManagerImpl @Inject constructor(
             // clear app entry state
             localUserManager.clearAppEntry()
             // update listener
-            updateListener?.onUpdate("SignOut Success")
+            updateListener?.onUpdate(SIGN_OUT_SUCCESS)
 
         } catch (e: Exception) {
             updateListener?.onUpdate(e.message.toString())
