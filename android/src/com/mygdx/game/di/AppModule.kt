@@ -13,6 +13,7 @@ import com.mygdx.game.domain.api.MapApi
 import com.mygdx.game.data.api.MapRepositoryImpl
 import com.mygdx.game.domain.api.RankApi
 import com.mygdx.game.data.dao.Biometric
+import com.mygdx.game.data.manager.ARManagerImpl
 import com.mygdx.game.data.manager.AuthManagerImpl
 import com.mygdx.game.data.manager.ContextManagerImpl
 import com.mygdx.game.data.manager.LocalUserManagerImpl
@@ -20,6 +21,7 @@ import com.mygdx.game.data.manager.MapManagerImpl
 import com.mygdx.game.data.manager.RankManagerImpl
 import com.mygdx.game.data.manager.SettingsManagerImpl
 import com.mygdx.game.domain.api.DataRepository
+import com.mygdx.game.domain.manager.ARManager
 import macc.ar.domain.api.MapRepository
 import com.mygdx.game.domain.manager.AuthManager
 import com.mygdx.game.domain.manager.ContextManager
@@ -33,6 +35,11 @@ import com.mygdx.game.domain.usecase.appEntry.ReadAppEntry
 import com.mygdx.game.domain.usecase.appEntry.ReadUser
 import com.mygdx.game.domain.usecase.appEntry.SaveAppEntry
 import com.mygdx.game.domain.usecase.appEntry.SaveUser
+import com.mygdx.game.domain.usecase.ar.ARUseCases
+import com.mygdx.game.domain.usecase.ar.AddGameItem
+import com.mygdx.game.domain.usecase.ar.AddOwnership
+import com.mygdx.game.domain.usecase.ar.GetGameItem
+import com.mygdx.game.domain.usecase.ar.GetOwnership
 import com.mygdx.game.domain.usecase.auth.AuthCheck
 import com.mygdx.game.domain.usecase.auth.AuthenticationUseCases
 import com.mygdx.game.domain.usecase.auth.BioSignIn
@@ -167,6 +174,9 @@ object AppModule {
     @Singleton
     fun provideMapManager(mapRepository: MapRepository,localUserManager: LocalUserManager): MapManager = MapManagerImpl(mapRepository = mapRepository,localUserManager)
 
+    @Provides
+    @Singleton
+    fun provideARManager(dataRepository: DataRepository): ARManager = ARManagerImpl(dataRepository = dataRepository)
 
     @Provides
     @Singleton
@@ -246,5 +256,14 @@ object AppModule {
         updatePlayerLocation = UpdatePlayerLocation(mapManager)
     )
 
-
+    @Provides
+    @Singleton
+    fun provideARUseCases(
+        arManager: ARManager
+    ) = ARUseCases(
+        addGameItem = AddGameItem(arManager),
+        getGameItem = GetGameItem(arManager),
+        addOwnership = AddOwnership(arManager),
+        getOwnership = GetOwnership(arManager)
+    )
 }
