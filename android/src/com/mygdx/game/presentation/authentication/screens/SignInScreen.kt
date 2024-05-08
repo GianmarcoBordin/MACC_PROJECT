@@ -233,7 +233,7 @@ fun DefaultSignInContent(
                     .fillMaxWidth(),
                 onClick = {
                     val biometricManager = BiometricManager.from(context)
-                    if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) != BiometricManager.BIOMETRIC_SUCCESS) {
+                    if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS) {
                         bioSignInHandler(BioSignInEvent.BioSignIn(context) { success ->
                             authenticationResult = when (success) {
                                 "Bio Auth Success" -> {
