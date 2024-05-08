@@ -7,8 +7,10 @@ package com.mygdx.game.presentation.settings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -36,6 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.navigation.NavController
+
 import com.mygdx.game.presentation.components.BackButton
 import com.mygdx.game.presentation.components.LogoUserImage
 import com.mygdx.game.presentation.components.UserGreeting
@@ -43,6 +46,8 @@ import com.mygdx.game.presentation.navgraph.Route
 import com.mygdx.game.presentation.settings.events.SignOutEvent
 import com.mygdx.game.presentation.settings.events.UpdateEvent
 import com.mygdx.game.ui.theme.ArAppTheme
+
+
 
 @Composable
 fun SettingsScreen(
@@ -58,7 +63,6 @@ fun SettingsScreen(
     var newName by remember { mutableStateOf(userProfile?.displayName ?: "New Name") }
     var newEmail by remember { mutableStateOf(userProfile?.email ?: "New Name") }
     var newPassword by remember { mutableStateOf("New Password") }
-
 
 
     //lifecycle
@@ -140,7 +144,7 @@ fun SettingsScreen(
                     unfocusedBorderColor = MaterialTheme.colorScheme.onSurface // Set the contour color when not focused
                 )
             )
-
+            Spacer(modifier = Modifier.height(12.dp))
             // Email field
             OutlinedTextField(
                 value = newEmail,
@@ -158,6 +162,7 @@ fun SettingsScreen(
                 )
             )
 
+            Spacer(modifier = Modifier.height(12.dp))
             // Password field
             OutlinedTextField(
                 value = newPassword,
@@ -183,18 +188,21 @@ fun SettingsScreen(
                         signOutHandler(SignOutEvent.SignOut)
                     },
                     shape = RoundedCornerShape(size = 18.dp),
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .weight(1f)
                 ) {
-                    Text(text = "LogOut")
+                    Text(text = "Logout")
                 }
                 // Save button
                 Button(
                     onClick = {
                         settingsHandler(UpdateEvent.Update(newName ,newEmail, newPassword))
                     },
-                    shape = RoundedCornerShape(size = 20.dp),
+                    shape = RoundedCornerShape(size = 18.dp),
                     modifier = Modifier
-                        .padding(top = 16.dp)
+                        .padding(16.dp)
+                        .weight(1f)
                 ) {
                     Text(text = "Save")
                 }
@@ -204,11 +212,11 @@ fun SettingsScreen(
                 // Display data
                 Text(
                     text = data!!.toString(),
-                    color = if (data.equals("Update Success") || data.equals("SignOut Success")) Color.Green else MaterialTheme.colorScheme.onError
+                    color = if (data.equals("Update Success") || data.equals("Signout Success")) Color.Green else MaterialTheme.colorScheme.onError
                 )
                 // Change page if all ok
                 if (viewModel.navigateToAnotherScreen.value == true) {
-                    val route:String = if (data.equals("SignOut Success")){
+                    val route:String = if (data.equals("Signout Success")){
                         Route.SignInScreen.route
                     }else{
                         Route.HomeScreen.route
@@ -222,6 +230,9 @@ fun SettingsScreen(
         }
     }
 }
+
+
+
 
 
 
