@@ -39,7 +39,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
     private var updateListener: UpdateListener? = null
     private lateinit var contxt: Context
 
-    override suspend fun signIn(email: String, password: String) {
+    override suspend fun signIn(email: String, password: String, update: Boolean) : Boolean{
         val success :Boolean = doSignIn(email, password)
         if (success) {
             try {
@@ -64,16 +64,27 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                 // save bio application state
                 val bio = Biometric(userEmail = email, userPass = password)
                 localUserManager.saveBio(bio)
-                // Notify listener of successful sign-up
-                updateListener?.onUpdate("Login Success")
+                if(update == true) {
+                    // Notify listener of successful sign-up
+                    updateListener?.onUpdate("Login Success")
+                }
+                return true
             } catch (e: Exception) {
                 // Handle exceptions within runBlocking block
                 Log.e("AUTH_MANAGER",e.toString())
-                updateListener?.onUpdate("Error: ${e.message}")
+                if(update) {
+                    // Notify listener of successful sign-up
+                    updateListener?.onUpdate("Error: ${e.message}")
+                }
+                return false
             }
         } else {
             // Sign-in failed or fields were empty, handle accordingly
-            updateListener?.onUpdate("Login Failed")
+            if(update) {
+                // Notify listener of successful sign-up
+                updateListener?.onUpdate("Login Failed")
+            }
+            return false
         }
     }
 
@@ -101,20 +112,41 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                             val bio = withContext(Dispatchers.IO) {
                                 localUserManager.readBio()
                             }
-
+                            println(bio)
                             // Perform the authentication
                             val result = withContext(Dispatchers.Default) {
                                 doSignIn(bio.first, bio.second)
                             }
 
+
                             // Invoke the callback with the authentication result
                             if (result) {
+                                // Sign-in was successful,maybe I did a signOut and lost the local data so we fetch those data
+                                val name = firebaseAuth?.currentUser?.displayName ?: bio.first
+                                // save user profile application state
+                                val userProfileBundle =
+                                    UserProfileBundle(displayName = name, email = bio.first)
+                                localUserManager.saveUserProfile(userProfileBundle)
+                                // fetch rank data
+                                val result = dataRepository.fetchUserData(name).value
+                                val rank:Rank
+                                if(result?.isNotEmpty() == true){
+                                    val rankData = dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
+                                    rank = Rank(rankData?.get(0) ?: name, rankData?.get(1)?.toInt() ?: 0)
+
+                                }else {
+                                    rank = Rank( name,  0)
+                                }
+                                // save user rank
+                                localUserManager.saveScore(rank)
+
                                 callbacks.invoke("Bio Auth Success")
                                 updateListener?.onUpdate("Bio Auth Success")
                             } else {
                                 callbacks.invoke("Bio Auth Failed")
                                 updateListener?.onUpdate("Bio Auth Failed")
                             }
+
                         }
                     }
 

@@ -259,20 +259,14 @@ fun DefaultSignInContent(
                 )
             }
             // Observe changes in data
-            if (data?.isNotEmpty() == true) {
+            if (data?.isNotEmpty() == true || authenticationResult == "Bio Auth Success") {
                 // Display data
-                if(data?.equals("Login Success") == true) {
+
                     Text(
                         text = data!!.toString(),
-                        color = if (data.equals("Login Success")) Color.Green else MaterialTheme.colorScheme.onError,
+                        color = if (data.equals("Login Success") ||data.equals("Bio Auth Success") || authenticationResult.equals("Bio Auth Success")) Color.Green else MaterialTheme.colorScheme.onError,
                     )
-                }
-                if(data?.equals("Bio Auth Success") == true) {
-                    Text(
-                        text = authenticationResult,
-                        color = if (data.equals("Bio Auth Success")) Color.Green else MaterialTheme.colorScheme.onError,
-                    )
-                }
+
                 // Change page if all ok
                 if (viewModel.navigateToAnotherScreen.value == true) {
                     navController.navigate(Route.HomeScreen.route)

@@ -6,7 +6,7 @@ class SignIn(
     private val authManager: AuthManager
 ){
     suspend operator fun invoke(email:String,password:String){
-        authManager.signIn(email = email, password = password)
+        authManager.signIn(email = email, password = password, update = true)
     }
 
 }
