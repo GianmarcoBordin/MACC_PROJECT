@@ -60,6 +60,7 @@ fun NavGraph(
                     visibilityHandler = arViewModel::onVisibilityEvent,
                     dimensionsHandler = arViewModel::onDimensionsEvent,
                     bitmapHandler = arViewModel::onBitmapEvent,
+                    readDataStoreHandler = arViewModel::onDataStoreEvent,
                     viewModel = arViewModel,
                     navController = navController)
             }

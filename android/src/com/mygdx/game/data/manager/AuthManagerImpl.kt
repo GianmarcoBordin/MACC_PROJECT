@@ -102,6 +102,8 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                                 localUserManager.readBio()
                             }
 
+                            Log.e("DEBUG", "$bio")
+
                             // Perform the authentication
                             val result = withContext(Dispatchers.Default) {
                                 doSignIn(bio.first, bio.second)
