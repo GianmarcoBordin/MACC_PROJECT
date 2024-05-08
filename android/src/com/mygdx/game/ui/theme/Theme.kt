@@ -21,7 +21,8 @@ private val darkColorScheme = darkColorScheme(
     primary = Color.Blue,
     background = Color.Black,
     onPrimaryContainer = Color.Red,
-    error = DarkRed,
+    error = Color.Red,
+    onError = Color.Red,
     surface = Color.Black,
     onSurface = Color.White // Set the text color for dark theme
 )
@@ -30,7 +31,8 @@ private val lightColorScheme = lightColorScheme(
     primary = Color.Blue,
     background = Color.White,
     onPrimaryContainer = Color.Red,
-    error = LightRed,
+    error = Color.Red,
+    onError = Color.Red,
     surface = Color.White,
     onSurface = Color.Black // Set the text color for light theme
 )
@@ -40,7 +42,7 @@ private val lightColorScheme = lightColorScheme(
 fun ArAppTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

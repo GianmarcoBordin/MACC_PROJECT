@@ -34,7 +34,7 @@ interface Multiplayer{
 class MainActivity : ComponentActivity(){
 
 
-    //private val viewModel by viewModels<MainViewModel>()
+    private val viewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,14 +48,13 @@ class MainActivity : ComponentActivity(){
 
                 Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
 
-                    //val startDestination = viewModel.startDestination
-                    /*
+                    val startDestination = viewModel.startDestination
+
                     NavGraph(
                         object: Multiplayer{ override fun onSetMultiplayer() { setMultiplayer() } },
                         startDestination = startDestination
                     )
-                    */
-
+                    /*
                     Button(onClick = {
 
                         setMultiplayer()
@@ -63,7 +62,7 @@ class MainActivity : ComponentActivity(){
                     }) {
                         Text(text = "Multiplayer")
                     }
-
+                    */
                 }
 
             }
