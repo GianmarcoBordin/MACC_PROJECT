@@ -233,7 +233,7 @@ fun DefaultSignInContent(
                     .fillMaxWidth(),
                 onClick = {
                     val biometricManager = BiometricManager.from(context)
-                    if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS) {
+                    if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) != BiometricManager.BIOMETRIC_SUCCESS) {
                         bioSignInHandler(BioSignInEvent.BioSignIn(context) { success ->
                             authenticationResult = when (success) {
                                 "Bio Auth Success" -> {
@@ -258,6 +258,31 @@ fun DefaultSignInContent(
                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
                 )
             }
+            // Observe changes in data
+            if (data?.isNotEmpty() == true) {
+                // Display data
+                Text(
+                    text = data!!.toString(),
+                    color = if (data.equals("Login Success")) Color.Green else MaterialTheme.colorScheme.onError,
+                )
+                // Change page if all ok
+                if (viewModel.navigateToAnotherScreen.value == true) {
+                    navController.navigate(Route.HomeScreen.route)
+                    viewModel.onNavigationComplete()
+                }
+
+            }
+            // Observe changes in data
+            if (authenticationResult == "Biometric authentication successful") {
+                navController.navigate(Route.HomeScreen.route)
+                viewModel.onNavigationComplete()
+            }
+            Text(
+                text = authenticationResult,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(top = 16.dp),
+                color = if (authenticationResult == "Biometric authentication successful") Color.Green else MaterialTheme.colorScheme.onError
+            )
             if (isLoading == true) {
                 val progress = remember { Animatable(0f) }
                 LaunchedEffect(Unit) {
@@ -288,31 +313,7 @@ fun DefaultSignInContent(
                     }
                 }
             }
-            // Observe changes in data
-            if (data?.isNotEmpty() == true) {
-                // Display data
-                Text(
-                    text = data!!.toString(),
-                    color = if (data.equals("Login Success")) Color.Green else MaterialTheme.colorScheme.onError,
-                )
-                // Change page if all ok
-                if (viewModel.navigateToAnotherScreen.value == true) {
-                    navController.navigate(Route.HomeScreen.route)
-                    viewModel.onNavigationComplete()
-                }
 
-            }
-            // Observe changes in data
-            if (authenticationResult == "Biometric authentication successful") {
-                navController.navigate(Route.HomeScreen.route)
-                viewModel.onNavigationComplete()
-            }
-            Text(
-                text = authenticationResult,
-                fontSize = 16.sp,
-                modifier = Modifier.padding(top = 16.dp),
-                color = if (authenticationResult == "Biometric authentication successful") Color.Green else MaterialTheme.colorScheme.onError
-            )
         }
     }
 }
