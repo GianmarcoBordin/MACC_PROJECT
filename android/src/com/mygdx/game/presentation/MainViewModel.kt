@@ -40,21 +40,16 @@ class MainViewModel @Inject constructor(
     var startDestination by mutableStateOf(Route.AppStartNavigation.route)
     init {
         appEntryUseCases.readAppEntry().onEach { shouldStartFromHomeScreen ->
-            entered = true
             startDestination = if (shouldStartFromHomeScreen) {
                 if (authenticationUseCases.authCheck()) {
                     Route.HomeScreen.route
                 } else {
                     Route.SignInScreen.route
                 }
-            } else {
+            }else {
                 Route.OnBoardingScreen.route
             }
         }
-        if (!entered) {
-            startDestination = Route.OnBoardingScreen.route
-        }
-        Log.d ("MAIN VIEW", "Start destination $startDestination")
     }
 
     override fun onCleared() {
