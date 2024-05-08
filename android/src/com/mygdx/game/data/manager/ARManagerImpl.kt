@@ -12,8 +12,9 @@ class ARManagerImpl @Inject constructor(private val dataRepository: DataReposito
     }
 
     override suspend fun getGameItem(username: String, rarity: String): List<String> {
-        val listOfStringGameItem = dataRepository.getGameItem(username, rarity).value?.get(0)?.split(" ")
-        return listOfStringGameItem ?: listOf()
+        val stringGameItem = dataRepository.getGameItem(username, rarity).value?.get(0) ?: ""
+        println(listOf( stringGameItem))
+        return listOf(stringGameItem)
     }
 
     override suspend fun addOwnership(ownership: Ownership) {
