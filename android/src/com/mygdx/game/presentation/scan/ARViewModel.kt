@@ -22,6 +22,7 @@ import com.mygdx.game.data.dao.Ownership
 import com.mygdx.game.data.manager.UpdateListener
 import com.mygdx.game.domain.api.DataRepository
 import com.mygdx.game.domain.manager.LocalUserManager
+import com.mygdx.game.domain.usecase.ar.ARUseCases
 import com.mygdx.game.presentation.scan.events.BitmapEvent
 import com.mygdx.game.presentation.scan.events.DimensionsEvent
 import com.mygdx.game.presentation.scan.events.FocusEvent
@@ -40,7 +41,7 @@ import kotlin.random.Random
 @HiltViewModel
 class ARViewModel @Inject constructor(
     private val localUserManager: LocalUserManager,
-    private val dataRepository: DataRepository
+    private val arUseCases: ARUseCases
 ) : ViewModel(), UpdateListener {
     // -> ARScreen
     var scanned = false
@@ -125,7 +126,7 @@ class ARViewModel @Inject constructor(
                     ownedGameItem.hp + event.hpIncrement,
                     ownedGameItem.damage + event.damageIncrement)
                 viewModelScope.launch {
-                    dataRepository.postGameItem(updatedGameItem)
+                    arUseCases.addGameItem(updatedGameItem)
                 }
             }
 
@@ -135,15 +136,15 @@ class ARViewModel @Inject constructor(
                     state.value.gameItem.hp,
                     state.value.gameItem.damage)
                 viewModelScope.launch {
-                    dataRepository.postGameItem(newGameItem)
+                    arUseCases.addGameItem(newGameItem)
                 }
             }
 
             is UpdateDatabaseEvent.GetItem -> {
                 val username = localUserManager.getUserProfile().displayName
                 viewModelScope.launch {
-                    val gameItemString = dataRepository.getGameItem(username, event.rarity).value?.get(0)?.split(" ")
-                    val id = gameItemString!![0].replace("GameItem(id=", "").replace(",", "")
+                    val gameItemString = arUseCases.getGameItem(username, event.rarity)
+                    val id = gameItemString[0].replace("GameItem(id=", "").replace(",", "")
                     val rarity = gameItemString[1].replace("rarity=", "").replace(",", "")
                     val hp = gameItemString[2].replace("hp=", "").replace(",", "")
                     val damage = gameItemString[3].replace("damage=", "").replace(",", "")
@@ -159,7 +160,7 @@ class ARViewModel @Inject constructor(
                 val username = localUserManager.getUserProfile().displayName
                 val ownership = Ownership(event.itemId, username)
                 viewModelScope.launch {
-                    dataRepository.postOwnership(ownership)
+                    arUseCases.addOwnership(ownership)
                 }
             }
         }
@@ -195,7 +196,7 @@ class ARViewModel @Inject constructor(
 
                 viewModelScope.launch {
                     // set if the player already owns the item
-                    if (dataRepository.getOwnership(username, itemId).value?.isNotEmpty() == true) {
+                    if (arUseCases.getOwnership(username, itemId).isNotEmpty()) {
                         _state.value.owned = true
                     } else {
                         _state.value.owned = false

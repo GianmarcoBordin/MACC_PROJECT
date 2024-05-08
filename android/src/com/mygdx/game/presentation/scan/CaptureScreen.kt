@@ -1,5 +1,6 @@
 package com.mygdx.game.presentation.scan
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -50,8 +51,12 @@ import com.mygdx.game.presentation.scan.events.GameEvent
 import com.mygdx.game.presentation.scan.events.LineEvent
 import com.mygdx.game.presentation.scan.events.UpdateDatabaseEvent
 import com.mygdx.game.util.Constants
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Scaffold
+import androidx.compose.ui.unit.Dp
 
-
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHandler: (GameEvent.StartGame) -> Unit,
                   lineAddHandler: (LineEvent.AddNewLine) -> Unit, lineDeleteHandler: (LineEvent.DeleteAllLines) -> Unit,
@@ -91,10 +96,20 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
             )
         }
         if (!gameState.isGameOver) {
-            Text(
+            Scaffold(
                 modifier = Modifier
-                        .fillMaxWidth(),
-                text = "HP left: ${gameState.hp}"
+                    .padding(top = 50.dp),
+                content = {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        HealthBar(health = gameState.hp, maxHealth = gameState.gameItem.hp, barWidth = 200.dp, barHeight = 24.dp)
+                    }
+                }
             )
             Canvas(
                 modifier = Modifier
@@ -256,6 +271,23 @@ private fun DrawScope.drawItem(coordinates: Vector2, itemImage: ImageBitmap, wid
         ),
         dstSize = IntSize(width, height)
     )
+}
+
+@Composable
+fun HealthBar(health: Int, maxHealth: Int, barWidth: Dp, barHeight: Dp) {
+    val progress = (health.toFloat() / maxHealth.toFloat()) * 100
+    Box(
+        modifier = Modifier
+            .size(barWidth, barHeight)
+            .background(Color.Gray, RoundedCornerShape(4.dp))
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .fillMaxWidth(progress / 100f)
+                .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(4.dp))
+        )
+    }
 }
 
 fun scaleDown(realImage: Bitmap, maxImageSize: Float, filter: Boolean): Bitmap {
