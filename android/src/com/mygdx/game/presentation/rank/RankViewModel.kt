@@ -52,7 +52,8 @@ class RankViewModel  @Inject constructor(
             try {
                 // Fetch data asynchronously
                 val result = rankUseCases.fetch()
-                if (result.value== null){
+
+                if (result.value== null || result.value?.isEmpty() == true || result.value == listOf("Error: ")){
                     _isError.value=true
                 }else{
                     // Update rank data
