@@ -24,6 +24,7 @@ import com.mygdx.game.domain.api.DataRepository
 import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.domain.usecase.ar.ARUseCases
 import com.mygdx.game.presentation.scan.events.BitmapEvent
+import com.mygdx.game.presentation.scan.events.DataStoreEvent
 import com.mygdx.game.presentation.scan.events.DimensionsEvent
 import com.mygdx.game.presentation.scan.events.FocusEvent
 import com.mygdx.game.presentation.scan.events.GameEvent
@@ -62,10 +63,23 @@ class ARViewModel @Inject constructor(
     // counter for the presence of the bullets on the screen
     private var justShoot = 0
 
-    var ownedGameItem: GameItem = GameItem()
+    // GameItem retrieved by the DataStore (the one generated from the server)
+    private var gameItem: GameItem = GameItem()
+    // GameItem retrieved by the database (the one the player has already captured)
+    private var ownedGameItem: GameItem = GameItem()
 
     private val _state = MutableStateFlow(GameState())
     val state = _state.asStateFlow()
+
+    fun onDataStoreEvent(event: DataStoreEvent) {
+        when (event) {
+            DataStoreEvent.readDataStore -> {
+                gameItem = localUserManager.readGameItem()
+                // set the gameitem and its health
+                _state.value = state.value.copy(gameItem = gameItem, hp = gameItem.hp,)
+            }
+        }
+    }
 
     fun onFocusEvent(event: FocusEvent) {
         when (event) {
@@ -152,6 +166,8 @@ class ARViewModel @Inject constructor(
                     Log.e("DEBUG", rarity)
                     Log.e("DEBUG", hp)
                     Log.e("DEBUG", damage)
+                    Log.e("DEBUG", username)
+                    Log.e("DEBUG", event.rarity)
                     ownedGameItem = GameItem(id, rarity.toInt(), hp.toInt(), damage.toInt())
                 }
             }
@@ -174,8 +190,6 @@ class ARViewModel @Inject constructor(
                 val imageHeightRatio = screenHeight / (bitmap?.height ?: 1).toFloat()
                 imageRatio = max(imageWidthRatio, imageHeightRatio)
 
-                val gameItem: GameItem = localUserManager.readGameItem()
-
                 // -> bitmap of the bullets
                 // convert to bitmap
                 val bulletsBitmap = event.bullets.asAndroidBitmap()
@@ -189,7 +203,7 @@ class ARViewModel @Inject constructor(
                 val finalBullets = bulletsBitmap.scale(bulletsWidth, bulletsHeight)
 
                 // set the bitmap and make the game start
-                _state.value = state.value.copy(gameItem = gameItem, hp = gameItem.hp, shootBitmap = finalBullets, isStarted = true)
+                _state.value = state.value.copy(shootBitmap = finalBullets, isStarted = true)
 
                 val username = localUserManager.getUserProfile().displayName
                 val itemId = state.value.gameItem.id

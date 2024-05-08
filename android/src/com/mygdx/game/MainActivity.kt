@@ -54,7 +54,6 @@ class MainActivity : ComponentActivity(){
                         object: Multiplayer{ override fun onSetMultiplayer() { setMultiplayer() } },
                         startDestination = startDestination
                     )
-
                     /*
                     Button(onClick = {
 
@@ -63,9 +62,7 @@ class MainActivity : ComponentActivity(){
                     }) {
                         Text(text = "Multiplayer")
                     }
-
-
-                     */
+                    */
                 }
 
             }

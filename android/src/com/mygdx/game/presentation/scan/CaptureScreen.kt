@@ -1,6 +1,5 @@
 package com.mygdx.game.presentation.scan
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
@@ -53,10 +51,8 @@ import com.mygdx.game.presentation.scan.events.UpdateDatabaseEvent
 import com.mygdx.game.util.Constants
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Scaffold
 import androidx.compose.ui.unit.Dp
 
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHandler: (GameEvent.StartGame) -> Unit,
                   lineAddHandler: (LineEvent.AddNewLine) -> Unit, lineDeleteHandler: (LineEvent.DeleteAllLines) -> Unit,
@@ -96,21 +92,19 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
             )
         }
         if (!gameState.isGameOver) {
-            Scaffold(
+            Column(
                 modifier = Modifier
-                    .padding(top = 50.dp),
-                content = {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        HealthBar(health = gameState.hp, maxHealth = gameState.gameItem.hp, barWidth = 200.dp, barHeight = 24.dp)
-                    }
-                }
-            )
+                    .padding(top = 32.dp, start = 32.dp, end = 32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                HealthBar(health = gameState.hp, maxHealth = gameState.gameItem.hp, barWidth = (viewModel.screenWidth - 64).dp, barHeight = 24.dp)
+                Text(modifier = Modifier
+                        .padding(top = 6.dp),
+                    color = Color.Red,
+                    text = "HP: ${gameState.hp}/${gameState.gameItem.hp}"
+                )
+            }
             Canvas(
                 modifier = Modifier
                     .fillMaxSize()
@@ -236,17 +230,6 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                 }
             }
         }
-        Text(
-            modifier = Modifier
-                .systemBarsPadding()
-                .fillMaxWidth()
-                .align(Alignment.TopCenter)
-                .padding(top = 16.dp, start = 32.dp, end = 32.dp),
-            textAlign = TextAlign.Center,
-            fontSize = 28.sp,
-            color = MaterialTheme.colorScheme.onSurface,
-            text = if (!gameState.isGameOver) "Capture the object" else "Object captured"
-        )
     }
 }
 
@@ -285,7 +268,7 @@ fun HealthBar(health: Int, maxHealth: Int, barWidth: Dp, barHeight: Dp) {
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(progress / 100f)
-                .background(MaterialTheme.colorScheme.secondary, RoundedCornerShape(4.dp))
+                .background(Color.Red, RoundedCornerShape(4.dp))
         )
     }
 }
