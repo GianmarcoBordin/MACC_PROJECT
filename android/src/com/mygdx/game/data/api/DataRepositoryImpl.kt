@@ -37,13 +37,16 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
 
                 if (response.isSuccessful) {
                     val ranks = response.body()
-                    if (ranks != null) {
+                    if (ranks == emptyList<Rank>()){
+                        data.value = emptyList()
+                    }
+                    else if (ranks != null) {
                         val rankInfo = ranks.map {
                             "${it.username} ${it.score}" }
                         data.value = rankInfo
                     } else {
                         // Empty response body
-                        data.value = listOf("Empty response body")
+                        data.value = listOf("Error: ")
                     }
                 } else {
                     // Unsuccessful response
@@ -77,13 +80,16 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
 
             if (response.isSuccessful) {
                 val ranks = response.body()
-                if (ranks != null) {
+                if (ranks == emptyList<Rank>()){
+                    data.value = emptyList()
+                }
+                else if (ranks != null) {
                     val rankInfo = ranks.map {
                         "${it.username} ${it.score}" }
                     data.value = rankInfo
                 } else {
                     // Empty response body
-                    data.value = listOf("Empty response body")
+                    data.value = listOf("Error: ")
                 }
             } else {
                 // Unsuccessful response
@@ -178,7 +184,7 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
 
         return resultLiveData
     }
-    override suspend fun getGameItem(user: String,rarity:String): LiveData<List<String>> {
+    override suspend fun getGameItem(user: String, rarity:String): LiveData<List<String>> {
         val data = MutableLiveData<List<String>>()
         try {
             val response = suspendCoroutine { continuation ->
@@ -213,7 +219,6 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
             Log.d(TAG,"Error: ${e.message}"+e.printStackTrace())
             data.value = listOf("Error: ")
         }
-
 
         return data
     }

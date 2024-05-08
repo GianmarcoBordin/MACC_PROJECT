@@ -9,6 +9,7 @@ import androidx.core.graphics.scale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.badlogic.gdx.Game
 import com.mygdx.game.data.dao.GameItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -59,6 +60,8 @@ class ARViewModel @Inject constructor(
     private var direction = Vector2(0f, 0f)
     // counter for the presence of the bullets on the screen
     private var justShoot = 0
+
+    var ownedGameItem: GameItem = GameItem()
 
     private val _state = MutableStateFlow(GameState())
     val state = _state.asStateFlow()
@@ -112,14 +115,15 @@ class ARViewModel @Inject constructor(
         }
     }
 
+    // bitmap is not used because it is pointless to save it on the db
+    // (it requires more bandwidth, but provide no benefit for the user)
      fun onUpdateDatabaseEvent(event: UpdateDatabaseEvent) {
         when (event) {
             is UpdateDatabaseEvent.IncrementItemStats -> {
-                val updatedGameItem = GameItem(state.value.gameItem.id,
-                    state.value.gameItem.rarity,
-                    state.value.gameItem.hp + event.hpIncrement,
-                    state.value.gameItem.damage + event.damageIncrement,
-                    state.value.gameItem.bitmap)
+                val updatedGameItem = GameItem(ownedGameItem.id,
+                    ownedGameItem.rarity,
+                    ownedGameItem.hp + event.hpIncrement,
+                    ownedGameItem.damage + event.damageIncrement)
                 viewModelScope.launch {
                     dataRepository.postGameItem(updatedGameItem)
                 }
@@ -129,16 +133,25 @@ class ARViewModel @Inject constructor(
                 val newGameItem = GameItem(state.value.gameItem.id,
                     state.value.gameItem.rarity,
                     state.value.gameItem.hp,
-                    state.value.gameItem.damage,
-                    state.value.gameItem.bitmap)
+                    state.value.gameItem.damage)
                 viewModelScope.launch {
                     dataRepository.postGameItem(newGameItem)
                 }
             }
 
-            UpdateDatabaseEvent.GetItem -> {
+            is UpdateDatabaseEvent.GetItem -> {
+                val username = localUserManager.getUserProfile().displayName
                 viewModelScope.launch {
-                    //dataRepository.getGameItem()
+                    val gameItemString = dataRepository.getGameItem(username, event.rarity).value?.get(0)?.split(" ")
+                    val id = gameItemString!![0].replace("GameItem(id=", "").replace(",", "")
+                    val rarity = gameItemString[1].replace("rarity=", "").replace(",", "")
+                    val hp = gameItemString[2].replace("hp=", "").replace(",", "")
+                    val damage = gameItemString[3].replace("damage=", "").replace(",", "")
+                    Log.e("DEBUG", id)
+                    Log.e("DEBUG", rarity)
+                    Log.e("DEBUG", hp)
+                    Log.e("DEBUG", damage)
+                    ownedGameItem = GameItem(id, rarity.toInt(), hp.toInt(), damage.toInt())
                 }
             }
 

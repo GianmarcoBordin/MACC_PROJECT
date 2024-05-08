@@ -2,6 +2,7 @@
 
 package com.mygdx.game.data.manager
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import kotlinx.coroutines.runBlocking
@@ -46,7 +47,7 @@ class SettingsManagerImpl @Inject constructor(
                     try {
                         runBlocking {
                             val oldName= localUserManager.getUserProfile().displayName
-                            authManager.updatePlayerFirestore(oldName,name)
+                            Log.d("AUTH_MANAGER",authManager.updatePlayerFirestore(oldName,name))
                             // save user profile application state
                             val userProfileBundle =
                                 UserProfileBundle(displayName = name, email = email)
@@ -72,6 +73,7 @@ class SettingsManagerImpl @Inject constructor(
                 if (emailUpdateTask.isSuccessful) {
                     return@continueWithTask user.updateProfile(profileUpdates)
                 } else {
+                    println(emailUpdateTask.exception!!.message)
                     throw emailUpdateTask.exception!!
                 }
             }?.addOnCompleteListener { combinedTask ->
@@ -80,7 +82,7 @@ class SettingsManagerImpl @Inject constructor(
                     runBlocking {
 
                         val oldName= localUserManager.getUserProfile().displayName
-                        authManager.updatePlayerFirestore(oldName,name)
+                        Log.d("AUTH_MANAGER",authManager.updatePlayerFirestore(oldName,name))
                         // save user profile application state
                         val userProfileBundle =
                             UserProfileBundle(displayName = name, email = email)
