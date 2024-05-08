@@ -138,7 +138,7 @@ class ARViewModel @Inject constructor(
 
             UpdateDatabaseEvent.GetItem -> {
                 viewModelScope.launch {
-                    dataRepository.getGameItem()
+                    //dataRepository.getGameItem()
                 }
             }
 

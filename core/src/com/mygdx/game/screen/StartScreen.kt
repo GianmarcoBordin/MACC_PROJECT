@@ -60,20 +60,10 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
 
         addUserIdFieldTable()
 
-        // TODO this data should be passed from outside
-        // Define character data
-        val characters = listOf(
-            CharacterType(PlayerSkin.GREEN, 100, 20),
-            CharacterType(PlayerSkin.RED, 120, 25),
-            CharacterType(PlayerSkin.YELLOW, 80, 30),
-            CharacterType(PlayerSkin.BLACK, 150, 15),
-            CharacterType(PlayerSkin.BLUE, 90, 25)
-        )
-
         val padding = width * 0.025f
 
         // create the table
-        characters.forEach { character ->
+        game.myCollectedSkin.forEach { character ->
             val characterTable = createCharacterTable(character)
             table.add(characterTable).padLeft(padding).padRight(padding).padTop(30f).padBottom(10f)
 
