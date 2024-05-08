@@ -3,9 +3,9 @@ package com.mygdx.game.player
 enum class PlayerSkin {
     GREEN,
     RED,
-    BLACK,
     YELLOW,
-    BLUE;
+    BLUE,
+    BLACK;
 
     fun getSkinRegionName(): String {
         return when (this) {

@@ -3,6 +3,7 @@ package com.mygdx.game
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
+import com.mygdx.game.dto.CharacterType
 import com.mygdx.game.screen.GameScreen
 import com.mygdx.game.screen.ConnectionScreen
 import com.mygdx.game.screen.GameOverScreen
@@ -11,7 +12,7 @@ import com.mygdx.game.screen.StartScreen
 /**
  * Class that handles screens and resources of the game
  */
-class GameManager(val myId: String) : Game() {
+class GameManager(val myCollectedSkin: ArrayList<CharacterType>, private val myId: String) : Game() {
 
     val gameSkin by lazy { Skin(Gdx.files.internal("skin/glassy-ui.json")) }
     private var startScreen: StartScreen? = null
@@ -20,7 +21,7 @@ class GameManager(val myId: String) : Game() {
     private var gameOverScreen: GameOverScreen? = null
 
     override fun create() {
-        //showGameScreen(GameScreen(this, MultiplayerClient(this,"1","2"),PlayerSkin.GREEN,"me","other"))
+
         setScreen(getStartScreen())
 
     }
