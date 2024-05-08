@@ -71,6 +71,13 @@ class ARViewModel @Inject constructor(
     private val _state = MutableStateFlow(GameState())
     val state = _state.asStateFlow()
 
+
+    // test
+    init {
+        viewModelScope.launch {
+            arUseCases.getGameItem("carlo", "3")
+        }
+    }
     fun onDataStoreEvent(event: DataStoreEvent) {
         when (event) {
             DataStoreEvent.readDataStore -> {

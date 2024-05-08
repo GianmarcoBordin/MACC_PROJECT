@@ -201,13 +201,19 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
 
             if (response.isSuccessful) {
                 val ranks = response.body()
+                if (ranks == emptyList<GameItem>()){
+                    data.value = emptyList()
+                }
                 if (ranks != null) {
+                    println(response.body())
                     val rankInfo = ranks.map {
-                        "${it}" }
+                        "${it.id} ${it.rarity} ${it.hp} ${it.damage}"
+                    }
+
                     data.value = rankInfo
                 } else {
                     // Empty response body
-                    data.value = listOf("Empty response body")
+                    data.value = emptyList()
                 }
             } else {
                 // Unsuccessful response
@@ -266,13 +272,16 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
 
             if (response.isSuccessful) {
                 val ranks = response.body()
+                if (ranks == emptyList<Ownership>()){
+                    data.value = emptyList()
+                }
                 if (ranks != null) {
                     val rankInfo = ranks.map {
                         "${it.username} ${it.itemId}" }
                     data.value = rankInfo
                 } else {
                     // Empty response body
-                    data.value = listOf("Empty response body")
+                    data.value = emptyList()
                 }
             } else {
                 // Unsuccessful response
