@@ -13,6 +13,9 @@ import com.mygdx.game.domain.usecase.auth.AuthenticationUseCases
 import com.mygdx.game.presentation.authentication.events.BioSignInEvent
 import com.mygdx.game.presentation.authentication.events.SignInEvent
 import com.mygdx.game.presentation.authentication.events.SignUpEvent
+import com.mygdx.game.util.Constants.BIO_AUTH_SUCCESS
+import com.mygdx.game.util.Constants.LOGIN_SUCCESS
+import com.mygdx.game.util.Constants.SIGN_UP_SUCCESS
 import com.mygdx.game.util.Constants.USER_AUTH
 import kotlinx.coroutines.delay
 import javax.inject.Inject
@@ -101,7 +104,7 @@ class AuthenticationViewModel  @Inject constructor(
     override fun onUpdate(data: String) {
         // Update UI state with received data
         _data.value = data
-        if (_data.value == "SignUp Success" || _data.value == "Login Success" || _data.value == "Bio Auth Success") {
+        if (_data.value == SIGN_UP_SUCCESS || _data.value == LOGIN_SUCCESS || _data.value == BIO_AUTH_SUCCESS) {
             _isLoading.value=false
             _isError.value = false
             _navigateToAnotherScreen.value = true

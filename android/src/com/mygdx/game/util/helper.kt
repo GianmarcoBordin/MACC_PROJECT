@@ -15,3 +15,15 @@ fun isValidEmail(email: String): Boolean {
     // Use the matches function to check if the email matches the pattern
     return emailRegex.matches(email)
 }
+
+fun String.removeCharactersAfterAt(): String {
+    // Find the index of "@" symbol in the string
+    val atIndex = indexOf("@")
+
+    // If "@" symbol exists, return the substring before it, else return the original string
+    return if (atIndex != -1) {
+        substring(0, atIndex)
+    } else {
+        this
+    }
+}

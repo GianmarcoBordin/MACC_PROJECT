@@ -9,14 +9,15 @@ import com.mygdx.game.dto.CharacterType
 import com.mygdx.game.util.serializable
 
 
-class AndroidLauncher: AndroidApplication() {
+
+class AndroidLauncher: AndroidApplication(), GameTerminationListener {
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val config = AndroidApplicationConfiguration()
 
-        val deviceID = Settings.Secure.getString(contentResolver, Settings.Secure.ANDROID_ID).substring(0, 2)
 
         //deactivate compass and Accelerometer
         config.useAccelerometer = false
@@ -24,9 +25,21 @@ class AndroidLauncher: AndroidApplication() {
 
 
         val receivedCharacters = intent.serializable<ArrayList<CharacterType>>("PLAYER_LIST")
+        val userId = intent.getStringExtra("USERNAME")
 
-        // TODO deviceID should be the player ID
-        initialize(receivedCharacters?.let { GameManager(it,deviceID) }, config)
+        if (userId != null){
+            val gameManager = receivedCharacters?.let { GameManager(it,userId) }
+            // set the call back
+            gameManager?.setTerminationListener(this)
+
+            initialize(gameManager, config)
+        }
+
+
+    }
+
+    override fun onGameTerminated() {
+        finish()
     }
 }
 
