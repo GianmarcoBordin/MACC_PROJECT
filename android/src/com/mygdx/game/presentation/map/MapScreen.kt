@@ -322,8 +322,13 @@ fun OsmMap(
         factory = { context ->
             MapView(context).apply {
                 // Configure the map settings
+
                 setTileSource(TileSourceFactory.MAPNIK)
                 setMultiTouchControls(true)
+
+                // Set the minimum and maximum zoom levels for the map view
+                minZoomLevel = 10.0
+                maxZoomLevel = 18.0
                 controller.setZoom(18.0)
 
                 // Register a touch event listener

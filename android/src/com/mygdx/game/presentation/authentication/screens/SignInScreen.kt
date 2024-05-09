@@ -277,7 +277,6 @@ fun DefaultSignInContent(
             // Observe changes in data
             if (data?.isNotEmpty() == true || authenticationResult == BIO_AUTH_SUCCESS) {
                 // Display data
-
                     Text(
                         text = data!!.toString(),
                         color = if (data.equals(LOGIN_SUCCESS) ||data.equals(BIO_AUTH_SUCCESS) || authenticationResult == BIO_AUTH_SUCCESS) Color.Green else MaterialTheme.colorScheme.onError,
