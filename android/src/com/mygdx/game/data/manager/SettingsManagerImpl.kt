@@ -84,17 +84,16 @@ class SettingsManagerImpl @Inject constructor(
                 }
             }?.addOnCompleteListener { combinedTask ->
                 if (combinedTask.isSuccessful) {
-
-                CoroutineScope(Dispatchers.IO).launch {
-                    val oldName= localUserManager.getUserProfile().displayName
-                        Log.d("AUTH_MANAGER",authManager.updatePlayerFirestore(oldName,name))
-                        // save user profile application state
-                        val userProfileBundle =
-                            UserProfileBundle(displayName = name, email = email)
-                        localUserManager.saveUserProfile(userProfileBundle)
-                        // update local bio
-                        val bio= Biometric(email,password)
-                        localUserManager.saveBio(bio)
+                    CoroutineScope(Dispatchers.IO).launch {
+                           val oldName= localUserManager.getUserProfile().displayName
+                            Log.d("AUTH_MANAGER",authManager.updatePlayerFirestore(oldName,name))
+                            // save user profile application state
+                            val userProfileBundle =
+                                UserProfileBundle(displayName = name, email = email)
+                            localUserManager.saveUserProfile(userProfileBundle)
+                            // update local bio
+                            val bio= Biometric(email,password)
+                            localUserManager.saveBio(bio)
                     }
                     // All updates were successful
                     updateListener?.onUpdate(UPDATE_SUCCESS)
