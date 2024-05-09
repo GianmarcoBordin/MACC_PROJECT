@@ -57,7 +57,7 @@ import androidx.compose.ui.unit.Dp
 fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHandler: (GameEvent.StartGame) -> Unit,
                   lineAddHandler: (LineEvent.AddNewLine) -> Unit, lineDeleteHandler: (LineEvent.DeleteAllLines) -> Unit,
                   addDatabaseHandler: (UpdateDatabaseEvent.AddItem) -> Unit, updateDatabaseHandler: (UpdateDatabaseEvent.IncrementItemStats) -> Unit,
-                  addOwnershipHandler: (UpdateDatabaseEvent.AddOwnership) -> Unit, getItemDatabaseHandler: (UpdateDatabaseEvent.GetItem) -> Unit) {
+                  addOwnershipHandler: (UpdateDatabaseEvent.AddOwnership) -> Unit) {
     // collectAsState() allows Canvas' recomposition
     val gameState by viewModel.state.collectAsState()
 

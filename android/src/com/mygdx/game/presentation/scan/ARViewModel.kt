@@ -8,8 +8,6 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.core.graphics.scale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.badlogic.gdx.Game
 import com.mygdx.game.data.dao.GameItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -20,7 +18,6 @@ import com.mygdx.game.data.dao.Line
 import com.mygdx.game.data.dao.Message
 import com.mygdx.game.data.dao.Ownership
 import com.mygdx.game.data.manager.UpdateListener
-import com.mygdx.game.domain.api.DataRepository
 import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.domain.usecase.ar.ARUseCases
 import com.mygdx.game.presentation.scan.events.BitmapEvent
@@ -31,8 +28,6 @@ import com.mygdx.game.presentation.scan.events.GameEvent
 import com.mygdx.game.presentation.scan.events.LineEvent
 import com.mygdx.game.presentation.scan.events.UpdateDatabaseEvent
 import com.mygdx.game.presentation.scan.events.VisibilityEvent
-import kotlinx.coroutines.runBlocking
-import macc.ar.domain.api.MapRepository
 import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.sqrt
@@ -151,12 +146,6 @@ class ARViewModel @Inject constructor(
                     state.value.gameItem.damage)
                 viewModelScope.launch {
                     arUseCases.addGameItem(newGameItem)
-                }
-            }
-
-            is UpdateDatabaseEvent.GetItem -> {
-                val username = localUserManager.getUserProfile().displayName
-                viewModelScope.launch {
                 }
             }
 
