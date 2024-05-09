@@ -8,4 +8,5 @@ interface RankManager{
     suspend fun fetch(): LiveData<List<String>>
 
     fun setUpdateListener(ref: UpdateListener)
+    suspend fun fetchGameItem(user: String, rarity: String): LiveData<List<String>>
 }

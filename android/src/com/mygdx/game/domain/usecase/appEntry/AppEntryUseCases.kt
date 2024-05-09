@@ -4,5 +4,6 @@ data class AppEntryUseCases (
     val readAppEntry: ReadAppEntry,
     val saveAppEntry: SaveAppEntry,
     val readUser: ReadUser,
-    val saveUser: SaveUser
+    val saveUser: SaveUser,
+    val readSkin : ReadSkin
 )
