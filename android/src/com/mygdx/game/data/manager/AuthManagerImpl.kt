@@ -63,13 +63,14 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                     val rankData = dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
                     rank = Rank(rankData?.get(0) ?: name, rankData?.get(1)?.toInt() ?: 0)
                     // TODO AND CHECK RUN BLOCKING
-                    for (i in 1..5){
-                        val skin = dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ") ?: emptyList()
-                        val gameItem= GameItem(id =skin[0] ,rarity=skin[1].toInt(),hp=skin[2].toInt(), damage =skin[3].toInt() )
-                        localUserManager.saveObject("SKIN_${i}",gameItem)
-                    }
+
                 }else {
                     rank = Rank( name,  0)
+                }
+                for (i in 1..5){
+                    val skin = dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ") ?: emptyList()
+                    val gameItem= GameItem(id =skin[0] ,rarity=skin[1].toInt(),hp=skin[2].toInt(), damage =skin[3].toInt() )
+                    localUserManager.saveObject("SKIN_${i}",gameItem)
                 }
                 // save user rank
                 localUserManager.saveScore(rank)
