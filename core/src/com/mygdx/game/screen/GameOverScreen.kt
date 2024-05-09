@@ -26,7 +26,7 @@ class GameOverScreen(private val game: GameManager, private val win: Boolean, pr
 
     private val playAgainButton = TextButton("Play again", game.gameSkin)
     private val changeAdversaryButton = TextButton("Change adversary", game.gameSkin)
-
+    private val exitButton = TextButton("Exit", game.gameSkin)
     init {
 
         addTitle(if (win) "You win!" else "You loose")
@@ -49,6 +49,17 @@ class GameOverScreen(private val game: GameManager, private val win: Boolean, pr
         changeAdversaryButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
                 game.showStartScreen(otherId,disconnect = true)
+            }
+
+            override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
+                return true
+            }
+        })
+
+        exitButton.addListener(object : InputListener() {
+            override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
+
+                game.endActivity()
             }
 
             override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
