@@ -305,12 +305,15 @@ fun OsmMap(
 
     // observable state
     val userLocation by viewModel.userLocation.observeAsState()
-    val oldUserLocation by viewModel.oldUserLocation.observeAsState()
     val players by viewModel.players.observeAsState()
     val objects by viewModel.objects.observeAsState()
     val navPath by viewModel.navPath.observeAsState()
     val thresholdButton = 50
     val thresholdButtonFlag by viewModel.thresholdButtonFlag.observeAsState()
+    var pathOverlay : Polyline = Polyline()
+    var userMarker : Marker = Marker(MapView(LocalContext.current))
+
+
 
 
     // Initialize OSM MapView
@@ -359,10 +362,11 @@ fun OsmMap(
         val thresholdKm = 1000 // Set the threshold to 1 kilometer
         // Add user's location marker
         userLocation?.let { location ->
+            mapView.overlays.remove(userMarker)
             val userGeoPoint = GeoPoint(location.latitude, location.longitude)
             Log.d("MAP SCREEN", "$userGeoPoint")
             mapView.controller.setCenter(userGeoPoint)
-            val userMarker = Marker(mapView)
+            userMarker = Marker(mapView)
             userMarker.position = userGeoPoint
             userMarker.title = "Your Location"
             mapView.overlays.add(userMarker)
@@ -411,23 +415,15 @@ fun OsmMap(
         navPath?.let {
             val boundingBox = BoundingBox.fromGeoPoints(navPath)
             // Set the center and zoom level of the MapView based on the bounding box
+            mapView.overlays.remove(pathOverlay)
             mapView.zoomToBoundingBox(boundingBox, true)
-            val pathOverlay = Polyline()
+            pathOverlay = Polyline()
             pathOverlay.setPoints(navPath)
             mapView.overlays.add(pathOverlay)
 
+
         }
 
-
-        if (oldUserLocation != userLocation && oldUserLocation != null && userLocation != null) {
-            val userMarker = mapView.findMarker(
-                oldUserLocation?.latitude!!.toFloat(),
-                oldUserLocation?.longitude!!.toFloat()
-            )
-            if (userMarker != null) {
-                userMarker.remove(mapView)
-            }
-        }
     }
 
         if (thresholdButtonFlag?.isNotEmpty() == true) {

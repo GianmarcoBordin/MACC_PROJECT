@@ -5,6 +5,8 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.location.Location
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -56,9 +58,6 @@ class MapViewModel  @Inject constructor(
     private val _userLocation = MutableLiveData<Location?>()
     val userLocation: LiveData<Location?> = _userLocation
 
-    private val _oldUserLocation = MutableLiveData<Location?>()
-    val oldUserLocation: LiveData<Location?> = _oldUserLocation
-
     private val _players = MutableLiveData<List<Player>?>()
     val players: LiveData<List<Player>?> = _players
 
@@ -105,7 +104,6 @@ class MapViewModel  @Inject constructor(
 
 
     override fun onUpdate(data: Location) { // receives updates from data layer
-        _oldUserLocation.value = _userLocation.value
         _userLocation.value=data
         // when I rx an update from data layer the position is changed so if I have a route in progress I will update it
         if (_navPath.value!=null){
@@ -159,7 +157,6 @@ class MapViewModel  @Inject constructor(
 
                 // Update LiveData
                 _userLocation.value = userLoc
-                _oldUserLocation.value = userLoc
                 _players.value = ps ?: emptyList()
                 _objects.value = objs ?: emptyList()
                 // Set loading state to false
