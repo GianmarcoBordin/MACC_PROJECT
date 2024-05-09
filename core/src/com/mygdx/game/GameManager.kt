@@ -45,7 +45,6 @@ class GameManager(val myCollectedSkin: ArrayList<CharacterType>, private val myI
     }
 
     fun showStartScreen(adversaryId: String, disconnect: Boolean) {
-        // TODO disconnect the client could be improved
         if (disconnect){
             getConnectionScreen(adversaryId).multiplayerClient.disconnect()
         }
@@ -87,7 +86,6 @@ class GameManager(val myCollectedSkin: ArrayList<CharacterType>, private val myI
 
     private fun getConnectionScreen(otherId: String): ConnectionScreen {
         if (connectionScreen == null) {
-            // TODO change the logic of passing the selected character between screens
             connectionScreen =
                 startScreen?.selectedCharacter?.let { ConnectionScreen(this, myId, otherId, it) }
         }

@@ -31,7 +31,7 @@ data class Player(
     // keep track of laser generate by users
     var laserList: LinkedList<Laser> = LinkedList()
 
-    // collision detection TODO
+    // collision detection
     private var playerBox: Rectangle = Rectangle(origin.x, origin.y, Constants.WORLD_WIDTH / 15, Constants.WORLD_WIDTH / 15)
 
     // position & dimension

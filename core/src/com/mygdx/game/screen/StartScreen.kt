@@ -86,7 +86,6 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
 
     fun handleConnection(){
 
-        // TODO condition to check userid
         if (userIdField.text.isNotEmpty() && selectedCharacter != null){
             errorLabel.isVisible = false
             val playerId = userIdField.text

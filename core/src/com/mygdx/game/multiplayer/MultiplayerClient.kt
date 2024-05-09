@@ -121,7 +121,6 @@ class MultiplayerClient(
                         }
 
                         MessageType.INIT -> {
-                            TODO()
                         }
 
                     }
@@ -151,7 +150,6 @@ class MultiplayerClient(
 
     }
 
-    // TODO will be used when the game ends
     fun disconnect() {
         try {
             webSocket.close(1000, "Disconnected by user")

@@ -121,7 +121,6 @@ class Controller(gameBatch: SpriteBatch): Disposable {
 
         table = drawTable(table, upImg, downImg, leftImg, rightImg)
 
-        // TODO because is not general
         fightImage.setSize(65f, 65f)
         fightImage.setPosition(0.75f * viewport.worldWidth , 0.05f * viewport.worldHeight)
 
