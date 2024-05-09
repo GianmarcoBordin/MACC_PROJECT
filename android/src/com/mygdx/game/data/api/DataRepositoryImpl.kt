@@ -11,6 +11,9 @@ import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.dao.Rank
 import com.mygdx.game.domain.api.RankApi
 import com.mygdx.game.domain.api.DataRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -187,38 +190,44 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
     override suspend fun getGameItem(user: String, rarity:String): LiveData<List<String>> {
         val data = MutableLiveData<List<String>>()
         try {
-            val response = suspendCoroutine { continuation ->
-                rankApi?.getGameItem(user, rarity)?.enqueue(object : Callback<List<GameItem>> {
-                    override fun onResponse(call: Call<List<GameItem>>, response: Response<List<GameItem>>) {
-                        continuation.resume(response)
-                    }
+            CoroutineScope(Dispatchers.IO).launch {
 
-                    override fun onFailure(call: Call<List<GameItem>>, t: Throwable) {
-                        continuation.resumeWithException(t)
-                    }
-                })
-            }
+                val response = suspendCoroutine { continuation ->
+                    rankApi?.getGameItem(user, rarity)?.enqueue(object : Callback<List<GameItem>> {
+                        override fun onResponse(
+                            call: Call<List<GameItem>>,
+                            response: Response<List<GameItem>>
+                        ) {
+                            continuation.resume(response)
+                        }
 
-            if (response.isSuccessful) {
-                val ranks = response.body()
-                if (ranks == emptyList<GameItem>()){
-                    data.value = emptyList()
+                        override fun onFailure(call: Call<List<GameItem>>, t: Throwable) {
+                            continuation.resumeWithException(t)
+                        }
+                    })
                 }
-                if (ranks != null) {
-                    println(response.body())
-                    val rankInfo = ranks.map {
-                        "${it.id} ${it.rarity} ${it.hp} ${it.damage}"
-                    }
 
-                    data.value = rankInfo
+                if (response.isSuccessful) {
+                    val ranks = response.body()
+                    if (ranks == emptyList<GameItem>()) {
+                        data.postValue(emptyList())
+                    }
+                    if (ranks != null) {
+                        println(response.body())
+                        val rankInfo = ranks.map {
+                            "${it.id} ${it.rarity} ${it.hp} ${it.damage}"
+                        }
+
+                        data.postValue(rankInfo)
+                    } else {
+                        // Empty response body
+                        data.postValue(emptyList())
+                    }
                 } else {
-                    // Empty response body
-                    data.value = emptyList()
+                    // Unsuccessful response
+                    Log.d(TAG, "Error: ${response.code()}" + response)
+                    data.postValue(listOf("Error: "))
                 }
-            } else {
-                // Unsuccessful response
-                Log.d(TAG,"Error: ${response.code()}"+response)
-                data.value = listOf("Error: ")
             }
         } catch (e: Exception) {
             // Failure

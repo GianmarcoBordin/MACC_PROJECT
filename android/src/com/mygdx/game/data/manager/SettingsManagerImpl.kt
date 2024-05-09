@@ -15,6 +15,9 @@ import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.domain.manager.SettingsManager
 import com.mygdx.game.util.Constants.SIGN_OUT_SUCCESS
 import com.mygdx.game.util.Constants.UPDATE_SUCCESS
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SettingsManagerImpl @Inject constructor(
@@ -48,7 +51,7 @@ class SettingsManagerImpl @Inject constructor(
                 if (combinedTask.isSuccessful) {
 
                     try {
-                        runBlocking {
+                        CoroutineScope(Dispatchers.IO).launch {
                             val oldName= localUserManager.getUserProfile().displayName
                             Log.d("AUTH_MANAGER",authManager.updatePlayerFirestore(oldName,name))
                             // save user profile application state
@@ -82,9 +85,8 @@ class SettingsManagerImpl @Inject constructor(
             }?.addOnCompleteListener { combinedTask ->
                 if (combinedTask.isSuccessful) {
 
-                    runBlocking {
-
-                        val oldName= localUserManager.getUserProfile().displayName
+                    CoroutineScope(Dispatchers.IO).launch {
+                    val oldName= localUserManager.getUserProfile().displayName
                         Log.d("AUTH_MANAGER",authManager.updatePlayerFirestore(oldName,name))
                         // save user profile application state
                         val userProfileBundle =

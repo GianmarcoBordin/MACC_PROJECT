@@ -41,9 +41,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MapViewModel  @Inject constructor(
     private val mapUseCases: MapUseCases,
-    private val contextManager: ContextManager,
     private val appEntryUseCases: AppEntryUseCases,
-    private val localUserManager: LocalUserManager
 ): ViewModel(), UpdateListener {
 
     private val _isLoading = MutableLiveData<Boolean>()
@@ -98,7 +96,7 @@ class MapViewModel  @Inject constructor(
 
      fun saveGameItem(gameItem: GameItem){
          viewModelScope.launch {
-             localUserManager.saveGameItem(gameItem)
+             mapUseCases.saveGameItem(gameItem)
          }
     }
 
@@ -139,6 +137,9 @@ class MapViewModel  @Inject constructor(
                 userLoc = mapUseCases.fetchUserLocation(player, context)
                     ?: throw IllegalStateException("User location is null")
 
+                // post user player location
+                player.location = userLoc
+                mapUseCases.updateUserLocation(player)
                 // Fetch nearby players
                 ps = mapUseCases.getNearbyPlayers(userLoc)
 
@@ -205,7 +206,7 @@ class MapViewModel  @Inject constructor(
         when (event) {
             is LocationGrantedEvent.LocationGranted -> {
                 Log.d(TAG,"Location permission granted")
-                fetchData(contextManager.getContext())
+                fetchData(mapUseCases.getContext())
                 _isLocGranted.value=true
             }
 
@@ -222,11 +223,11 @@ class MapViewModel  @Inject constructor(
     }
     private fun goMapUpdate(){
         release()
-        fetchData(context =contextManager.getContext() )
+        fetchData(context =mapUseCases.getContext() )
        }
     private fun goMapRetry(){
         release()
-        fetchData(context=contextManager.getContext())
+        fetchData(context=mapUseCases.getContext())
    }
     fun release() {
         _userLocation.value = null
@@ -241,7 +242,7 @@ class MapViewModel  @Inject constructor(
     fun resume() {
         isActive.value=true
         startLocationUpdates()
-        fetchData(contextManager.getContext())
+        fetchData(mapUseCases.getContext())
     }
      private fun startLocationUpdates() {
         mapUseCases.startLocUpdates()

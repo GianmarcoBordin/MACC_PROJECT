@@ -29,6 +29,7 @@ import com.mygdx.game.util.Constants.LOGIN_SUCCESS
 import com.mygdx.game.util.Constants.SIGN_UP_SUCCESS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -62,18 +63,28 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                 if(result?.isNotEmpty() == true){
                     val rankData = dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
                     rank = Rank(rankData?.get(0) ?: name, rankData?.get(1)?.toInt() ?: 0)
-                    // TODO AND CHECK RUN BLOCKING
 
                 }else {
                     rank = Rank( name,  0)
                 }
-                for (i in 1..5){
-                    val skin = dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ") ?: emptyList()
-                    val gameItem= GameItem(id =skin[0] ,rarity=skin[1].toInt(),hp=skin[2].toInt(), damage =skin[3].toInt() )
-                    localUserManager.saveObject("SKIN_${i}",gameItem)
-                }
                 // save user rank
                 localUserManager.saveScore(rank)
+                for (i in 1..5){
+                    val res = dataRepository.getGameItem(name, i.toString()).value
+                    if (res?.isNotEmpty() == true) {
+                        val skin =
+                            dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ")
+                                ?: emptyList()
+                        val gameItem = GameItem(
+                            id = skin[0],
+                            rarity = skin[1].toInt(),
+                            hp = skin[2].toInt(),
+                            damage = skin[3].toInt()
+                        )
+                        // save user skin
+                        localUserManager.saveObject("SKIN_${i}", gameItem)
+                    }
+                }
                 // save bio application state
                 val bio = Biometric(userEmail = email, userPass = password)
                 localUserManager.saveBio(bio)
@@ -120,21 +131,16 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
-                    CoroutineScope(Dispatchers.Main).launch {
+                    CoroutineScope(Dispatchers.IO).launch {
                         // Use withContext to switch to a background thread for blocking operation
-                        val bio = withContext(Dispatchers.IO) {
-                            localUserManager.readBio()
-                        }
-                        println(bio)
+                        val bio =localUserManager.readBio()
+
                         Log.d("DEBUG","bio from local user manager: $bio")
                         // Perform the authentication
-                        val result = withContext(Dispatchers.Default) {
-                            doSignIn(bio.first, bio.second)
-                        }
-
+                        val resultSignIn = doSignIn(bio.first, bio.second)
 
                         // Invoke the callback with the authentication result
-                        if (result) {
+                        if (resultSignIn) {
                             // Sign-in was successful,maybe I did a signOut and lost the local data so we fetch those data
                             val name = firebaseAuth?.currentUser?.displayName ?: bio.first
                             // save user profile application state
@@ -147,20 +153,27 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                                 val rankData = dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
                                 Rank(rankData?.get(0) ?: name, rankData?.get(1)?.toInt() ?: 0)
 
-
                             }else {
                                 Rank( name,  0)
                             }
-                            // TODO AND CHECK RUN BLOCKING
                             for (i in 1..5){
-                                val skin = dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ") ?: emptyList()
-                                val gameItem= GameItem(id =skin[0] ,rarity=skin[1].toInt(),hp=skin[2].toInt(), damage =skin[3].toInt() )
-                                localUserManager.saveObject("SKIN_${i}",gameItem)
+                                val res = dataRepository.getGameItem(name, i.toString()).value
+                                if (res?.isNotEmpty() == true) {
+                                    val skin =
+                                        dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ")
+                                            ?: emptyList()
+                                    val gameItem = GameItem(
+                                        id = skin[0],
+                                        rarity = skin[1].toInt(),
+                                        hp = skin[2].toInt(),
+                                        damage = skin[3].toInt()
+                                    )
+                                    // save user skin
+                                    localUserManager.saveObject("SKIN_${i}", gameItem)
+                                }
                             }
-                            // TODO AND CHECK RUN BLOCKING
                             // save user rank
                             localUserManager.saveScore(rank)
-
                             callbacks.invoke(BIO_AUTH_SUCCESS)
                             updateListener?.onUpdate(BIO_AUTH_SUCCESS)
                         } else {
@@ -212,7 +225,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                                 // Display name updated successfully
                                 Log.d(TAG, "Display name: $name updated successfully")
                                 try {
-                                    runBlocking {
+                                    CoroutineScope(Dispatchers.IO).launch {
                                         // Save user profile application state and so player local state
                                         val userProfileBundle = UserProfileBundle(
                                             displayName = name,
@@ -222,22 +235,28 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                                         // Save user rank
                                         val rank = Rank(name, 0)
                                         localUserManager.saveScore(rank)
-                                        // TODO AND CHECK RUN BLOCKING
                                         for (i in 1..5){
-                                            val skin = dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ") ?: emptyList()
-                                            val gameItem= GameItem(id =skin[0] ,rarity=skin[1].toInt(),hp=skin[2].toInt(), damage =skin[3].toInt() )
-                                            localUserManager.saveObject("SKIN_${i}",gameItem)
+                                            val res = dataRepository.getGameItem(name, i.toString()).value
+                                            if (res?.isNotEmpty() == true) {
+                                                val skin =
+                                                    dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ")
+                                                        ?: emptyList()
+                                                val gameItem = GameItem(
+                                                    id = skin[0],
+                                                    rarity = skin[1].toInt(),
+                                                    hp = skin[2].toInt(),
+                                                    damage = skin[3].toInt()
+                                                )
+                                                // save user skin
+                                                localUserManager.saveObject("SKIN_${i}", gameItem)
+                                            }
                                         }
                                         // Post player data
                                         val player= Player(
                                             username = name,
-                                            location =Location("provider"),
+                                            location =localUserManager.readLocation() ?: Location("provider"),
                                             distance =0.0
                                         )
-                                        //Log.d(TAG, dataRepository.postPlayer(player).toString())
-                                        // Post rank data
-                                        //Log.d(TAG, dataRepository.postRank(rank).toString())
-                                        // post on firestore
                                         postPlayerToFirestore(firestore,player)
                                         // Save bio application state
                                         val bio = Biometric(userEmail = email, userPass = password)

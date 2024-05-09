@@ -11,5 +11,8 @@ data class MapUseCases (
     val getNearbyObjects: GetNearbyObjects,
     val startLocUpdates: StartLocUpdates,
     val stopLocUpdates: StopLocUpdates,
+    val getContext : GetContext,
+    val saveGameItem: SaveGameItem,
+    val updateUserLocation: UpdateUserLocation,
     val subscribe: Subscribe,
 )

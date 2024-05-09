@@ -275,11 +275,11 @@ fun DefaultSignInContent(
                 }
             }
             // Observe changes in data
-            if (data?.isNotEmpty() == true || authenticationResult == BIO_AUTH_SUCCESS) {
+            if (data?.isNotEmpty() == true || authenticationResult == BIO_AUTH_SUCCESS || authenticationResult == "Biometric authentication not available") {
                 // Display data
                     Text(
-                        text = data!!.toString(),
-                        color = if (data.equals(LOGIN_SUCCESS) ||data.equals(BIO_AUTH_SUCCESS) || authenticationResult == BIO_AUTH_SUCCESS) Color.Green else MaterialTheme.colorScheme.onError,
+                        text = if(data != null) data.toString() else authenticationResult,
+                        color = if (data.equals(LOGIN_SUCCESS) ||data.equals(BIO_AUTH_SUCCESS) || authenticationResult == BIO_AUTH_SUCCESS) Color.Green else MaterialTheme.colorScheme.error,
                     )
 
                 // Change page if all ok
