@@ -328,7 +328,7 @@ fun OsmMap(
 
                 // Set the minimum and maximum zoom levels for the map view
                 minZoomLevel = 10.0
-                maxZoomLevel = 18.0
+                //maxZoomLevel = 18.0
                 controller.setZoom(18.0)
 
                 // Register a touch event listener
