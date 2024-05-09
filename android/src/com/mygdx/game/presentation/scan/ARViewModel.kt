@@ -173,7 +173,6 @@ class ARViewModel @Inject constructor(
                 // scale the bullets so that its height is equal to the height of the item,
                 // but the ratio between its dimensions is maintained
                 val bulletsHeight = gameItem.bitmap.height
-                Log.e("DEBUG", "$bulletsHeight")
                 val bulletsOriginalHeight = bulletsBitmap.height
                 val bulletsRatio = bulletsHeight.toDouble() / bulletsOriginalHeight
                 val bulletsWidth = (bulletsBitmap.width * bulletsRatio).toInt()

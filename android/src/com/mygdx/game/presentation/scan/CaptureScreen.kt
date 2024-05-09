@@ -57,7 +57,7 @@ import androidx.compose.ui.unit.Dp
 fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHandler: (GameEvent.StartGame) -> Unit,
                   lineAddHandler: (LineEvent.AddNewLine) -> Unit, lineDeleteHandler: (LineEvent.DeleteAllLines) -> Unit,
                   addDatabaseHandler: (UpdateDatabaseEvent.AddItem) -> Unit, updateDatabaseHandler: (UpdateDatabaseEvent.IncrementItemStats) -> Unit,
-                  addOwnershipHandler: (UpdateDatabaseEvent.AddOwnership) -> Unit) {
+                  addOwnershipHandler: (UpdateDatabaseEvent.AddOwnership) -> Unit, resetGameHandler: (GameEvent.ResetGame) -> Unit) {
     // collectAsState() allows Canvas' recomposition
     val gameState by viewModel.state.collectAsState()
 
@@ -215,6 +215,9 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                                 .align(Alignment.CenterHorizontally)
                                 .padding(bottom = 16.dp),
                             onClick = {
+                                // whenever the session is started, reset the game state
+                                // so that the game can be played again
+                                resetGameHandler(GameEvent.ResetGame)
                                 // go back to map screen
                                 navController.navigate(Route.MapScreen.route)
                             },

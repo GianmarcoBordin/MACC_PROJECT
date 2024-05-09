@@ -71,14 +71,12 @@ import java.io.ByteArrayOutputStream
 import com.mygdx.game.presentation.components.BackButton
 import com.mygdx.game.presentation.scan.events.BitmapEvent
 import com.mygdx.game.presentation.scan.events.DataStoreEvent
-import com.mygdx.game.presentation.scan.events.GameEvent
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ARScreen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (VisibilityEvent.Visible) -> Unit,
              dimensionsHandler: (DimensionsEvent.Dimensions) -> Unit, bitmapHandler: (BitmapEvent.BitmapCreated) -> Unit,
-             readDataStoreHandler: (DataStoreEvent.readDataStore) -> Unit, resetGameHandler: (GameEvent.ResetGame) -> Unit,
-             viewModel: ARViewModel, navController: NavController) {
+             readDataStoreHandler: (DataStoreEvent.readDataStore) -> Unit, viewModel: ARViewModel, navController: NavController) {
     // Camera permission state
     var permissionRequested by remember { mutableStateOf(false) }
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
@@ -93,7 +91,7 @@ fun ARScreen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (Visib
     if (cameraPermissionState.status.isGranted) {
         // If camera permission is granted, show the screen
         Screen(focusHandler, visibilityHandler, dimensionsHandler, bitmapHandler,
-            readDataStoreHandler, resetGameHandler, viewModel, navController)
+            readDataStoreHandler, viewModel, navController)
 
     } else {
         Column {
@@ -123,8 +121,7 @@ fun ARScreen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (Visib
 @Composable
 fun Screen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (VisibilityEvent.Visible) -> Unit,
            dimensionsHandler: (DimensionsEvent.Dimensions) -> Unit, bitmapHandler: (BitmapEvent.BitmapCreated) -> Unit,
-           readDataStoreHandler: (DataStoreEvent.readDataStore) -> Unit, resetGameHandler: (GameEvent.ResetGame) -> Unit,
-           viewModel: ARViewModel, navController: NavController) {
+           readDataStoreHandler: (DataStoreEvent.readDataStore) -> Unit, viewModel: ARViewModel, navController: NavController) {
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -172,18 +169,11 @@ fun Screen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (Visibil
                     Config.LightEstimationMode.ENVIRONMENTAL_HDR
                 // configure cloud anchor mode
                 config.cloudAnchorMode = Config.CloudAnchorMode.ENABLED
-
-
             },
             cameraNode = cameraNode,
             planeRenderer = planeRenderer,
             onTrackingFailureChanged = {
                 trackingFailureReason = it
-            },
-            onSessionCreated = {
-                // whenever the session is started, reset the game state
-                // so that the game can be played again
-                resetGameHandler(GameEvent.ResetGame)
             },
             // session is updated each time a new frame is received (if the camera records at 60fps, then session is updated 60 times per second)
             onSessionUpdated = { _, updatedFrame ->
