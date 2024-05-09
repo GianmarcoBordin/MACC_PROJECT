@@ -265,7 +265,7 @@ class MapRepositoryImpl(
     }
     private fun postPlayerLocation(player: Player, callback: (Boolean) -> Unit) {
         // Create a new document with a generated ID
-        val document = firestore?.collection("players")?.document("Newplayer")
+        val document = firestore?.collection("players")?.document(player.username)
 
         // Create a map with player data
         val playerData = hashMapOf(
