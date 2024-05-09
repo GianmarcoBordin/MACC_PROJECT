@@ -194,6 +194,9 @@ class ARViewModel @Inject constructor(
                         _state.value.owned = false
                     }
 
+                    Log.e("DEBUG", "OWNED = ${state.value.owned}")
+                    Log.e("DEBUG", "ITEM = ${ownedGameItem.hp}, ${ownedGameItem.damage}")
+
                     while (!state.value.isGameOver) {
                         // update each 16 milliseconds (60Hz)
                         delay(16L)
@@ -477,10 +480,11 @@ class ARViewModel @Inject constructor(
 
     private suspend fun setOwnedItem(username: String, rarityRequest: String) {
         val gameItemString = arUseCases.getGameItem(username, rarityRequest)
-        val id = gameItemString[0].replace("GameItem(id=", "").replace(",", "")
-        val rarity = gameItemString[1].replace("rarity=", "").replace(",", "")
-        val hp = gameItemString[2].replace("hp=", "").replace(",", "")
-        val damage = gameItemString[3].replace("damage=", "").replace(",", "")
+        Log.e("DEBUG", gameItemString.toString())
+        val id = gameItemString[0]
+        val rarity = gameItemString[1]
+        val hp = gameItemString[2]
+        val damage = gameItemString[3]
         ownedGameItem = GameItem(id, rarity.toInt(), hp.toInt(), damage.toInt())
     }
 
