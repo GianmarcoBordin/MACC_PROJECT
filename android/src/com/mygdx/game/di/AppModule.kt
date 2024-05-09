@@ -47,14 +47,17 @@ import com.mygdx.game.domain.usecase.auth.BioSignIn
 import com.mygdx.game.domain.usecase.auth.SignIn
 import com.mygdx.game.domain.usecase.auth.SignUp
 import com.mygdx.game.domain.usecase.map.FetchUserLocation
+import com.mygdx.game.domain.usecase.map.GetContext
 import com.mygdx.game.domain.usecase.map.GetNearbyObjects
 import com.mygdx.game.domain.usecase.map.GetNearbyPlayers
 import com.mygdx.game.domain.usecase.map.GetRoute
 import com.mygdx.game.domain.usecase.map.MapUseCases
+import com.mygdx.game.domain.usecase.map.SaveGameItem
 import com.mygdx.game.domain.usecase.map.StartLocUpdates
 import com.mygdx.game.domain.usecase.map.StopLocUpdates
 import com.mygdx.game.domain.usecase.map.UpdateItemLocation
 import com.mygdx.game.domain.usecase.map.UpdatePlayerLocation
+import com.mygdx.game.domain.usecase.map.UpdateUserLocation
 import com.mygdx.game.domain.usecase.rank.Fetch
 import com.mygdx.game.domain.usecase.rank.RankUseCases
 import com.mygdx.game.domain.usecase.settings.FetchUserProfile
@@ -245,6 +248,7 @@ object AppModule {
         rankManager: RankManager,
         mapManager: MapManager,
         localUserManager: LocalUserManager,
+        contextManager: ContextManager
 
 
     ) = MapUseCases(
@@ -256,7 +260,10 @@ object AppModule {
         startLocUpdates = StartLocUpdates(mapManager) ,
         stopLocUpdates = StopLocUpdates(mapManager),
         updateItemLocation = UpdateItemLocation(mapManager),
-        updatePlayerLocation = UpdatePlayerLocation(mapManager)
+        updatePlayerLocation = UpdatePlayerLocation(mapManager),
+        updateUserLocation = UpdateUserLocation(rankManager),
+        saveGameItem = SaveGameItem(localUserManager),
+        getContext = GetContext(contextManager)
     )
 
     @Provides
