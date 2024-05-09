@@ -61,7 +61,6 @@ fun NavGraph(
                     dimensionsHandler = arViewModel::onDimensionsEvent,
                     bitmapHandler = arViewModel::onBitmapEvent,
                     readDataStoreHandler = arViewModel::onDataStoreEvent,
-                    resetGameHandler = arViewModel::onGameEvent,
                     viewModel = arViewModel,
                     navController = navController)
             }
@@ -94,7 +93,8 @@ fun NavGraph(
                     lineDeleteHandler = arViewModel::onLineEvent,
                     updateDatabaseHandler = arViewModel::onUpdateDatabaseEvent,
                     addDatabaseHandler = arViewModel::onUpdateDatabaseEvent,
-                    addOwnershipHandler = arViewModel::onUpdateDatabaseEvent
+                    addOwnershipHandler = arViewModel::onUpdateDatabaseEvent,
+                    resetGameHandler = arViewModel::onGameEvent
                 )
             }
 
