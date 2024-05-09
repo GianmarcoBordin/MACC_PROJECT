@@ -16,6 +16,10 @@ class RankManagerImpl @Inject constructor(private val dataRepository: DataReposi
         return dataRepository.fetchData()
     }
 
+    override suspend fun fetchGameItem(user:String,rarity:String): LiveData<List<String>> {
+        return dataRepository.getGameItem(user,rarity)
+    }
+
 
     override fun setUpdateListener(ref: UpdateListener) {
         updateListener=ref

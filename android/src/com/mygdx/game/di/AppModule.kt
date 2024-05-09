@@ -32,6 +32,7 @@ import com.mygdx.game.domain.manager.SettingsManager
 import com.mygdx.game.domain.usecase.Subscribe
 import com.mygdx.game.domain.usecase.appEntry.AppEntryUseCases
 import com.mygdx.game.domain.usecase.appEntry.ReadAppEntry
+import com.mygdx.game.domain.usecase.appEntry.ReadSkin
 import com.mygdx.game.domain.usecase.appEntry.ReadUser
 import com.mygdx.game.domain.usecase.appEntry.SaveAppEntry
 import com.mygdx.game.domain.usecase.appEntry.SaveUser
@@ -181,12 +182,14 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAppEntryUseCases(
-        localUserManager: LocalUserManager
+        localUserManager: LocalUserManager,
+        rankManager: RankManager
     ) = AppEntryUseCases(
         readAppEntry = ReadAppEntry(localUserManager),
         saveAppEntry = SaveAppEntry(localUserManager),
         readUser = ReadUser(localUserManager),
-        saveUser = SaveUser(localUserManager)
+        saveUser = SaveUser(localUserManager),
+        readSkin = ReadSkin(rankManager)
     )
     @Provides
     @Singleton
