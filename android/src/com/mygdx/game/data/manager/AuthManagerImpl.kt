@@ -62,17 +62,15 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                 if(result?.isNotEmpty() == true){
                     val rankData = dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
                     rank = Rank(rankData?.get(0) ?: name, rankData?.get(1)?.toInt() ?: 0)
-                    // TODO
-                   /* for (i in 0..5){
-                        val skin = dataRepository.getGameItem(name, i.toString())
-                    }*/
+                    // TODO AND CHECK RUN BLOCKING
+                    for (i in 1..5){
+                        val skin = dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ") ?: emptyList()
+                        val gameItem= GameItem(id =skin[0] ,rarity=skin[1].toInt(),hp=skin[2].toInt(), damage =skin[3].toInt() )
+                        localUserManager.saveObject("SKIN_${i}",gameItem)
+                    }
                 }else {
                     rank = Rank( name,  0)
                 }
-                val skin = dataRepository.getGameItem("Relanis", "0").value?.get(0)?.split(" ") ?: emptyList()
-                println("skin"+skin)
-                val gameItem= GameItem(id =skin[0].replace("[","").replace(",","") ,rarity=skin[1].toInt(),hp=skin[2].toInt(), damage =skin[3].toInt() )
-                localUserManager.saveObject("SKIN",gameItem)
                 // save user rank
                 localUserManager.saveScore(rank)
                 // save bio application state
@@ -148,9 +146,17 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                                 val rankData = dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
                                 Rank(rankData?.get(0) ?: name, rankData?.get(1)?.toInt() ?: 0)
 
+
                             }else {
                                 Rank( name,  0)
                             }
+                            // TODO AND CHECK RUN BLOCKING
+                            for (i in 1..5){
+                                val skin = dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ") ?: emptyList()
+                                val gameItem= GameItem(id =skin[0] ,rarity=skin[1].toInt(),hp=skin[2].toInt(), damage =skin[3].toInt() )
+                                localUserManager.saveObject("SKIN_${i}",gameItem)
+                            }
+                            // TODO AND CHECK RUN BLOCKING
                             // save user rank
                             localUserManager.saveScore(rank)
 
@@ -215,6 +221,12 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                                         // Save user rank
                                         val rank = Rank(name, 0)
                                         localUserManager.saveScore(rank)
+                                        // TODO AND CHECK RUN BLOCKING
+                                        for (i in 1..5){
+                                            val skin = dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ") ?: emptyList()
+                                            val gameItem= GameItem(id =skin[0] ,rarity=skin[1].toInt(),hp=skin[2].toInt(), damage =skin[3].toInt() )
+                                            localUserManager.saveObject("SKIN_${i}",gameItem)
+                                        }
                                         // Post player data
                                         val player= Player(
                                             username = name,
