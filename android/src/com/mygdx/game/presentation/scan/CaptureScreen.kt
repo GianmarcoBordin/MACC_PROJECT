@@ -187,7 +187,6 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                                     "- HP: ${gameState.gameItem.hp}\n" +
                                     "- Damage: ${gameState.gameItem.damage}"
                         } else {
-                            getItemDatabaseHandler(UpdateDatabaseEvent.GetItem(gameState.gameItem.rarity.toString()))
                             updateDatabaseHandler(UpdateDatabaseEvent.IncrementItemStats(1, 1))
                             val rarity: String = when(gameState.gameItem.rarity) {
                                 1 -> Constants.RARITY_1_COLOR
@@ -199,8 +198,8 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                             }
                             textStats = "Your $rarity Gunner has received an upgrade!\n" +
                                     "Updated Stats: \n" +
-                                    "- HP: ${gameState.gameItem.hp + 1}\n" +
-                                    "- Damage: ${gameState.gameItem.damage + 1}"
+                                    "- HP: ${viewModel.ownedGameItem.hp + 1}\n" +
+                                    "- Damage: ${viewModel.ownedGameItem.damage + 1}"
                         }
 
                         Text(
@@ -262,14 +261,21 @@ fun HealthBar(health: Int, maxHealth: Int, barWidth: Dp, barHeight: Dp) {
     Box(
         modifier = Modifier
             .size(barWidth, barHeight)
-            .background(Color.Gray, RoundedCornerShape(4.dp))
+            .background(Color.Black, RoundedCornerShape(4.dp))
     ) {
         Box(
             modifier = Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(progress / 100f)
-                .background(Color.Red, RoundedCornerShape(4.dp))
-        )
+                .size((barWidth.value - 2).dp, (barHeight.value - 2).dp)
+                .background(Color.Gray, RoundedCornerShape(4.dp))
+                .align(Alignment.Center)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth(progress / 100f)
+                    .background(Color.Red, RoundedCornerShape(4.dp))
+            )
+        }
     }
 }
 

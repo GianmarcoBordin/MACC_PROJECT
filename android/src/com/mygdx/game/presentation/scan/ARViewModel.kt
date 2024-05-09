@@ -66,11 +66,10 @@ class ARViewModel @Inject constructor(
     // GameItem retrieved by the DataStore (the one generated from the server)
     private var gameItem: GameItem = GameItem()
     // GameItem retrieved by the database (the one the player has already captured)
-    private var ownedGameItem: GameItem = GameItem()
+    var ownedGameItem: GameItem = GameItem()
 
     private val _state = MutableStateFlow(GameState())
     val state = _state.asStateFlow()
-
 
     fun onDataStoreEvent(event: DataStoreEvent) {
         when (event) {
@@ -158,18 +157,6 @@ class ARViewModel @Inject constructor(
             is UpdateDatabaseEvent.GetItem -> {
                 val username = localUserManager.getUserProfile().displayName
                 viewModelScope.launch {
-                    val gameItemString = arUseCases.getGameItem(username, event.rarity)
-                    val id = gameItemString[0].replace("GameItem(id=", "").replace(",", "")
-                    val rarity = gameItemString[1].replace("rarity=", "").replace(",", "")
-                    val hp = gameItemString[2].replace("hp=", "").replace(",", "")
-                    val damage = gameItemString[3].replace("damage=", "").replace(",", "")
-                    Log.e("DEBUG", id)
-                    Log.e("DEBUG", rarity)
-                    Log.e("DEBUG", hp)
-                    Log.e("DEBUG", damage)
-                    Log.e("DEBUG", username)
-                    Log.e("DEBUG", event.rarity)
-                    ownedGameItem = GameItem(id, rarity.toInt(), hp.toInt(), damage.toInt())
                 }
             }
 
@@ -213,6 +200,8 @@ class ARViewModel @Inject constructor(
                     // set if the player already owns the item
                     if (arUseCases.getOwnership(username, itemId).isNotEmpty()) {
                         _state.value.owned = true
+                        // because the player already owns an item, then retrieve it immediately and store it
+                        setOwnedItem(username, gameItem.rarity.toString())
                     } else {
                         _state.value.owned = false
                     }
@@ -225,6 +214,18 @@ class ARViewModel @Inject constructor(
                     // delete all remaining lines
                     _state.value.lines.clear()
                 }
+            }
+
+            GameEvent.ResetGame -> {
+                // reset the scanned value because the player must be able to scan it again
+                scanned = false
+                // reset the direction values
+                directionCounter = 120
+                directionTowardsLine = false
+                directionTowardsLineCounter = 0
+                direction = Vector2(0f, 0f)
+                // reset the gamestate
+                _state.value = GameState()
             }
         }
     }
@@ -484,6 +485,15 @@ class ARViewModel @Inject constructor(
             )
         }
         return mutableListOf()
+    }
+
+    private suspend fun setOwnedItem(username: String, rarityRequest: String) {
+        val gameItemString = arUseCases.getGameItem(username, rarityRequest)
+        val id = gameItemString[0].replace("GameItem(id=", "").replace(",", "")
+        val rarity = gameItemString[1].replace("rarity=", "").replace(",", "")
+        val hp = gameItemString[2].replace("hp=", "").replace(",", "")
+        val damage = gameItemString[3].replace("damage=", "").replace(",", "")
+        ownedGameItem = GameItem(id, rarity.toInt(), hp.toInt(), damage.toInt())
     }
 
     override fun onUpdate(data: Location) {

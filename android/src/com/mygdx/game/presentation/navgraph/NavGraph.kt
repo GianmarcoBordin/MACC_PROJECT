@@ -61,6 +61,7 @@ fun NavGraph(
                     dimensionsHandler = arViewModel::onDimensionsEvent,
                     bitmapHandler = arViewModel::onBitmapEvent,
                     readDataStoreHandler = arViewModel::onDataStoreEvent,
+                    resetGameHandler = arViewModel::onGameEvent,
                     viewModel = arViewModel,
                     navController = navController)
             }
