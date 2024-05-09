@@ -85,7 +85,7 @@ class SettingsManagerImpl @Inject constructor(
             }?.addOnCompleteListener { combinedTask ->
                 if (combinedTask.isSuccessful) {
 
-                    CoroutineScope(Dispatchers.IO).launch {
+                CoroutineScope(Dispatchers.IO).launch {
                     val oldName= localUserManager.getUserProfile().displayName
                         Log.d("AUTH_MANAGER",authManager.updatePlayerFirestore(oldName,name))
                         // save user profile application state
