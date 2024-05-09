@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import com.mygdx.game.data.dao.Biometric
+import com.mygdx.game.data.dao.GameItem
 import com.mygdx.game.data.dao.Message
 import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.dao.Rank
@@ -61,10 +62,17 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                 if(result?.isNotEmpty() == true){
                     val rankData = dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
                     rank = Rank(rankData?.get(0) ?: name, rankData?.get(1)?.toInt() ?: 0)
-
+                    // TODO
+                   /* for (i in 0..5){
+                        val skin = dataRepository.getGameItem(name, i.toString())
+                    }*/
                 }else {
                     rank = Rank( name,  0)
                 }
+                val skin = dataRepository.getGameItem("Relanis", "0").value?.get(0)?.split(" ") ?: emptyList()
+                println("skin"+skin)
+                val gameItem= GameItem(id =skin[0].replace("[","").replace(",","") ,rarity=skin[1].toInt(),hp=skin[2].toInt(), damage =skin[3].toInt() )
+                localUserManager.saveObject("SKIN",gameItem)
                 // save user rank
                 localUserManager.saveScore(rank)
                 // save bio application state
