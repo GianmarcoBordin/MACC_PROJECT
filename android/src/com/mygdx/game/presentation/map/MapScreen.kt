@@ -310,6 +310,9 @@ fun OsmMap(
     val navPath by viewModel.navPath.observeAsState()
     val thresholdButton = 50
     val thresholdButtonFlag by viewModel.thresholdButtonFlag.observeAsState()
+    var pathOverlay : Polyline = Polyline()
+    var userMarker : Marker = Marker(MapView(LocalContext.current))
+
 
 
 
@@ -330,7 +333,11 @@ fun OsmMap(
                             val clickedMarker = findMarker(event.x, event.y)
                             if (clickedMarker != null && clickedMarker.position.latitude != userLocation?.latitude && clickedMarker.position.longitude != userLocation?.longitude) {
                                 // If a marker is clicked, show marker details
-                                Toast.makeText(context, "Clicked marker: ${clickedMarker.title}", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    context,
+                                    "Clicked marker: ${clickedMarker.title}",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                                 performClick() // Simulate a click event on the map view
                                 // Convert GeoPoints to Locations
                                 val to = Location("provider").apply {
@@ -339,10 +346,11 @@ fun OsmMap(
                                 }
                                 routeHandler(RouteEvent.Route(userLocation, to))
                                 true
-                            }else{
+                            } else {
                                 false
                             }
                         }
+
                         else -> false // Continue processing other touch events
                     }
                 }
@@ -353,154 +361,166 @@ fun OsmMap(
     ) { mapView ->
         val thresholdKm = 1000 // Set the threshold to 1 kilometer
         // Add user's location marker
-            userLocation?.let { location ->
-                val userGeoPoint = GeoPoint(location.latitude, location.longitude)
-                Log.d("MAP SCREEN","$userGeoPoint")
-                mapView.controller.setCenter(userGeoPoint)
-                val userMarker = Marker(mapView)
-                userMarker.position = userGeoPoint
-                userMarker.title = "Your Location"
-                mapView.overlays.add(userMarker)
+        userLocation?.let { location ->
+            mapView.overlays.remove(userMarker)
+            val userGeoPoint = GeoPoint(location.latitude, location.longitude)
+            Log.d("MAP SCREEN", "$userGeoPoint")
+            mapView.controller.setCenter(userGeoPoint)
+            userMarker = Marker(mapView)
+            userMarker.position = userGeoPoint
+            userMarker.title = "Your Location"
+            mapView.overlays.add(userMarker)
+        }
+
+        players?.forEach { player ->
+            //println(player)
+            val playerGeoPoint = GeoPoint(player.location.latitude, player.location.longitude)
+            val playerMarker = Marker(mapView)
+            playerMarker.position = playerGeoPoint
+
+
+            val distanceString = if (player.distance > thresholdKm) {
+                "%.0f km".format(player.distance)
+            } else {
+                "%.2f meters".format(player.distance)
             }
+            playerMarker.title =
+                "Username: ${player.username} Distance From Me: $distanceString"
+            //playerMarker.icon.colorFilter= PorterDuffColorFilter(Color.Blue.toArgb(), PorterDuff.Mode.SRC_ATOP)
+            mapView.overlays.add(playerMarker)
+        }
 
-            players?.forEach { player ->
-                //println(player)
-                val playerGeoPoint = GeoPoint(player.location.latitude, player.location.longitude)
-                val playerMarker = Marker(mapView)
-                playerMarker.position = playerGeoPoint
+        objects?.forEach { obj ->
+            val objectGeoPoint = GeoPoint(obj.location.latitude, obj.location.longitude)
+            val objectMarker = Marker(mapView)
+            objectMarker.position = objectGeoPoint
 
-
-                val distanceString = if (player.distance > thresholdKm) {
-                    "%.0f km".format(player.distance)
-                } else {
-                    "%.2f meters".format(player.distance)
-                }
-                playerMarker.title =
-                    "Username: ${player.username} Distance From Me: $distanceString"
-                //playerMarker.icon.colorFilter= PorterDuffColorFilter(Color.Blue.toArgb(), PorterDuff.Mode.SRC_ATOP)
-                mapView.overlays.add(playerMarker)
-            }
-
-            objects?.forEach { obj ->
-                val objectGeoPoint = GeoPoint(obj.location.latitude, obj.location.longitude)
-                val objectMarker = Marker(mapView)
-                objectMarker.position = objectGeoPoint
-
-                Log.d("DEBUG","${obj.distance} $thresholdKm")
-                val distanceString = if (obj.distance > thresholdKm) {
+            Log.d("DEBUG", "${obj.distance} $thresholdKm")
+            val distanceString = if (obj.distance > thresholdKm) {
                 "%.0f km".format(obj.distance)
-                } else {
-                    "%.2f meters".format(obj.distance)
-                }
-                if (obj.distance < thresholdButton){
-                    viewModel.update(obj,true)
-                }
-                objectMarker.title =
-                    "Item id: ${obj.itemId} Item Name: ${obj.itemId} Item Rarity: ${obj.itemRarity} Distance From Me: $distanceString"
-                //objectMarker.icon.colorFilter= PorterDuffColorFilter(Color.Green.toArgb(), PorterDuff.Mode.OVERLAY)
-                mapView.overlays.add(objectMarker)
+            } else {
+                "%.2f meters".format(obj.distance)
             }
-
-
-            // Show navigation path
-            navPath?.let {
-                val boundingBox = BoundingBox.fromGeoPoints(navPath)
-                // Set the center and zoom level of the MapView based on the bounding box
-                mapView.zoomToBoundingBox(boundingBox, true)
-                val pathOverlay = Polyline()
-                pathOverlay.setPoints(navPath)
-                mapView.overlays.add(pathOverlay)
-
+            if (obj.distance < thresholdButton) {
+                viewModel.update(obj, true)
             }
+            objectMarker.title =
+                "Item id: ${obj.itemId} Item Name: ${obj.itemId} Item Rarity: ${obj.itemRarity} Distance From Me: $distanceString"
+            //objectMarker.icon.colorFilter= PorterDuffColorFilter(Color.Green.toArgb(), PorterDuff.Mode.OVERLAY)
+            mapView.overlays.add(objectMarker)
+        }
+
+
+        // Show navigation path
+        navPath?.let {
+            val boundingBox = BoundingBox.fromGeoPoints(navPath)
+            // Set the center and zoom level of the MapView based on the bounding box
+            mapView.overlays.remove(pathOverlay)
+            mapView.zoomToBoundingBox(boundingBox, true)
+            pathOverlay = Polyline()
+            pathOverlay.setPoints(navPath)
+            mapView.overlays.add(pathOverlay)
+
 
         }
 
-    if(thresholdButtonFlag?.isNotEmpty() == true) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth() // Fill the width of the parent
-                .padding(top = 16.dp), // Optional padding // Center horizontally
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            val itemBitMap : ImageBitmap
-            val hp: Int
-            val damage: Int
-            val firstTrueItemKey = thresholdButtonFlag!!.entries.find { it.value }?.key
-            when (firstTrueItemKey?.itemRarity) {
-                "1" -> {
-                    itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_green)
-                    // Parse JSON string to Item object
-                    hp = com.mygdx.game.util.Constants.RARITY_1_HP
-                    damage = com.mygdx.game.util.Constants.RARITY_1_DAMAGE
+    }
+
+        if (thresholdButtonFlag?.isNotEmpty() == true) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth() // Fill the width of the parent
+                    .padding(top = 16.dp), // Optional padding // Center horizontally
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                val itemBitMap: ImageBitmap
+                val hp: Int
+                val damage: Int
+                val firstTrueItemKey = thresholdButtonFlag!!.entries.find { it.value }?.key
+                when (firstTrueItemKey?.itemRarity) {
+                    "1" -> {
+                        itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_green)
+                        // Parse JSON string to Item object
+                        hp = com.mygdx.game.util.Constants.RARITY_1_HP
+                        damage = com.mygdx.game.util.Constants.RARITY_1_DAMAGE
+                    }
+
+                    "2" -> {
+                        itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_red)
+                        hp = com.mygdx.game.util.Constants.RARITY_2_HP
+                        damage = com.mygdx.game.util.Constants.RARITY_2_DAMAGE
+                    }
+
+                    "3" -> {
+                        itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_yellow)
+                        hp = com.mygdx.game.util.Constants.RARITY_3_HP
+                        damage = com.mygdx.game.util.Constants.RARITY_3_DAMAGE
+                    }
+
+                    "4" -> {
+                        itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_blue)
+                        hp = com.mygdx.game.util.Constants.RARITY_4_HP
+                        damage = com.mygdx.game.util.Constants.RARITY_4_DAMAGE
+                    }
+
+                    "5" -> {
+                        itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_black)
+                        hp = com.mygdx.game.util.Constants.RARITY_5_HP
+                        damage = com.mygdx.game.util.Constants.RARITY_5_DAMAGE
+                    }
+
+                    else -> {
+                        itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_green)
+                        hp = com.mygdx.game.util.Constants.RARITY_1_HP
+                        damage = com.mygdx.game.util.Constants.RARITY_1_DAMAGE
+                    }
+
                 }
-                "2" -> {
-                    itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_red)
-                    hp = com.mygdx.game.util.Constants.RARITY_2_HP
-                    damage = com.mygdx.game.util.Constants.RARITY_2_DAMAGE
+
+                val configuration = LocalConfiguration.current
+                val screenWidth =
+                    with(LocalDensity.current) { configuration.screenWidthDp.dp.toPx().toInt() }
+
+
+                Button(
+                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.surface), // Set the background color of the button
+                    shape = RoundedCornerShape(size = 20.dp),
+                    onClick = {
+
+                        // -> bitmap of the item
+                        // convert to bitmap
+                        val itemBitmap = itemBitMap.asAndroidBitmap()
+                        // scale the item so that its width is 1/4 of the screen width,
+                        // but the ratio between its dimensions is maintained
+                        val itemWidth = screenWidth / 4
+                        val itemOriginalWidth = itemBitmap.width
+                        val itemRatio = itemWidth.toDouble() / itemOriginalWidth
+                        val itemHeight = (itemBitmap.height * itemRatio).toInt()
+                        val finalItemBitmap = itemBitmap.scale(itemWidth, itemHeight)
+                        val finalGameItem = GameItem(
+                            firstTrueItemKey!!.itemId,
+                            firstTrueItemKey.itemRarity.toInt(),
+                            hp,
+                            damage,
+                            finalItemBitmap
+                        )
+                        viewModel.saveGameItem(finalGameItem)
+                        navController.navigate(Route.ARScreen.route)
+                    },
+                    enabled = thresholdButtonFlag!!.any { it.value },
+
+                    ) {
+                    Text(
+                        text = "Catch ${firstTrueItemKey?.itemId}",
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
                 }
-
-                "3" -> {
-                    itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_yellow)
-                    hp = com.mygdx.game.util.Constants.RARITY_3_HP
-                    damage = com.mygdx.game.util.Constants.RARITY_3_DAMAGE
-                }
-
-                "4" -> {
-                    itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_blue)
-                    hp = com.mygdx.game.util.Constants.RARITY_4_HP
-                    damage = com.mygdx.game.util.Constants.RARITY_4_DAMAGE
-                }
-
-                "5" -> {
-                    itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_black)
-                    hp = com.mygdx.game.util.Constants.RARITY_5_HP
-                    damage = com.mygdx.game.util.Constants.RARITY_5_DAMAGE
-                }
-
-                else -> {
-                    itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_green)
-                    hp = com.mygdx.game.util.Constants.RARITY_1_HP
-                    damage = com.mygdx.game.util.Constants.RARITY_1_DAMAGE
-                }
-
-            }
-
-            val configuration = LocalConfiguration.current
-            val screenWidth = with(LocalDensity.current) { configuration.screenWidthDp.dp.toPx().toInt() }
-
-
-            Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.surface), // Set the background color of the button
-                shape = RoundedCornerShape(size = 20.dp),
-                onClick = {
-
-                    // -> bitmap of the item
-                    // convert to bitmap
-                    val itemBitmap = itemBitMap.asAndroidBitmap()
-                    // scale the item so that its width is 1/4 of the screen width,
-                    // but the ratio between its dimensions is maintained
-                    val itemWidth = screenWidth / 4
-                    val itemOriginalWidth = itemBitmap.width
-                    val itemRatio = itemWidth.toDouble() / itemOriginalWidth
-                    val itemHeight = (itemBitmap.height * itemRatio).toInt()
-                    val finalItemBitmap = itemBitmap.scale(itemWidth, itemHeight)
-                    val finalGameItem = GameItem(firstTrueItemKey!!.itemId,firstTrueItemKey.itemRarity.toInt(),hp,damage,finalItemBitmap)
-                    viewModel.saveGameItem(finalGameItem)
-                    navController.navigate(Route.ARScreen.route)
-                },
-                enabled = thresholdButtonFlag!!.any { it.value },
-
-                ) {
-                Text(
-                    text = "Catch ${firstTrueItemKey?.itemId}",
-                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
             }
         }
     }
-}
+
 
 
 

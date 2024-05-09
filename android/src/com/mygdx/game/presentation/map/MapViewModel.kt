@@ -5,6 +5,8 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.location.Location
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -92,7 +94,6 @@ class MapViewModel  @Inject constructor(
           val _map = HashMap<Item, Boolean>()
          _map.set(item,value)
         _thresholdButtonFlag.value=_map
-         Log.d("FUC>K","${_thresholdButtonFlag.value}")
     }
 
      fun saveGameItem(gameItem: GameItem){
