@@ -44,7 +44,7 @@ object Constants {
     const val RARITY_3_COLOR = "Yellow"
     const val RARITY_4_COLOR = "Blue"
     const val RARITY_5_COLOR = "Black"
-    const val MINIMUM_TIME_BETWEEN_LOCATION_UPDATES = 300000L // 5 minutes in milliseconds
+    const val MINIMUM_TIME_BETWEEN_LOCATION_UPDATES = 60000L // 1 minute in milliseconds
     const val DEFAULT_LATITUDE = 0.0
     const val DEFAULT_LONGITUDE = 0.0
     const val RANK_URL = "https://gianm.pythonanywhere.com"

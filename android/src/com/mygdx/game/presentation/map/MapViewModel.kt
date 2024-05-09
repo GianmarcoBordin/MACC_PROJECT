@@ -56,6 +56,9 @@ class MapViewModel  @Inject constructor(
     private val _userLocation = MutableLiveData<Location?>()
     val userLocation: LiveData<Location?> = _userLocation
 
+    private val _oldUserLocation = MutableLiveData<Location?>()
+    val oldUserLocation: LiveData<Location?> = _oldUserLocation
+
     private val _players = MutableLiveData<List<Player>?>()
     val players: LiveData<List<Player>?> = _players
 
@@ -92,7 +95,6 @@ class MapViewModel  @Inject constructor(
           val _map = HashMap<Item, Boolean>()
          _map.set(item,value)
         _thresholdButtonFlag.value=_map
-         Log.d("FUC>K","${_thresholdButtonFlag.value}")
     }
 
      fun saveGameItem(gameItem: GameItem){
@@ -103,6 +105,7 @@ class MapViewModel  @Inject constructor(
 
 
     override fun onUpdate(data: Location) { // receives updates from data layer
+        _oldUserLocation.value = _userLocation.value
         _userLocation.value=data
         // when I rx an update from data layer the position is changed so if I have a route in progress I will update it
         if (_navPath.value!=null){
@@ -156,6 +159,7 @@ class MapViewModel  @Inject constructor(
 
                 // Update LiveData
                 _userLocation.value = userLoc
+                _oldUserLocation.value = userLoc
                 _players.value = ps ?: emptyList()
                 _objects.value = objs ?: emptyList()
                 // Set loading state to false
