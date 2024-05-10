@@ -20,6 +20,7 @@ object Constants {
     const val USER_SETTINGS = "userSettings"
     const val USER_SETTINGS2 = "userSettings2"
     const val USER = "user"
+    const val USERNAME = "username"
     const val MAP = "map"
     const val RADIUS = 2000
     const val RADIUS2 = 10.0

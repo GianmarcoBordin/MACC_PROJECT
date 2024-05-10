@@ -147,6 +147,7 @@ class LocalUserManagerImpl(
             settings[PreferencesKeys.EMAIL] = userProfile.email
         }
         saveObject(Constants.USER,userProfile.email)
+        saveObject(Constants.USERNAME,userProfile.displayName)
     }
 
     override suspend fun saveGameItem(gameItem: GameItem) {
