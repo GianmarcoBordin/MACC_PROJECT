@@ -197,8 +197,6 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
     override suspend fun getGameItem(user: String, rarity:String): LiveData<List<String>> {
         val data = MutableLiveData<List<String>>()
         try {
-            CoroutineScope(Dispatchers.IO).launch {
-
                 val response = suspendCoroutine { continuation ->
                     rankApi?.getGameItem(user, rarity)?.enqueue(object : Callback<List<GameItem>> {
                         override fun onResponse(
@@ -235,7 +233,6 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
                     Log.d(TAG, "Error: ${response.code()}" + response)
                     data.postValue(listOf("Error: "))
                 }
-            }
         } catch (e: Exception) {
             // Failure
             Log.d(TAG,"Error: ${e.message}"+e.printStackTrace())
