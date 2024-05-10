@@ -6,6 +6,8 @@ import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.core.graphics.scale
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mygdx.game.data.dao.GameItem
@@ -65,6 +67,13 @@ class ARViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(GameState())
     val state = _state.asStateFlow()
+
+    init {
+
+        viewModelScope.launch {
+            val gameItemString = arUseCases.getGameItem("carlo", "3")
+            Log.e("DEBUG", gameItemString.toString())  }
+    }
 
     fun onDataStoreEvent(event: DataStoreEvent) {
         when (event) {
@@ -477,16 +486,48 @@ class ARViewModel @Inject constructor(
         }
         return mutableListOf()
     }
-
     private suspend fun setOwnedItem(username: String, rarityRequest: String) {
-        val gameItemString = arUseCases.getGameItem(username, rarityRequest)
-        Log.e("DEBUG", gameItemString.toString())
-        val id = gameItemString[0]
-        val rarity = gameItemString[1]
-        val hp = gameItemString[2]
-        val damage = gameItemString[3]
-        ownedGameItem = GameItem(id, rarity.toInt(), hp.toInt(), damage.toInt())
+        val gameItemString = MutableLiveData<List<String>>()
+        val observer = Observer<List<String>> { gameItemList ->
+            // Ensure the gameItemList is not null and has at least four elements
+            if (gameItemList != null && gameItemList.size >= 4) {
+                // Extract information from the list
+                val id = gameItemList[0]
+                val rarity = gameItemList[1]
+                val hp = gameItemList[2]
+                val damage = gameItemList[3]
+
+                // Create the ownedGameItem object
+                ownedGameItem = GameItem(id, rarity.toInt(), hp.toInt(), damage.toInt())
+            } else {
+                // Handle case where the game item information is not available or incomplete
+                Log.e("DEBUG", "Game item information is not available or incomplete")
+            }
+        }
+
+        // Observe changes in the LiveData
+        gameItemString.observeForever(observer)
+
+        // Call the suspend function to fetch the game item
+        arUseCases.getGameItem(username, rarityRequest).observeForever { stringList ->
+            gameItemString.postValue(stringList)
+        }
+
+        // Remove the observer to avoid potential memory leaks
+        gameItemString.removeObserver(observer)
     }
+
+
+
+    /* private suspend fun setOwnedItem(username: String, rarityRequest: String) {
+         val gameItemString = arUseCases.getGameItem(username, rarityRequest)
+         Log.e("DEBUG", gameItemString.toString())
+         val id = gameItemString[0]
+         val rarity = gameItemString[1]
+         val hp = gameItemString[2]
+         val damage = gameItemString[3]
+         ownedGameItem = GameItem(id, rarity.toInt(), hp.toInt(), damage.toInt())
+     }*/
 
     override fun onUpdate(data: Location) {
     }
