@@ -27,7 +27,8 @@ class AndroidLauncher: AndroidApplication(), GameTerminationListener {
 
         val receivedCharacters = intent.serializable<ArrayList<CharacterType>>("PLAYER_LIST")
         val userId = intent.getStringExtra("USERNAME")
-        Log.d("DEBUG","USERRRRR :$userId")
+        val userEmail = intent.getStringExtra("USER")
+        Log.d("DEBUG","USER :$userId, EMAIUL: ${userEmail}")
 
         if (userId != null){
             val gameManager = receivedCharacters?.let { GameManager(it,userId) }

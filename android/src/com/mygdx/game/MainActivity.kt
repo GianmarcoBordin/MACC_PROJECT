@@ -103,8 +103,10 @@ class MainActivity : ComponentActivity(){
         val sharedPreferences = applicationContext.getSharedPreferences(USER_SETTINGS2, Context.MODE_PRIVATE)
         // TODO GABRIELE INTEGRA QUESTO CHE FUNZIONA
         // read username from shared preferences and pass it to the libgdx game
-        val userEmail = sharedPreferences.getString(USERNAME,"")?.replace("\\\"", "")?.replace("\"","") ?: ""
-        Log.d("DEBUG","USER:${userEmail}, EMAIL")
+        val userName = sharedPreferences.getString(USERNAME,"")?.replace("\\\"", "")?.replace("\"","") ?: ""
+        val userEmail = sharedPreferences.getString(USER,"")?.replace("\\\"", "")?.replace("\"","") ?: ""
+
+        Log.d("DEBUG","USER:${userName}, EMAIL:${userEmail}")
 
 
         val retrofit =  Retrofit.Builder()
@@ -127,7 +129,9 @@ class MainActivity : ComponentActivity(){
         val intent = Intent(this, AndroidLauncher::class.java)
 
         intent.putExtra("PLAYER_LIST", characters as Serializable)
-        intent.putExtra("USERNAME", userEmail?.removeCharactersAfterAt())
+        intent.putExtra("USERNAME", userName?.removeCharactersAfterAt())
+        intent.putExtra("USER", userEmail) //?.removeCharactersAfterAt()
+
         startActivity(intent)
 
     }

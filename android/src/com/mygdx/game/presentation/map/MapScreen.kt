@@ -308,7 +308,7 @@ fun OsmMap(
     val players by viewModel.players.observeAsState()
     val objects by viewModel.objects.observeAsState()
     val navPath by viewModel.navPath.observeAsState()
-    val thresholdButton = 50
+    val thresholdButton = 100
     val thresholdButtonFlag by viewModel.thresholdButtonFlag.observeAsState()
     var pathOverlay : Polyline = Polyline()
     var userMarker : Marker = Marker(MapView(LocalContext.current))
