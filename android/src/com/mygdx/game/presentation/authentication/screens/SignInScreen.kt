@@ -70,6 +70,7 @@ import com.mygdx.game.presentation.authentication.events.BioSignInEvent
 import com.mygdx.game.presentation.authentication.events.SignInEvent
 import com.mygdx.game.presentation.navgraph.Route
 import com.mygdx.game.ui.theme.ArAppTheme
+import com.mygdx.game.util.Constants
 import com.mygdx.game.util.Constants.BIO_AUTH_FAILED
 import com.mygdx.game.util.Constants.BIO_AUTH_SUCCESS
 import com.mygdx.game.util.Constants.LOGIN_SUCCESS
@@ -275,12 +276,34 @@ fun DefaultSignInContent(
                 }
             }
             // Observe changes in data
-            if (data?.isNotEmpty() == true || authenticationResult == BIO_AUTH_SUCCESS || authenticationResult == "Biometric authentication not available") {
+            if (data?.isNotEmpty() == true ) {
                 // Display data
                     Text(
-                        text = if(data != null) data.toString() else authenticationResult,
-                        color = if (data.equals(LOGIN_SUCCESS) ||data.equals(BIO_AUTH_SUCCESS) || authenticationResult == BIO_AUTH_SUCCESS) Color.Green else MaterialTheme.colorScheme.error,
+                        text = if(data != null) data.toString() else "Login Failed",
+                        color = if (data.equals(LOGIN_SUCCESS) ) Color.Green else MaterialTheme.colorScheme.error,
                     )
+
+                // Change page if all ok
+                if (viewModel.navigateToAnotherScreen.value == true) {
+                    navController.navigate(Route.HomeScreen.route)
+                    viewModel.onNavigationComplete()
+                }
+
+            }
+            // Observe changes in data
+            if (authenticationResult == BIO_AUTH_SUCCESS || authenticationResult == "Biometric authentication not available") {
+                // Display data
+                if (authenticationResult == BIO_AUTH_SUCCESS) {
+                    viewModel.onUpdateBio(true)
+                }
+                else if (authenticationResult == "Biometric authentication not available"){
+                    viewModel.onUpdateBio(false)
+
+                }
+                Text(
+                    text = authenticationResult,
+                    color = if (authenticationResult == BIO_AUTH_SUCCESS) Color.Green else MaterialTheme.colorScheme.error,
+                )
 
                 // Change page if all ok
                 if (viewModel.navigateToAnotherScreen.value == true) {

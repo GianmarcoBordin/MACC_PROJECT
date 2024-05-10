@@ -120,6 +120,19 @@ class AuthenticationViewModel  @Inject constructor(
 
     }
 
+     fun onUpdateBio(bool : Boolean) {
+         if (bool) {
+             _isLoading.value=false
+             _isError.value = false
+             _navigateToAnotherScreen.value = true
+         }
+         else{
+             _isLoading.value=false
+             _isError.value = true
+         }
+    }
+
+
 
     fun onNavigationComplete() {
         _navigateToAnotherScreen.value = false
