@@ -340,8 +340,8 @@ fun OsmMap(
                                 // If a marker is clicked, show marker details
                                 Toast.makeText(
                                     context,
-                                    "Clicked marker: ${clickedMarker.title}",
-                                    Toast.LENGTH_SHORT
+                                    "${clickedMarker.title}",
+                                    Toast.LENGTH_LONG
                                 ).show()
                                 performClick() // Simulate a click event on the map view
                                 // Convert GeoPoints to Locations
@@ -356,7 +356,7 @@ fun OsmMap(
                                     // If a marker is clicked, show marker details
                                     Toast.makeText(
                                         context,
-                                        "Clicked marker: ${clickedMarker?.title}",
+                                        "${clickedMarker?.title}",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                     performClick() // Simulate a click event on the map view
@@ -416,7 +416,7 @@ fun OsmMap(
                 viewModel.update(obj, true)
             }
             objectMarker.title =
-                "Item id: ${obj.itemId} Item Name: ${obj.itemId} Item Rarity: ${obj.itemRarity} Distance From Me: $distanceString"
+                "Item Name: ${obj.itemId} Item Rarity: ${obj.itemRarity} Distance From Me: $distanceString"
             mapView.overlays.add(objectMarker)
         }
 
