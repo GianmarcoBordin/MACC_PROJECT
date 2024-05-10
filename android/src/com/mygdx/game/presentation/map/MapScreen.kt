@@ -352,7 +352,16 @@ fun OsmMap(
                                 routeHandler(RouteEvent.Route(userLocation, to))
                                 true
                             } else {
-                                false
+                                if (clickedMarker != null) {
+                                    // If a marker is clicked, show marker details
+                                    Toast.makeText(
+                                        context,
+                                        "Clicked marker: ${clickedMarker?.title}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    performClick() // Simulate a click event on the map view
+                                }
+                                true
                             }
                         }
 
@@ -369,7 +378,6 @@ fun OsmMap(
         userLocation?.let { location ->
             mapView.overlays.remove(userMarker)
             val userGeoPoint = GeoPoint(location.latitude, location.longitude)
-            Log.d("MAP SCREEN", "$userGeoPoint")
             mapView.controller.setCenter(userGeoPoint)
             userMarker = Marker(mapView)
             userMarker.position = userGeoPoint
@@ -391,7 +399,6 @@ fun OsmMap(
             }
             playerMarker.title =
                 "Username: ${player.username} Distance From Me: $distanceString"
-            //playerMarker.icon.colorFilter= PorterDuffColorFilter(Color.Blue.toArgb(), PorterDuff.Mode.SRC_ATOP)
             mapView.overlays.add(playerMarker)
         }
 
@@ -400,7 +407,6 @@ fun OsmMap(
             val objectMarker = Marker(mapView)
             objectMarker.position = objectGeoPoint
 
-            Log.d("DEBUG", "${obj.distance} $thresholdKm")
             val distanceString = if (obj.distance > thresholdKm) {
                 "%.0f km".format(obj.distance)
             } else {
@@ -411,7 +417,6 @@ fun OsmMap(
             }
             objectMarker.title =
                 "Item id: ${obj.itemId} Item Name: ${obj.itemId} Item Rarity: ${obj.itemRarity} Distance From Me: $distanceString"
-            //objectMarker.icon.colorFilter= PorterDuffColorFilter(Color.Green.toArgb(), PorterDuff.Mode.OVERLAY)
             mapView.overlays.add(objectMarker)
         }
 
