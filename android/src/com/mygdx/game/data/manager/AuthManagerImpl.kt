@@ -177,11 +177,9 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                             callbacks.invoke(BIO_AUTH_SUCCESS)
                         } else {
                             callbacks.invoke(BIO_AUTH_FAILED)
-                            updateListener?.onUpdate(BIO_AUTH_FAILED)
                         }
 
                     }
-                    updateListener?.onUpdate(BIO_AUTH_SUCCESS)
 
                 }
 
