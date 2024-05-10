@@ -69,9 +69,9 @@ class ARViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     init {
-
+       // TODO CARLO INTEGRA QUESTO
         viewModelScope.launch {
-            val gameItemString = arUseCases.getGameItem("carlo", "3")
+            val gameItemString = arUseCases.getGameItem("carlo", "2")
             Log.e("DEBUG", gameItemString.toString())  }
     }
 

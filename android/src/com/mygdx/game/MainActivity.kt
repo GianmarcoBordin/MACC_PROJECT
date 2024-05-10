@@ -18,7 +18,9 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import com.mygdx.game.data.api.DataRepositoryImpl
 import com.mygdx.game.data.dao.GameItem
+import com.mygdx.game.data.dao.Rank
 import com.mygdx.game.data.manager.LocalUserManagerImpl
+import com.mygdx.game.domain.api.DataRepository
 import com.mygdx.game.domain.api.RankApi
 
 
@@ -28,13 +30,20 @@ import com.mygdx.game.player.PlayerSkin
 import com.mygdx.game.ui.theme.ArAppTheme
 import com.mygdx.game.presentation.MainViewModel
 import com.mygdx.game.presentation.navgraph.NavGraph
+import com.mygdx.game.util.Constants
 import com.mygdx.game.util.Constants.USER
+import com.mygdx.game.util.Constants.USERNAME
 import com.mygdx.game.util.Constants.USER_SETTINGS
 import com.mygdx.game.util.Constants.USER_SETTINGS2
 import com.mygdx.game.util.fromIntegerToSkin
 import com.mygdx.game.util.removeCharactersAfterAt
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONObject
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.Serializable
 
 interface Multiplayer{
@@ -73,7 +82,9 @@ class MainActivity : ComponentActivity(){
 
                     }) {
                         Text(text = "Multiplayer")
-                    }*/
+                    }
+
+                     */
 
                 }
 
@@ -88,9 +99,24 @@ class MainActivity : ComponentActivity(){
 
 
         val sharedPreferences = applicationContext.getSharedPreferences(USER_SETTINGS2, Context.MODE_PRIVATE)
-
+        // TODO GABRIELE INTEGRA QUESTO CHE FUNZIONA
         // read username from shared preferences and pass it to the libgdx game
-        val userEmail = sharedPreferences.getString(USER,"")
+        val userEmail = sharedPreferences.getString(USERNAME,"")?.replace("\\\"", "")?.replace("\"","") ?: ""
+        Log.d("DEBUG",userEmail)
+
+
+        val retrofit =  Retrofit.Builder()
+            .baseUrl(Constants.RANK_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+         val rankApi = retrofit.create(RankApi::class.java)
+        val repo =DataRepositoryImpl(rankApi)
+        val rank = Rank(userEmail ,1)
+
+        CoroutineScope(Dispatchers.IO).launch {
+            repo.postRank(rank)
+        }
+
 
         // read characters from username
         val characters = getUserCharacters(sharedPreferences)

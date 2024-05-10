@@ -134,9 +134,9 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
                         }
                     })
                 }
-                resultLiveData.value =response.isSuccessful.toString()
+                resultLiveData.postValue(response.isSuccessful.toString())
             } catch (e: Exception) {
-                resultLiveData.value = e.message
+                resultLiveData.postValue(e.message)
             }
 
             return resultLiveData
