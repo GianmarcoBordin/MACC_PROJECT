@@ -69,40 +69,47 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
     override suspend fun fetchUserData(user : String): LiveData<List<String>> {
         val data = MutableLiveData<List<String>>()
         try {
-            val response = suspendCoroutine { continuation ->
-                rankApi?.fetchUserData(user)?.enqueue(object : Callback<List<Rank>> {
-                    override fun onResponse(call: Call<List<Rank>>, response: Response<List<Rank>>) {
-                        continuation.resume(response)
-                    }
+            CoroutineScope(Dispatchers.IO).launch {
 
-                    override fun onFailure(call: Call<List<Rank>>, t: Throwable) {
-                        continuation.resumeWithException(t)
-                    }
-                })
-            }
+                val response = suspendCoroutine { continuation ->
+                    rankApi?.fetchUserData(user)?.enqueue(object : Callback<List<Rank>> {
+                        override fun onResponse(
+                            call: Call<List<Rank>>,
+                            response: Response<List<Rank>>
+                        ) {
+                            continuation.resume(response)
+                        }
 
-            if (response.isSuccessful) {
-                val ranks = response.body()
-                if (ranks == emptyList<Rank>()){
-                    data.value = emptyList()
+                        override fun onFailure(call: Call<List<Rank>>, t: Throwable) {
+                            continuation.resumeWithException(t)
+                        }
+                    })
                 }
-                else if (ranks != null) {
-                    val rankInfo = ranks.map {
-                        "${it.username} ${it.score}" }
-                    data.value = rankInfo
+
+                if (response.isSuccessful) {
+                    val ranks = response.body()
+                    if (ranks == emptyList<Rank>()) {
+                        data.postValue(emptyList())
+                    } else if (ranks != null) {
+                        val rankInfo = ranks.map {
+                            "${it.username} ${it.score}"
+                        }
+                        data.postValue(rankInfo)
+                    } else {
+                        // Empty response body
+                        data.postValue(emptyList())
+                    }
                 } else {
-                    // Empty response body
-                    data.value = listOf("Error: ")
+                    // Unsuccessful response
+                    Log.d(TAG, "Error: ${response.code()}" + response)
+                    data.postValue(listOf("Error: "))
+
                 }
-            } else {
-                // Unsuccessful response
-                Log.d(TAG,"Error: ${response.code()}"+response)
-                data.value = listOf("Error: ")
             }
         } catch (e: Exception) {
             // Failure
             Log.d(TAG,"Error: ${e.message}"+e.printStackTrace())
-            data.value = listOf("Error: ")
+            data.postValue(listOf("Error: "))
         }
 
 
@@ -232,7 +239,7 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
         } catch (e: Exception) {
             // Failure
             Log.d(TAG,"Error: ${e.message}"+e.printStackTrace())
-            data.value = listOf("Error: ")
+            data.postValue(listOf("Error: "))
         }
 
         return data
