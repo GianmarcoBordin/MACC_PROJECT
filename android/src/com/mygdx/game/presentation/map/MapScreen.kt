@@ -349,7 +349,7 @@ fun OsmMap(
                                     latitude = clickedMarker.position.latitude
                                     longitude = clickedMarker.position.longitude
                                 }
-                                routeHandler(RouteEvent.Route(userLocation, to))
+                                //routeHandler(RouteEvent.Route(userLocation, to))
                                 true
                             } else {
                                 if (clickedMarker != null) {
@@ -377,6 +377,7 @@ fun OsmMap(
         // Add user's location marker
         userLocation?.let { location ->
             mapView.overlays.remove(userMarker)
+            mapView.invalidate()
             val userGeoPoint = GeoPoint(location.latitude, location.longitude)
             mapView.controller.setCenter(userGeoPoint)
             userMarker = Marker(mapView)
@@ -393,7 +394,7 @@ fun OsmMap(
 
 
             val distanceString = if (player.distance > thresholdKm) {
-                "%.0f km".format(player.distance)
+                "%.0f km".format(player.distance/1000)
             } else {
                 "%.2f meters".format(player.distance)
             }
@@ -408,10 +409,12 @@ fun OsmMap(
             objectMarker.position = objectGeoPoint
 
             val distanceString = if (obj.distance > thresholdKm) {
-                "%.0f km".format(obj.distance)
+                "%.0f km".format(obj.distance/1000)
             } else {
                 "%.2f meters".format(obj.distance)
             }
+            Log.d("DEBUG","item : ${obj.itemId} ${obj.distance} ${distanceString}")
+
             if (obj.distance < thresholdButton) {
                 viewModel.update(obj, true)
             }

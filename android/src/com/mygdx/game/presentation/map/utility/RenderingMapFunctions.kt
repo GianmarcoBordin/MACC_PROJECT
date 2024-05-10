@@ -6,7 +6,7 @@ import org.osmdroid.views.overlay.Marker
 
  fun MapView.findMarker(x: Float, y: Float): Marker? {
     val markerSize = 100 // Assuming a default marker size in pixels
-    val enlargedSize = markerSize * 2 // Doubling the marker size for enlargement
+    val enlargedSize = markerSize * 1 // Doubling the marker size for enlargement
 
     for (overlay in overlays) {
         if (overlay is Marker && overlay.position != null) {

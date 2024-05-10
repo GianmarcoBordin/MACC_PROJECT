@@ -69,6 +69,7 @@ class MapRepositoryImpl(
                 }
             }
         }
+
         return userLocation
     }
     override suspend fun updatePlayersLocation(userLocation: Location): List<Player> {
@@ -331,7 +332,7 @@ class MapRepositoryImpl(
     private fun calculateDistance(location1: Location, location2: Location): Double {
         val earthRadius = 6371 // Earth's radius in kilometers
 
-        val thresholdKm = 1.0 // Set the threshold to 1 kilometer
+        val thresholdKm = 1000 // Set the threshold to 1 kilometer
 
         val lat1 = Math.toRadians(location1.latitude)
         val lon1 = Math.toRadians(location1.longitude)
