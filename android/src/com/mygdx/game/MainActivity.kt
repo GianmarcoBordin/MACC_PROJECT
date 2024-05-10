@@ -75,7 +75,7 @@ class MainActivity : ComponentActivity(){
                         startDestination = startDestination
                     )
 
-                    /*
+/*
                     Button(onClick = {
 
                         setMultiplayer()
@@ -84,7 +84,9 @@ class MainActivity : ComponentActivity(){
                         Text(text = "Multiplayer")
                     }
 
-                     */
+ */
+
+
 
                 }
 
@@ -102,7 +104,7 @@ class MainActivity : ComponentActivity(){
         // TODO GABRIELE INTEGRA QUESTO CHE FUNZIONA
         // read username from shared preferences and pass it to the libgdx game
         val userEmail = sharedPreferences.getString(USERNAME,"")?.replace("\\\"", "")?.replace("\"","") ?: ""
-        Log.d("DEBUG",userEmail)
+        Log.d("DEBUG","USER:${userEmail}, EMAIL")
 
 
         val retrofit =  Retrofit.Builder()
