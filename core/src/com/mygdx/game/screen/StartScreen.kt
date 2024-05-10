@@ -29,6 +29,7 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
     private val width = (Gdx.graphics.width/1.2).toFloat()
     private val height = (Gdx.graphics.height/1.2).toFloat()
 
+    private val exitButton = TextButton("Exit", game.gameSkin)
     private val connectButton = TextButton("Confirm", game.gameSkin)
 
     private val stage: Stage = Stage(FitViewport(width,height))
@@ -66,7 +67,6 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
         game.myCollectedSkin.forEach { character ->
             val characterTable = createCharacterTable(character)
             table.add(characterTable).padLeft(padding).padRight(padding).padTop(30f).padBottom(10f)
-
         }
 
         table.row()
@@ -75,6 +75,9 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
 
         addConnectButtonListener()
 
+        addExitButtonListener()
+        exitButton.setPosition(width * 0.75f, height * 0.75f)
+
         stage.addActor(table)
         Gdx.input.inputProcessor = stage
     }
@@ -82,6 +85,19 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
     override fun show() {
         Gdx.input.inputProcessor = stage
 
+    }
+
+    private fun addExitButtonListener(){
+        exitButton.addListener(object : InputListener() {
+            override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
+
+                game.endActivity()
+            }
+
+            override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
+                return true
+            }
+        })
     }
 
     fun handleConnection(){

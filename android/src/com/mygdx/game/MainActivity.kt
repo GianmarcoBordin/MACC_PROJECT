@@ -16,8 +16,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 
 import androidx.compose.ui.Modifier
-
-
+import com.mygdx.game.data.api.DataRepositoryImpl
+import com.mygdx.game.data.dao.GameItem
+import com.mygdx.game.data.manager.LocalUserManagerImpl
+import com.mygdx.game.domain.api.RankApi
 
 
 import com.mygdx.game.dto.CharacterType
@@ -29,8 +31,10 @@ import com.mygdx.game.presentation.navgraph.NavGraph
 import com.mygdx.game.util.Constants.USER
 import com.mygdx.game.util.Constants.USER_SETTINGS
 import com.mygdx.game.util.Constants.USER_SETTINGS2
+import com.mygdx.game.util.fromIntegerToSkin
 import com.mygdx.game.util.removeCharactersAfterAt
 import dagger.hilt.android.AndroidEntryPoint
+import org.json.JSONObject
 import java.io.Serializable
 
 interface Multiplayer{
@@ -82,18 +86,14 @@ class MainActivity : ComponentActivity(){
 
     fun setMultiplayer(){
 
-        // read username from shared preferences and pass it to the libgdx game
+
         val sharedPreferences = applicationContext.getSharedPreferences(USER_SETTINGS2, Context.MODE_PRIVATE)
+
+        // read username from shared preferences and pass it to the libgdx game
         val userEmail = sharedPreferences.getString(USER,"")
 
-        // TODO this is hardcoded
-        val characters = listOf(
-            CharacterType(PlayerSkin.GREEN, 100, 20),
-            CharacterType(PlayerSkin.RED, 120, 25),
-            CharacterType(PlayerSkin.YELLOW, 80, 30),
-            CharacterType(PlayerSkin.BLACK, 150, 15),
-            CharacterType(PlayerSkin.BLUE, 90, 25)
-        )
+        // read characters from username
+        val characters = getUserCharacters(sharedPreferences)
 
 
         val intent = Intent(this, AndroidLauncher::class.java)
@@ -102,6 +102,29 @@ class MainActivity : ComponentActivity(){
         intent.putExtra("USERNAME", userEmail?.removeCharactersAfterAt())
         startActivity(intent)
 
+    }
+
+    private fun getUserCharacters(sharedPreferences: SharedPreferences): List<CharacterType>{
+        val characters = mutableListOf<CharacterType>()
+
+        for (i in 1..5){
+            val skin = sharedPreferences.getString("SKIN_$i","")
+            if (skin != null) {
+                if (skin.isNotEmpty()){
+
+                    // convert to json object
+                    val jsonObject = JSONObject(skin)
+                    val hp = jsonObject.getString("hp")
+                    val damage = jsonObject.getString("damage")
+                    Log.d("DEBUG","HP: $hp, DAMAGE: $damage")
+
+                    val characterType = CharacterType(fromIntegerToSkin(i), hp.toInt(), damage.toInt())
+                    characters.add(characterType)
+                }
+            }
+        }
+
+        return characters
     }
 
 

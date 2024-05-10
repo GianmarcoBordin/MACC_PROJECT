@@ -1,5 +1,7 @@
 package com.mygdx.game.util
 
+import com.mygdx.game.player.PlayerSkin
+
 fun cleanUpString(input: String): String {
 
     val regex = Regex("[^A-Za-z0-9 ]")
@@ -17,13 +19,26 @@ fun isValidEmail(email: String): Boolean {
 }
 
 fun String.removeCharactersAfterAt(): String {
-    // Find the index of "@" symbol in the string
+
     val atIndex = indexOf("@")
 
-    // If "@" symbol exists, return the substring before it, else return the original string
+
     return if (atIndex != -1) {
         substring(0, atIndex)
     } else {
         this
+    }
+}
+
+fun fromIntegerToSkin(value: Int): PlayerSkin {
+    return when (value) {
+        1 -> PlayerSkin.GREEN
+        2 -> PlayerSkin.RED
+        3 -> PlayerSkin.YELLOW
+        4 -> PlayerSkin.BLUE
+        5 -> PlayerSkin.BLACK
+        else -> {
+            PlayerSkin.BLACK
+        }
     }
 }

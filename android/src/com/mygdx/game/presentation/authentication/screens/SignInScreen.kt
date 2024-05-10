@@ -1,5 +1,6 @@
 package com.mygdx.game.presentation.authentication.screens
 
+import android.util.Log
 import androidx.biometric.BiometricManager
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
@@ -240,19 +241,8 @@ fun DefaultSignInContent(
                     val biometricManager = BiometricManager.from(context)
                     if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS) {
                         bioSignInHandler(BioSignInEvent.BioSignIn(context) { success ->
-                            authenticationResult = when (success) {
-                                BIO_AUTH_SUCCESS -> {
-                                    "Biometric authentication successful"
-                                }
+                            authenticationResult = success
 
-                                BIO_AUTH_FAILED -> {
-                                    "Biometric authentication failed"
-                                }
-
-                                else -> {
-                                    "Biometric authentication failed, unknown error"
-                                }
-                            }
                         })
                     } else {
                         authenticationResult = "Biometric authentication not available"
@@ -291,13 +281,15 @@ fun DefaultSignInContent(
 
             }
             // Observe changes in data
-            if (authenticationResult == BIO_AUTH_SUCCESS || authenticationResult == "Biometric authentication not available") {
+            if (authenticationResult == BIO_AUTH_SUCCESS || authenticationResult == BIO_AUTH_FAILED || authenticationResult == "Biometric authentication not available") {
                 // Display data
                 if (authenticationResult == BIO_AUTH_SUCCESS) {
                     viewModel.onUpdateBio(true)
+
                 }
                 else if (authenticationResult == "Biometric authentication not available"){
                     viewModel.onUpdateBio(false)
+
 
                 }
                 Text(
@@ -309,6 +301,7 @@ fun DefaultSignInContent(
                 if (viewModel.navigateToAnotherScreen.value == true) {
                     navController.navigate(Route.HomeScreen.route)
                     viewModel.onNavigationComplete()
+                    authenticationResult = "nothing"
                 }
 
             }
