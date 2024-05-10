@@ -75,10 +75,13 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
 
         addConnectButtonListener()
 
-        addExitButtonListener()
-        exitButton.setPosition(width * 0.75f, height * 0.75f)
-
         stage.addActor(table)
+
+        addExitButtonListener()
+        exitButton.setPosition(width * 0.05f, height * 0.8f)
+        exitButton.setSize(width / 10f, height / 7)
+        stage.addActor(exitButton)
+
         Gdx.input.inputProcessor = stage
     }
 
@@ -90,8 +93,8 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
     private fun addExitButtonListener(){
         exitButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-
-                game.endActivity()
+                // TODO here should be another call
+                game.endActivity(true)
             }
 
             override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {

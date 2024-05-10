@@ -8,18 +8,17 @@ import com.mygdx.game.screen.GameScreen
 import com.mygdx.game.screen.ConnectionScreen
 import com.mygdx.game.screen.GameOverScreen
 import com.mygdx.game.screen.StartScreen
-import java.io.Serializable
 
 /**
  * Class that handles screens and resources of the game
  */
 
 interface GameTerminationListener {
-    fun onGameTerminated()
+    fun onGameTerminated(username: String, win: Boolean)
 }
 
 
-class GameManager(val myCollectedSkin: ArrayList<CharacterType>, private val myId: String) : Game() {
+class GameManager(val myCollectedSkin: ArrayList<CharacterType>, private val myId: String, private val username: String) : Game() {
 
     val gameSkin by lazy { Skin(Gdx.files.internal("skin/glassy-ui.json")) }
     private var startScreen: StartScreen? = null
@@ -31,6 +30,7 @@ class GameManager(val myCollectedSkin: ArrayList<CharacterType>, private val myI
     fun setTerminationListener(listener: GameTerminationListener){
         this.gameTerminationListener = listener
     }
+
 
     override fun create() {
         setScreen(getStartScreen())
@@ -98,8 +98,8 @@ class GameManager(val myCollectedSkin: ArrayList<CharacterType>, private val myI
     this method is called from exit button in the game over instance and it's
     used to change activity
      */
-    fun endActivity(){
-        gameTerminationListener?.onGameTerminated()
+    fun endActivity(win: Boolean = false){
+        gameTerminationListener?.onGameTerminated(username, win)
     }
 
 

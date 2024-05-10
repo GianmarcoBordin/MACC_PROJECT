@@ -59,7 +59,7 @@ class GameOverScreen(private val game: GameManager, private val win: Boolean, pr
         exitButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
 
-                game.endActivity()
+                game.endActivity(win)
             }
 
             override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
