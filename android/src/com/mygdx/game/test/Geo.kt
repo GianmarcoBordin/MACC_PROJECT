@@ -91,7 +91,7 @@ fun main() {/*
     val startLon = -122.084
 
     // Distance to travel in kilometers
-    val distance = 2.0
+    val distance = 0.04
 
     // Bearing (0 degrees is north)
     val bearing = 0.0
