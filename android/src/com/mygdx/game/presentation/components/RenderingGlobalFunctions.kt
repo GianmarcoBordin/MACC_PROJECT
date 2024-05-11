@@ -1,6 +1,6 @@
 package com.mygdx.game.presentation.components
 
-import android.util.Log
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -53,7 +53,6 @@ fun LogoUserImage(name: String, modifier: Modifier = Modifier) {
 fun getInitials(name: String): String {
     return if (name.isNotEmpty()) {
         val words = name.split(" ")
-        Log.d("DEBUG","username: $words")
         val firstInitial = words.firstOrNull()?.first()
         "$firstInitial"
     } else {

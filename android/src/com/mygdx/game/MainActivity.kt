@@ -31,6 +31,7 @@ import com.mygdx.game.ui.theme.ArAppTheme
 import com.mygdx.game.presentation.MainViewModel
 import com.mygdx.game.presentation.navgraph.NavGraph
 import com.mygdx.game.util.Constants
+import com.mygdx.game.util.Constants.PLAYER_LIST
 import com.mygdx.game.util.Constants.USER
 import com.mygdx.game.util.Constants.USERNAME
 import com.mygdx.game.util.Constants.USER_SETTINGS
@@ -99,38 +100,22 @@ class MainActivity : ComponentActivity(){
 
     fun setMultiplayer(){
 
-
         val sharedPreferences = applicationContext.getSharedPreferences(USER_SETTINGS2, Context.MODE_PRIVATE)
-        // TODO GABRIELE INTEGRA QUESTO CHE FUNZIONA
+
         // read username from shared preferences and pass it to the libgdx game
         val userName = sharedPreferences.getString(USERNAME,"")?.replace("\\\"", "")?.replace("\"","") ?: ""
         val userEmail = sharedPreferences.getString(USER,"")?.replace("\\\"", "")?.replace("\"","") ?: ""
-
-        Log.d("DEBUG","USER:${userName}, EMAIL:${userEmail}")
-
-
-        val retrofit =  Retrofit.Builder()
-            .baseUrl(Constants.RANK_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-         val rankApi = retrofit.create(RankApi::class.java)
-        val repo =DataRepositoryImpl(rankApi)
-        val rank = Rank(userEmail ,1)
-
-        CoroutineScope(Dispatchers.IO).launch {
-            repo.postRank(rank)
-        }
 
 
         // read characters from username
         val characters = getUserCharacters(sharedPreferences)
 
-
+        // Specify the intent
         val intent = Intent(this, AndroidLauncher::class.java)
 
-        intent.putExtra("PLAYER_LIST", characters as Serializable)
-        intent.putExtra("USERNAME", userName?.removeCharactersAfterAt())
-        intent.putExtra("USER", userEmail) //?.removeCharactersAfterAt()
+        intent.putExtra(PLAYER_LIST, characters as Serializable)
+        intent.putExtra(USERNAME, userName)//?.removeCharactersAfterAt())
+        intent.putExtra(USER, userEmail.removeCharactersAfterAt()) //?.removeCharactersAfterAt()
 
         startActivity(intent)
 
