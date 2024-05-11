@@ -4,8 +4,6 @@ package com.mygdx.game.presentation.settings
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,11 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Button
+import androidx.compose.material3.Button
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.OutlinedTextField
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
@@ -47,9 +45,6 @@ import androidx.navigation.NavController
 import com.mygdx.game.presentation.Dimension.ButtonCornerShape
 
 import com.mygdx.game.presentation.components.BackButton
-import com.mygdx.game.presentation.components.CustomBackHandler
-import com.mygdx.game.presentation.components.LogoUserImage
-import com.mygdx.game.presentation.components.UserGreeting
 import com.mygdx.game.presentation.navgraph.Route
 import com.mygdx.game.presentation.settings.events.SignOutEvent
 import com.mygdx.game.presentation.settings.events.UpdateEvent
@@ -107,7 +102,6 @@ fun SettingsScreen(
         }
 
     }
-
     ArAppTheme {
         Row(
             modifier = Modifier
@@ -117,7 +111,7 @@ fun SettingsScreen(
             BackButton(
                 onClick = {navController.popBackStack()}
             )
-            LogoUserImage(name = userProfile?.displayName ?:"")
+
         }
         Column(
             modifier = Modifier
@@ -129,7 +123,7 @@ fun SettingsScreen(
             Row(modifier = Modifier
                 .padding(18.dp),
                 horizontalArrangement = Arrangement.SpaceBetween  ) {
-                UserGreeting(name = userProfile?.displayName ?:"", color = MaterialTheme.colorScheme.onSurface)
+
                 Text(
                     text = "Your Settings",
                     modifier = Modifier.padding(vertical = 16.dp),

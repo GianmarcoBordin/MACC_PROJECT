@@ -2,7 +2,6 @@ package com.mygdx.game.presentation.onboarding.components
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -25,7 +24,7 @@ fun OnBoardingButton(
         Text(
             text = text,
             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-            //color = MaterialTheme.colorScheme.onSurface
+
         )
     }
 }
@@ -40,7 +39,7 @@ fun OnBoardingTextButton(
         Text(
             text = text,
             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-            //color = MaterialTheme.colorScheme.onSurface
+
         )
     }
 }

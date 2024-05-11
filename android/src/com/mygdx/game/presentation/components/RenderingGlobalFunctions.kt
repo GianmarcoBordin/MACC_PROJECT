@@ -6,8 +6,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,11 +21,11 @@ import androidx.compose.ui.unit.sp
 
 
 @Composable
-fun UserGreeting(name:String ,color: Color) {
+fun UserGreeting(name:String) {
     // Greetings for the user
     Text(
         text = "Hello, ${name}!",
-        color = color,
+        color = MaterialTheme.colorScheme.onSecondaryContainer,
         fontSize = 18.sp,
         fontWeight = FontWeight.Bold,
         modifier = Modifier.padding(16.dp)
@@ -39,14 +40,19 @@ fun LogoUserImage(name: String, modifier: Modifier = Modifier) {
         modifier = modifier
             .size(48.dp)
             .clip(CircleShape)
-            .background(getRandomColor())
+            .background(MaterialTheme.colorScheme.tertiary)
             .padding(8.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = initials,
-            style = TextStyle(fontSize = 20.sp, color = Color.White),
-            fontWeight = FontWeight.Bold
+            style = TextStyle(
+                fontSize = 22.sp,
+                color = MaterialTheme.colorScheme.onTertiary,
+                fontWeight = FontWeight.Bold),
+            //style = MaterialTheme.typography.displayMedium,
+            //color = MaterialTheme.colorScheme.onSurface,
+            //fontWeight = FontWeight.Bold
         )
     }
 }
@@ -58,17 +64,4 @@ fun getInitials(name: String): String {
     } else {
         ""
     }
-}
-
-fun getRandomColor(): Color {
-    val colors = listOf(
-        Color.Blue,
-        Color.Red,
-        Color.Green,
-        Color.Yellow,
-        Color.Magenta,
-        Color.Cyan,
-        Color.Gray
-    )
-    return colors.random()
 }

@@ -26,17 +26,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
 
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 //noinspection UsingMaterialAndMaterial3Libraries
 
-import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material3.CircularProgressIndicator
 //noinspection UsingMaterialAndMaterial3Libraries
 
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 //noinspection UsingMaterialAndMaterial3Libraries
 
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -232,7 +232,10 @@ fun DefaultMapContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(300.dp))
-                CircularProgressIndicator(progress = progress.value, color = Color.Blue)
+                CircularProgressIndicator(
+                    progress = { progress.value },
+                    color = MaterialTheme.colorScheme.primary,
+                )
                 Button(
                     shape = RoundedCornerShape(size = 16.dp),
                     onClick = { mapRetryHandler(RetryMapEvent.MapRetry)
@@ -497,7 +500,7 @@ fun OsmMap(
 
 
                 Button(
-                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colorScheme.surface), // Set the background color of the button
+                    colors = ButtonDefaults.buttonColors(), // Set the background color of the button
                     shape = RoundedCornerShape(size = 20.dp),
                     onClick = {
 

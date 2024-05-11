@@ -7,19 +7,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.mygdx.game.data.dao.UserProfileBundle
 import com.mygdx.game.domain.usecase.appEntry.AppEntryUseCases
 import com.mygdx.game.domain.usecase.auth.AuthenticationUseCases
-import com.mygdx.game.presentation.multiplayer.MultiplayerState
-import com.mygdx.game.presentation.multiplayer.StartEvent
+
 import com.mygdx.game.presentation.navgraph.Route
-import com.mygdx.game.presentation.scan.GameState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+
 import javax.inject.Inject
 
 @HiltViewModel

@@ -17,6 +17,15 @@ val Poppins = FontFamily(
     )
 )
 
+val SecondPoppins = FontFamily(
+    fonts = listOf(
+        Font(R.font.pixelifysans_regular, FontWeight.Normal),
+        Font(R.font.pixelifysans_bold, FontWeight.Bold),
+        Font(R.font.pixelifysans_semibold, FontWeight.SemiBold),
+    )
+)
+
+
 // Set of Material typography styles to start with
 // body is "Text" in the Figma Design
 // label small is xsmall in Figma Design
@@ -51,4 +60,12 @@ val Typography = Typography(
         fontWeight = FontWeight.Normal,
         lineHeight = 19.sp,
     ),
+    displayLarge = TextStyle(
+        fontSize = 80.sp,
+        fontFamily = SecondPoppins,
+        fontWeight = FontWeight.Normal,
+        lineHeight = 19.sp,
+    )
+
 )
+

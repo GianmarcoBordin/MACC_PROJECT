@@ -2,7 +2,6 @@ package com.mygdx.game.presentation.authentication.screens
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.biometric.BiometricManager
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
@@ -11,7 +10,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,17 +27,18 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Button
+import androidx.compose.material3.Button
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material3.CircularProgressIndicator
 
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.OutlinedTextField
 //noinspection UsingMaterialAndMaterial3Libraries
 
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -72,11 +71,9 @@ import com.mygdx.game.presentation.Dimension.ButtonCornerShape
 import com.mygdx.game.presentation.authentication.AuthenticationViewModel
 import com.mygdx.game.presentation.authentication.events.BioSignInEvent
 import com.mygdx.game.presentation.authentication.events.SignInEvent
-import com.mygdx.game.presentation.components.BackButton
-import com.mygdx.game.presentation.components.CustomBackHandler
+
 import com.mygdx.game.presentation.navgraph.Route
 import com.mygdx.game.ui.theme.ArAppTheme
-import com.mygdx.game.util.Constants
 import com.mygdx.game.util.Constants.BIO_AUTH_FAILED
 import com.mygdx.game.util.Constants.BIO_AUTH_SUCCESS
 import com.mygdx.game.util.Constants.BIO_NOT_AVAILABLE
@@ -92,12 +89,9 @@ fun SignInScreen(
     navController: NavController) {
 
 
-    CustomBackHandler(
-        onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher ?: return,
-        enabled = true // Set to false to disable back press handling
-    ) {
-        // Define your custom back press behavior here
-        // For example, navigate to another destination
+
+    BackHandler(enabled = false) {
+        navController.popBackStack()
     }
 
     ArAppTheme {
@@ -108,6 +102,7 @@ fun SignInScreen(
             navController
         )
     }
+
 }
 
 
@@ -131,6 +126,7 @@ fun DefaultSignInContent(
     var authenticationResult by remember { mutableStateOf("") }
     // focus
     val focusManager = LocalFocusManager.current
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -265,7 +261,7 @@ fun DefaultSignInContent(
 
                         })
                     } else {
-                        authenticationResult = "Biometric authentication not available"
+                        authenticationResult = BIO_NOT_AVAILABLE
                     }
                 }) {
                 Row(
@@ -291,109 +287,81 @@ fun DefaultSignInContent(
             // Observe changes in data
 
 
-            if (data?.isNotEmpty() == true) {
+            if (data?.isNotEmpty() == true ) {
 
-                when (data) {
+                when (data){
                     LOGIN_FAILED -> {
                         Text(
-                            text = LOGIN_FAILED,
+                            text =  LOGIN_FAILED,
                             color = MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.displayMedium
                         )
                     }
-
                     BIO_AUTH_FAILED -> {
                         Text(
-                            text = BIO_AUTH_FAILED,
+                            text =  BIO_AUTH_FAILED,
                             color = MaterialTheme.colorScheme.error,
                             style = MaterialTheme.typography.displayMedium
                         )
                     }
                 }
-                if (data?.isNotEmpty() == true) {
-                    // Display data
-                    Text(
-                        text = if (data != null) data.toString() else "Login Failed",
-                        color = if (data.equals(LOGIN_SUCCESS)) Color.Green else MaterialTheme.colorScheme.error,
+
+                // Change page if all ok
+                if (viewModel.navigateToAnotherScreen.value == true) {
+                    navController.navigate(Route.HomeScreen.route)
+                    viewModel.onNavigationComplete()
+                }
+
+            }
+
+            // Handling authentication result
+            if (authenticationResult in listOf(BIO_AUTH_SUCCESS, BIO_AUTH_FAILED, BIO_NOT_AVAILABLE)) {
+                when (authenticationResult) {
+                    BIO_AUTH_SUCCESS -> viewModel.onUpdateBio(true)
+                    BIO_NOT_AVAILABLE -> viewModel.onUpdateBio(false)
+                }
+                if (viewModel.navigateToAnotherScreen.value == true) {
+                    navController.navigate(Route.HomeScreen.route)
+                    viewModel.onNavigationComplete()
+                    authenticationResult = "nothing"
+                }
+            }
+
+
+            if (isLoading == true) {
+                val progress = remember { Animatable(0f) }
+                LaunchedEffect(Unit) {
+
+                    progress.animateTo(
+                        targetValue = 1f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(durationMillis = 1000),
+                            repeatMode = RepeatMode.Reverse
+                        )
                     )
 
-                    // Change page if all ok
-                    if (viewModel.navigateToAnotherScreen.value == true) {
-                        navController.navigate(Route.HomeScreen.route)
-                        viewModel.onNavigationComplete()
-                    }
-
                 }
-                // Observe changes in data
-                if (authenticationResult == BIO_AUTH_SUCCESS || authenticationResult == BIO_AUTH_FAILED || authenticationResult == "Biometric authentication not available") {
-                    // Display data
-                    if (authenticationResult == BIO_AUTH_SUCCESS) {
-                        viewModel.onUpdateBio(true)
 
-                    } else if (authenticationResult == "Biometric authentication not available") {
-                        viewModel.onUpdateBio(false)
-
-
-                        // Handling authentication result
-                        if (authenticationResult in listOf(
-                                BIO_AUTH_SUCCESS,
-                                BIO_AUTH_FAILED,
-                                BIO_NOT_AVAILABLE
-                            )
-                        ) {
-                            when (authenticationResult) {
-                                BIO_AUTH_SUCCESS -> viewModel.onUpdateBio(true)
-                                BIO_NOT_AVAILABLE -> viewModel.onUpdateBio(false)
-                            }
-                            if (viewModel.navigateToAnotherScreen.value == true) {
-                                navController.navigate(Route.HomeScreen.route)
-                                viewModel.onNavigationComplete()
-                                authenticationResult = "nothing"
-                            }
-                        }
-
-
-                        if (isLoading == true) {
-                            val progress = remember { Animatable(0f) }
-                            LaunchedEffect(Unit) {
-
-                                progress.animateTo(
-                                    targetValue = 1f,
-                                    animationSpec = infiniteRepeatable(
-                                        animation = tween(durationMillis = 1000),
-                                        repeatMode = RepeatMode.Reverse
-                                    )
-                                )
-
-                            }
-
-                            Column(
-                                modifier = Modifier
-                                    .padding(16.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Bottom
-                            ) {
-                                CircularProgressIndicator(
-                                    progress = progress.value,
-                                    color = Color.Blue
-                                )
-                                if (isError == true) {
-                                    Text(
-                                        text = "Check your internet connection and retry later",
-                                        color = MaterialTheme.colorScheme.onError,
-                                        modifier = Modifier.padding(16.dp)
-                                    )
-                                }
-                            }
-                        }
-
+                Column(
+                    modifier = Modifier
+                        .padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Bottom
+                ) {
+                    CircularProgressIndicator(
+                        progress = { progress.value },
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                    if (isError == true) {
+                        Text(
+                            text = "Check your internet connection and retry later",
+                            color = MaterialTheme.colorScheme.onError,
+                            modifier = Modifier.padding(16.dp)
+                        )
                     }
                 }
             }
+
         }
     }
 }
-
-
-
-

@@ -23,15 +23,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Button
+import androidx.compose.material3.Button
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material3.CircularProgressIndicator
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Divider
+import androidx.compose.material3.HorizontalDivider
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 //noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -145,7 +145,10 @@ fun DefaultContent(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(300.dp))
-                CircularProgressIndicator(progress = progress.value, color = Color.Blue)
+                CircularProgressIndicator(
+                    progress = { progress.value },
+                    color = MaterialTheme.colorScheme.primary,
+                )
                 Button(
                     shape = RoundedCornerShape(size = ButtonCornerShape),
                     onClick = { retryHandler(RetryEvent.Retry())
@@ -203,10 +206,10 @@ fun DefaultContent(
                     userRankingsState?.let {
                         items(it.toList()) { userRanking ->
                             UserRankingItem(userRanking)
-                            Divider(
+                            HorizontalDivider(
                                 modifier = Modifier.padding(horizontal = 16.dp),
-                                color = Color.Gray,
-                                thickness = 5.dp
+                                thickness = 5.dp,
+                                color = Color.Gray
                             )
                         }
                     }

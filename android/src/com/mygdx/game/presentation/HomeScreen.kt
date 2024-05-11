@@ -15,20 +15,19 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+
 //noinspection UsingMaterialAndMaterial3Libraries
 
-import androidx.compose.material.Button
-import androidx.compose.material.ExtendedFloatingActionButton
-import androidx.compose.material.Icon
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExtendedFloatingActionButton
+import androidx.compose.material3.Icon
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material.Surface
 //noinspection UsingMaterialAndMaterial3Libraries
 
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.CameraAlt
@@ -36,25 +35,24 @@ import androidx.compose.material.icons.outlined.Gamepad
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
+
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.mygdx.game.Multiplayer
-import com.mygdx.game.R
-import com.mygdx.game.data.dao.UserProfileBundle
-import com.mygdx.game.presentation.Dimension.ButtonCornerShape
 import com.mygdx.game.presentation.components.CustomBackHandler
 import com.mygdx.game.presentation.components.LogoUserImage
 import com.mygdx.game.presentation.components.UserGreeting
@@ -83,12 +81,16 @@ fun ArHomeScreen(
     }
 
     ArAppTheme {
-        Surface(color = Color.Black) {
+        Surface(
+            color = MaterialTheme.colorScheme.background
+        ) {
+
+
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
-                // Background image
-                BackgroundImage()
+                // Background
+                Background()
 
                 // Menu buttons
                 Column(
@@ -101,7 +103,7 @@ fun ArHomeScreen(
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         LogoUserImage(name = userProfile?.displayName ?: "")
-                        UserGreeting(name = userProfile?.displayName?: "", color = Color.White)
+                        UserGreeting(name = userProfile?.displayName?: "")
                         SettingsButton(navController = navController)
                     }
 
@@ -142,26 +144,41 @@ fun ArHomeScreen(
 
 
 @Composable
-private fun BackgroundImage() {
-    Image(
-        painter = painterResource(id = R.drawable.logo),
-        contentDescription = "Background Image",
-        modifier = Modifier.fillMaxSize()
-    )
+private fun Background() {
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "AR",
+            style = MaterialTheme.typography.displayLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center,
+            fontSize = 90.sp,
+            modifier = Modifier.padding(bottom = 35.dp)
+        )
+    }
+
 }
+
 
 @Composable
 private fun SettingsButton(navController: NavController) {
     ExtendedFloatingActionButton(
         text = { Text("Settings") },
-        icon = {Icon(Icons.Outlined.Settings, "settings")},
+        icon = {Icon(
+            imageVector = Icons.Outlined.Settings,
+            contentDescription = "settings",
+            tint = MaterialTheme.colorScheme.onPrimaryContainer)},
         onClick = { navController.navigate(Route.SettingsScreen.route) },
-        contentColor = Color.White,
-        backgroundColor = Color.Gray
+
     )
 
 }
-
 
 @Composable
 private fun StartGameButton(navController: NavController){
@@ -177,10 +194,13 @@ private fun StartGameButton(navController: NavController){
 
     ExtendedFloatingActionButton(
         text = { Text("Scan scene") },
-        icon = {Icon(Icons.Outlined.CameraAlt, "scan scene")},
+        icon = {Icon(
+            imageVector =  Icons.Outlined.CameraAlt,
+            contentDescription = "scan scene",
+            tint = MaterialTheme.colorScheme.onPrimaryContainer
+            )},
         onClick = {navController.navigate(Route.ARScreen.route)},
-        contentColor = Color.White,
-        backgroundColor = Color.Gray
+
     )
 
 }
@@ -191,8 +211,7 @@ private fun MapButton(navController: NavController){
         text = { Text("Map") },
         icon = {Icon(Icons.Outlined.Place, "Map")},
         onClick = { navController.navigate(Route.MapScreen.route) },
-        contentColor = Color.White,
-        backgroundColor = Color.Gray
+
     )
 }
 
@@ -203,8 +222,7 @@ private fun RankButton(navController: NavController){
         text = { Text("Rank") },
         icon = {Icon(Icons.Outlined.StarBorder, "Rank")},
         onClick = {navController.navigate(Route.RankScreen.route)},
-        contentColor = Color.White,
-        backgroundColor = Color.Gray
+
     )
 }
 
@@ -215,8 +233,7 @@ private fun MultiplayerButton(multiplayer: Multiplayer){
         text = { Text("Multiplayer") },
         icon = {Icon(Icons.Outlined.Gamepad, "multiplayer battle")},
         onClick = { multiplayer.onSetMultiplayer() },
-        contentColor = Color.White,
-        backgroundColor = Color.Gray
+
     )
 }
 

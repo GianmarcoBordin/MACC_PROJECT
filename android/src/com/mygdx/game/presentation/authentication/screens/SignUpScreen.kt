@@ -7,7 +7,7 @@ package com.mygdx.game.presentation.authentication.screens
 
 //noinspection UsingMaterialAndMaterial3Libraries
 
-import androidx.biometric.BiometricManager
+
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
@@ -25,10 +25,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -232,8 +232,7 @@ fun DefaultSignUpContent(
 
             },
             shape = RoundedCornerShape(size = 20.dp),
-            modifier = Modifier
-                .fillMaxWidth()
+            modifier = Modifier.fillMaxWidth().padding(top = 10.dp)
         ) {
             Text("Sign Up")
         }
@@ -283,7 +282,11 @@ fun DefaultSignUpContent(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Bottom
             ) {
-                CircularProgressIndicator(progress = progress.value, color = Color.Blue)
+
+                CircularProgressIndicator(
+                    progress = { progress.value },
+                    color = MaterialTheme.colorScheme.primary,
+                )
                 if (isError == true) {
                     Text(
                         text = "Check your internet connection and retry later",
