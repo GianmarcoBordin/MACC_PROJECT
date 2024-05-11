@@ -16,6 +16,7 @@ import com.mygdx.game.data.dao.Biometric
 import com.mygdx.game.data.manager.ARManagerImpl
 import com.mygdx.game.data.manager.AuthManagerImpl
 import com.mygdx.game.data.manager.ContextManagerImpl
+import com.mygdx.game.data.manager.InventoryManagerImpl
 import com.mygdx.game.data.manager.LocalUserManagerImpl
 import com.mygdx.game.data.manager.MapManagerImpl
 import com.mygdx.game.data.manager.RankManagerImpl
@@ -25,6 +26,7 @@ import com.mygdx.game.domain.manager.ARManager
 import macc.ar.domain.api.MapRepository
 import com.mygdx.game.domain.manager.AuthManager
 import com.mygdx.game.domain.manager.ContextManager
+import com.mygdx.game.domain.manager.InventoryManager
 import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.domain.manager.MapManager
 import com.mygdx.game.domain.manager.RankManager
@@ -46,6 +48,8 @@ import com.mygdx.game.domain.usecase.auth.AuthenticationUseCases
 import com.mygdx.game.domain.usecase.auth.BioSignIn
 import com.mygdx.game.domain.usecase.auth.SignIn
 import com.mygdx.game.domain.usecase.auth.SignUp
+import com.mygdx.game.domain.usecase.inventory.InventoryUseCases
+import com.mygdx.game.domain.usecase.inventory.RetrieveItems
 import com.mygdx.game.domain.usecase.map.FetchUserLocation
 import com.mygdx.game.domain.usecase.map.GetContext
 import com.mygdx.game.domain.usecase.map.GetNearbyObjects
@@ -184,6 +188,10 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideInventoryManager(dataRepository: DataRepository): InventoryManager = InventoryManagerImpl(dataRepository = dataRepository)
+
+    @Provides
+    @Singleton
     fun provideAppEntryUseCases(
         localUserManager: LocalUserManager,
         rankManager: RankManager
@@ -275,5 +283,13 @@ object AppModule {
         getGameItem = GetGameItem(arManager),
         addOwnership = AddOwnership(arManager),
         getOwnership = GetOwnership(arManager)
+    )
+
+    @Provides
+    @Singleton
+    fun provideInventoryUseCases(
+        inventoryManager: InventoryManager
+    ) = InventoryUseCases(
+        retrieveItems = RetrieveItems(inventoryManager)
     )
 }

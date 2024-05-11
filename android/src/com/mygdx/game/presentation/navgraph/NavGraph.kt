@@ -21,6 +21,8 @@ import com.mygdx.game.presentation.MainViewModel
 import com.mygdx.game.presentation.authentication.AuthenticationViewModel
 import com.mygdx.game.presentation.authentication.screens.SignInScreen
 import com.mygdx.game.presentation.authentication.screens.SignUpScreen
+import com.mygdx.game.presentation.inventory.InventoryScreen
+import com.mygdx.game.presentation.inventory.InventoryViewModel
 import com.mygdx.game.presentation.map.MapScreen
 import com.mygdx.game.presentation.map.MapViewModel
 import com.mygdx.game.presentation.onboarding.OnBoardingScreen
@@ -109,6 +111,15 @@ fun NavGraph(
                     addOwnershipHandler = arViewModel::onUpdateDatabaseEvent,
                     resetGameHandler = arViewModel::onGameEvent
                 )
+            }
+            composable(
+                route = Route.InventoryScreen.route
+            ) {
+                val viewModel : InventoryViewModel = hiltViewModel()
+                InventoryScreen(retrieveItemsHandler = viewModel::onItemEvent,
+                    updateBitmapHandler = viewModel::onGameItemEvent,
+                    navController = navController,
+                    viewModel = viewModel)
             }
 
             // more nodes...

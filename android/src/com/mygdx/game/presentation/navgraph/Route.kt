@@ -13,6 +13,6 @@ sealed class Route(
     data object AppStartNavigation : Route(route = "appStartNavigation")
     data object ARScreen : Route(route = "arScreen")
     data object CaptureScreen : Route(route = "captureScreen")
-
+    data object InventoryScreen : Route(route = "inventoryScreen")
 
 }

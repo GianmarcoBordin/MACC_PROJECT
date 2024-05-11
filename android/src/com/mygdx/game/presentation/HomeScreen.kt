@@ -1,9 +1,6 @@
 package com.mygdx.game.presentation
 
-
-import android.content.Context
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,22 +12,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-
-//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.foundation.shape.RoundedCornerShape
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
-//noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material.Surface
-//noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.Gamepad
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Settings
@@ -42,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
@@ -53,13 +47,13 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.mygdx.game.Multiplayer
+import com.mygdx.game.presentation.Dimension.ButtonCornerShape
 import com.mygdx.game.presentation.components.CustomBackHandler
 import com.mygdx.game.presentation.components.LogoUserImage
 import com.mygdx.game.presentation.components.UserGreeting
 import com.mygdx.game.presentation.navgraph.Route
 
 import com.mygdx.game.ui.theme.ArAppTheme
-
 
 @Composable
 fun ArHomeScreen(
@@ -182,16 +176,15 @@ private fun SettingsButton(navController: NavController) {
 
 @Composable
 private fun StartGameButton(navController: NavController){
-    /*
     Button(
-        onClick = {navController.navigate(Route.ARScreen.route)},
+        onClick = {navController.navigate(Route.InventoryScreen.route)},
         modifier = Modifier
             .size(width = 150.dp, height = 50.dp)
             .clip(RoundedCornerShape(ButtonCornerShape))
     ) {
-        Text(text = "Start Game")
-    }*/
-
+        Text(text = "Inventory")
+    }
+    /*
     ExtendedFloatingActionButton(
         text = { Text("Scan scene") },
         icon = {Icon(
@@ -200,9 +193,8 @@ private fun StartGameButton(navController: NavController){
             tint = MaterialTheme.colorScheme.onPrimaryContainer
             )},
         onClick = {navController.navigate(Route.ARScreen.route)},
-
     )
-
+    */
 }
 
 @Composable
