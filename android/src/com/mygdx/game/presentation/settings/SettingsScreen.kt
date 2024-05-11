@@ -4,6 +4,8 @@ package com.mygdx.game.presentation.settings
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,6 +47,7 @@ import androidx.navigation.NavController
 import com.mygdx.game.presentation.Dimension.ButtonCornerShape
 
 import com.mygdx.game.presentation.components.BackButton
+import com.mygdx.game.presentation.components.CustomBackHandler
 import com.mygdx.game.presentation.components.LogoUserImage
 import com.mygdx.game.presentation.components.UserGreeting
 import com.mygdx.game.presentation.navgraph.Route
@@ -104,6 +107,7 @@ fun SettingsScreen(
         }
 
     }
+
     ArAppTheme {
         Row(
             modifier = Modifier

@@ -1,6 +1,15 @@
 package com.mygdx.game.presentation.navgraph
 
+import android.content.ContentValues.TAG
+import android.util.Log
+import android.view.GestureDetector
+import android.view.MotionEvent
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInteropFilter
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.GestureDetectorCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,6 +33,8 @@ import com.mygdx.game.presentation.scan.CaptureScreen
 import com.mygdx.game.presentation.settings.SettingsScreen
 import com.mygdx.game.presentation.settings.SettingsViewModel
 
+
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun NavGraph(
     multiplayer: Multiplayer,
@@ -32,6 +43,8 @@ fun NavGraph(
     val navController = rememberNavController()
     val authenticationViewModel : AuthenticationViewModel = init()
     val arViewModel : ARViewModel = hiltViewModel()
+
+
     NavHost(navController = navController, startDestination = startDestination){
         // construct a nested nav graph
         navigation(
@@ -113,8 +126,9 @@ fun NavGraph(
         composable(
             route = Route.SignInScreen.route
         ) {
-            // set screen as the node state
-            SignInScreen(signInHandler = authenticationViewModel::onSignInEvent, viewModel = authenticationViewModel, bioSignInHandler = authenticationViewModel::onBioSignInEvent, navController = navController)
+
+            SignInScreen(signInHandler = authenticationViewModel::onSignInEvent, viewModel = authenticationViewModel, bioSignInHandler = authenticationViewModel::onBioSignInEvent,
+                navController = navController)
         }
         composable(
             route = Route.HomeScreen.route

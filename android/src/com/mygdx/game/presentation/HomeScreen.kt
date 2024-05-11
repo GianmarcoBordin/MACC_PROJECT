@@ -1,6 +1,7 @@
 package com.mygdx.game.presentation
 
 
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,6 +45,7 @@ import com.mygdx.game.Multiplayer
 import com.mygdx.game.R
 import com.mygdx.game.data.dao.UserProfileBundle
 import com.mygdx.game.presentation.Dimension.ButtonCornerShape
+import com.mygdx.game.presentation.components.CustomBackHandler
 import com.mygdx.game.presentation.components.LogoUserImage
 import com.mygdx.game.presentation.components.UserGreeting
 import com.mygdx.game.presentation.navgraph.Route
@@ -62,55 +64,63 @@ fun ArHomeScreen(
     //lifecycle
     val lifecycleOwner = LocalLifecycleOwner.current
     ManageLifecycle(lifecycleOwner, viewModel)
+    CustomBackHandler(
+        onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher ?: return,
+        enabled = true // Set to false to disable back press handling
+    ) {
+        // Define your custom back press behavior here
+        // For example, navigate to another destination
 
-    ArAppTheme {
-        Surface(color = Color.Black) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                // Background image
-                BackgroundImage()
-
-                // Menu buttons
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(16.dp)
+    }
+        ArAppTheme {
+            Surface(color = Color.Black) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        LogoUserImage(name = userProfile?.displayName ?: "")
-                        UserGreeting(name = userProfile?.displayName?: "", color = Color.White)
-                        SettingsButton(navController = navController)
-                    }
+                    // Background image
+                    BackgroundImage()
 
-                    // Grid layout for buttons
-                    Box(
+                    // Menu buttons
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
+                            .fillMaxSize()
+                            .padding(16.dp)
                     ) {
-                        Column(
-                            modifier = Modifier.align(Alignment.BottomCenter)
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
+                            LogoUserImage(name = userProfile?.displayName ?: "")
+                            UserGreeting(name = userProfile?.displayName ?: "", color = Color.White)
+                            SettingsButton(navController = navController)
+                        }
+
+                        // Grid layout for buttons
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        ) {
+                            Column(
+                                modifier = Modifier.align(Alignment.BottomCenter)
                             ) {
-                                RankButton(navController = navController)
-                                Spacer(modifier = Modifier.width(24.dp))
-                                MapButton(navController = navController)
-                            }
-                            Spacer(modifier = Modifier.height(30.dp))
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                StartGameButton(navController = navController)
-                                Spacer(modifier = Modifier.width(24.dp))
-                                MultiplayerButton(multiplayer = multiplayer)
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    RankButton(navController = navController)
+                                    Spacer(modifier = Modifier.width(24.dp))
+                                    MapButton(navController = navController)
+                                }
+                                Spacer(modifier = Modifier.height(30.dp))
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Center
+                                ) {
+                                    StartGameButton(navController = navController)
+                                    Spacer(modifier = Modifier.width(24.dp))
+                                    MultiplayerButton(multiplayer = multiplayer)
+                                }
                             }
                         }
                     }
@@ -118,8 +128,6 @@ fun ArHomeScreen(
             }
         }
     }
-}
-
 
 
 @Composable
