@@ -55,6 +55,7 @@ import com.mygdx.game.Multiplayer
 import com.mygdx.game.R
 import com.mygdx.game.data.dao.UserProfileBundle
 import com.mygdx.game.presentation.Dimension.ButtonCornerShape
+import com.mygdx.game.presentation.components.CustomBackHandler
 import com.mygdx.game.presentation.components.LogoUserImage
 import com.mygdx.game.presentation.components.UserGreeting
 import com.mygdx.game.presentation.navgraph.Route
@@ -79,6 +80,7 @@ fun ArHomeScreen(
     ) {
         // Define your custom back press behavior here
         // For example, navigate to another destination
+    }
 
     ArAppTheme {
         Surface(color = Color.Black) {
