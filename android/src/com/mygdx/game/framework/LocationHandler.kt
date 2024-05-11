@@ -13,6 +13,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import androidx.core.content.ContextCompat
+import com.mygdx.game.util.Constants
 
 class LocationHandler(private val context: Context?) {
 
@@ -73,7 +74,8 @@ class LocationHandler(private val context: Context?) {
             } else {
                 // Handle case where location provider is null
                 Log.d(ContentValues.TAG,"Location provider is null")
-                null
+                locationManager.getLastKnownLocation(Constants.DEFAULT_PROVIDER_NAME)
+
             }
         } else {
             // You can't return location here because the permission is requested asynchronously

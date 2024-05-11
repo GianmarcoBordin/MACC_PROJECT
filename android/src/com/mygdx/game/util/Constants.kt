@@ -19,6 +19,8 @@ object Constants {
 
     const val USER_SETTINGS = "userSettings"
     const val USER_SETTINGS2 = "userSettings2"
+    const val DEFAULT_PROVIDER_NAME = "gps"
+
     const val USER = "user"
     const val USERNAME = "username"
     const val MAP = "map"

@@ -121,6 +121,9 @@ class MapViewModel  @Inject constructor(
         startLocationUpdates()
         viewModelScope.launch {
             var userLoc = Location("provider")
+            // DEFAULT LOCATION
+            userLoc.latitude = 41.89098635680032
+            userLoc.longitude = 12.503826312635637
             var ps: List<Player>? = null
             var objs: List<Item>? = null
             // Set loading state
