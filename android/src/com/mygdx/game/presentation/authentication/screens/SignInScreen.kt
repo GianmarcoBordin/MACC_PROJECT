@@ -124,7 +124,6 @@ fun DefaultSignInContent(
     ) {
         Text(
             text = "Login",
-            //style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
             style = MaterialTheme.typography.displayMedium,
             fontSize = 45.sp,
             color = MaterialTheme.colorScheme.onSurface,
@@ -271,6 +270,7 @@ fun DefaultSignInContent(
                         modifier = Modifier.size(24.dp)
                     )
                 }
+                
             }
             // Observe changes in data
 

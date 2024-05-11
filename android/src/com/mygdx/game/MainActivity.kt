@@ -30,21 +30,17 @@ import com.mygdx.game.player.PlayerSkin
 import com.mygdx.game.ui.theme.ArAppTheme
 import com.mygdx.game.presentation.MainViewModel
 import com.mygdx.game.presentation.navgraph.NavGraph
-import com.mygdx.game.util.Constants
+
 import com.mygdx.game.util.Constants.PLAYER_LIST
 import com.mygdx.game.util.Constants.USER
 import com.mygdx.game.util.Constants.USERNAME
-import com.mygdx.game.util.Constants.USER_SETTINGS
+
 import com.mygdx.game.util.Constants.USER_SETTINGS2
 import com.mygdx.game.util.fromIntegerToSkin
 import com.mygdx.game.util.removeCharactersAfterAt
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+
 import org.json.JSONObject
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.io.Serializable
 
 interface Multiplayer{

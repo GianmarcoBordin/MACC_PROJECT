@@ -32,7 +32,6 @@ class MainViewModel @Inject constructor(
     private var _userProfile = MutableLiveData(appEntryUseCases.readUser())
     val userProfile: LiveData<UserProfileBundle?> = _userProfile
 
-    private var entered :Boolean= false
 
     var startDestination by mutableStateOf(Route.AppStartNavigation.route)
     init {

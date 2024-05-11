@@ -1,6 +1,7 @@
 package com.mygdx.game.presentation
 
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,12 +20,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material.Button
+import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.Icon
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material.Surface
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.CameraAlt
+import androidx.compose.material.icons.outlined.Gamepad
+import androidx.compose.material.icons.outlined.Place
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -35,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -133,20 +144,19 @@ private fun BackgroundImage() {
 
 @Composable
 private fun SettingsButton(navController: NavController) {
-    Button(
+    ExtendedFloatingActionButton(
+        text = { Text("Settings") },
+        icon = {Icon(Icons.Outlined.Settings, "settings")},
         onClick = { navController.navigate(Route.SettingsScreen.route) },
-        modifier = Modifier
-            .padding(end = 16.dp)
-            .size(width = 150.dp, height = 50.dp)
-            .clip(RoundedCornerShape(ButtonCornerShape))
-    ) {
-        Text(text = "Settings")
-    }
-}
+        contentColor = Color.White,
+        backgroundColor = Color.Gray
+    )
 
+}
 
 @Composable
 private fun StartGameButton(navController: NavController){
+    /*
     Button(
         onClick = {navController.navigate(Route.ARScreen.route)},
         modifier = Modifier
@@ -154,43 +164,51 @@ private fun StartGameButton(navController: NavController){
             .clip(RoundedCornerShape(ButtonCornerShape))
     ) {
         Text(text = "Start Game")
-    }
+    }*/
+
+    ExtendedFloatingActionButton(
+        text = { Text("Scan scene") },
+        icon = {Icon(Icons.Outlined.CameraAlt, "scan scene")},
+        onClick = {navController.navigate(Route.ARScreen.route)},
+        contentColor = Color.White,
+        backgroundColor = Color.Gray
+    )
+
 }
 
 @Composable
 private fun MapButton(navController: NavController){
-    Button(
+    ExtendedFloatingActionButton(
+        text = { Text("Map") },
+        icon = {Icon(Icons.Outlined.Place, "Map")},
         onClick = { navController.navigate(Route.MapScreen.route) },
-        modifier = Modifier
-            .size(width = 150.dp, height = 50.dp)
-            .clip(RoundedCornerShape(ButtonCornerShape))
-    ) {
-        Text(text = "Map")
-    }
+        contentColor = Color.White,
+        backgroundColor = Color.Gray
+    )
 }
 
 @Composable
 private fun RankButton(navController: NavController){
-    Button(
+
+    ExtendedFloatingActionButton(
+        text = { Text("Rank") },
+        icon = {Icon(Icons.Outlined.StarBorder, "Rank")},
         onClick = {navController.navigate(Route.RankScreen.route)},
-        modifier = Modifier
-            .size(width = 150.dp, height = 50.dp)
-            .clip(RoundedCornerShape(ButtonCornerShape))
-    ) {
-        Text(text = "Rank")
-    }
+        contentColor = Color.White,
+        backgroundColor = Color.Gray
+    )
 }
 
 @Composable
 private fun MultiplayerButton(multiplayer: Multiplayer){
-    Button(
+
+    ExtendedFloatingActionButton(
+        text = { Text("Multiplayer") },
+        icon = {Icon(Icons.Outlined.Gamepad, "multiplayer battle")},
         onClick = { multiplayer.onSetMultiplayer() },
-        modifier = Modifier
-            .size(width = 150.dp, height = 50.dp)
-            .clip(RoundedCornerShape(ButtonCornerShape))
-    ) {
-        Text(text = "Multiplayer")
-    }
+        contentColor = Color.White,
+        backgroundColor = Color.Gray
+    )
 }
 
 
