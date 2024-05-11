@@ -93,8 +93,7 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
     private fun addExitButtonListener(){
         exitButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-                // TODO here should be another call
-                game.endActivity(true)
+                game.endActivity()
             }
 
             override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {

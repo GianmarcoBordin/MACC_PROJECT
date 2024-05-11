@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.Vector2
 
 object Constants{
 
+    const val MULTIPLAYER_SERVER_IP = "192.168.1.34"
+    const val MULTIPLAYER_SERVER_PORT = "9000"
 
     // This is the player speed when the user hit the button
     const val PLAYER_SPEED = 60f

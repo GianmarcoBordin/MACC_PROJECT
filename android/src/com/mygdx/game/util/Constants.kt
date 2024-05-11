@@ -9,11 +9,11 @@ object Constants {
 
     const val BIO_AUTH_SUCCESS = "Bio Auth Success"
     const val BIO_AUTH_FAILED = "Bio Auth Failed"
-
+    const val BIO_NOT_AVAILABLE = "Biometric authentication not available"
     const val UPDATE_SUCCESS = "Update success"
     const val SIGN_OUT_SUCCESS = "Sign-out success"
-
     const val SIGN_UP_SUCCESS = "SignUp Success"
+
 
     const val EMAIL_IS_IN_USE = "Email is already in use"
 
@@ -23,7 +23,6 @@ object Constants {
 
     const val USER = "user"
     const val USERNAME = "username"
-    const val EMAIL = "email"
     const val PLAYER_LIST = "player_list"
     const val MAP = "map"
     const val RADIUS = 2000
@@ -55,5 +54,6 @@ object Constants {
     const val RANK_URL = "https://gianm.pythonanywhere.com"
     const val MAPS_URL = "https://api.openrouteservice.org/v2/directions/driving-car"
     const val MAPS_URL2 = "https://api.openrouteservice.org/v2/directions/driving-car/geojson"
+
 
 }

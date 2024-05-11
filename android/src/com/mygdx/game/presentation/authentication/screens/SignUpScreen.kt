@@ -103,12 +103,12 @@ fun DefaultSignUpContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "SignUp",
-            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+            text = "Sign up",
+            style = MaterialTheme.typography.displayMedium,
+            fontSize = 45.sp,
             color = MaterialTheme.colorScheme.onSurface,
-            fontSize = 30.sp,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(bottom = 35.dp)
         )
         OutlinedTextField(
             value = name,

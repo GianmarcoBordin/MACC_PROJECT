@@ -9,7 +9,6 @@ import com.mygdx.game.data.dao.Rank
 import com.mygdx.game.domain.api.RankApi
 import com.mygdx.game.dto.CharacterType
 import com.mygdx.game.util.Constants
-import com.mygdx.game.util.Constants.EMAIL
 import com.mygdx.game.util.Constants.PLAYER_LIST
 import com.mygdx.game.util.Constants.USER
 import com.mygdx.game.util.Constants.USERNAME
@@ -45,13 +44,11 @@ class AndroidLauncher: AndroidApplication(), GameTerminationListener {
 
     }
 
-    override fun onGameTerminated(username: String, win: Boolean) {
-        submitScore(username, win)
+    override fun onGameTerminated() {
         finish()
     }
 
-    private fun submitScore(myId: String, win: Boolean) {
-
+    override fun submitScore(username: String, win: Boolean) {
         Log.d("DEBUG", "submitting score")
         val retrofit = Retrofit.Builder()
             .baseUrl(Constants.RANK_URL)
@@ -62,8 +59,14 @@ class AndroidLauncher: AndroidApplication(), GameTerminationListener {
         val dataRepository = DataRepositoryImpl(rankApi)
 
         CoroutineScope(Dispatchers.IO).launch {
-            dataRepository.postRank(Rank(myId, if (win) 1 else 0))
+            dataRepository.postRank(Rank(username, if (win) 1 else 0))
         }
+        finish()
+
+
     }
+
+
+
 }
 

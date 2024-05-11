@@ -220,10 +220,21 @@ fun SettingsScreen(
             // Observe changes in data
             if (data?.isNotEmpty() == true) {
                 // Display data
-                Text(
-                    text = data!!.toString(),
-                    color = if (data.equals(UPDATE_SUCCESS) || data.equals(SIGN_OUT_SUCCESS)) Color.Green else MaterialTheme.colorScheme.onError
-                )
+
+                if (data.equals(UPDATE_SUCCESS)){
+                    Text(
+                        text = data!!.toString(),
+                        color = Color.Green
+                    )
+                }
+                else if (!data.equals(SIGN_OUT_SUCCESS) &&  !data.equals(UPDATE_SUCCESS)){
+                    Text(
+                        text = data!!.toString(),
+                        color = MaterialTheme.colorScheme.onError
+                    )
+                }
+
+
                 // Change page if all ok
                 if (viewModel.navigateToAnotherScreen.value == true) {
                     val route:String = if (data.equals(SIGN_OUT_SUCCESS)){

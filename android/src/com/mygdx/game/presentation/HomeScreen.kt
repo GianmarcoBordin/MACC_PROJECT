@@ -1,6 +1,7 @@
 package com.mygdx.game.presentation
 
 
+import android.content.Context
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -20,12 +21,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material.Button
+import androidx.compose.material.ExtendedFloatingActionButton
+import androidx.compose.material.Icon
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material.Surface
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.CameraAlt
+import androidx.compose.material.icons.outlined.Gamepad
+import androidx.compose.material.icons.outlined.Place
+import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.StarBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -45,7 +55,6 @@ import com.mygdx.game.Multiplayer
 import com.mygdx.game.R
 import com.mygdx.game.data.dao.UserProfileBundle
 import com.mygdx.game.presentation.Dimension.ButtonCornerShape
-import com.mygdx.game.presentation.components.CustomBackHandler
 import com.mygdx.game.presentation.components.LogoUserImage
 import com.mygdx.game.presentation.components.UserGreeting
 import com.mygdx.game.presentation.navgraph.Route
@@ -71,56 +80,54 @@ fun ArHomeScreen(
         // Define your custom back press behavior here
         // For example, navigate to another destination
 
-    }
-        ArAppTheme {
-            Surface(color = Color.Black) {
-                Box(
-                    modifier = Modifier.fillMaxSize()
+    ArAppTheme {
+        Surface(color = Color.Black) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                // Background image
+                BackgroundImage()
+
+                // Menu buttons
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(16.dp)
                 ) {
-                    // Background image
-                    BackgroundImage()
-
-                    // Menu buttons
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp)
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            LogoUserImage(name = userProfile?.displayName ?: "")
-                            UserGreeting(name = userProfile?.displayName ?: "", color = Color.White)
-                            SettingsButton(navController = navController)
-                        }
+                        LogoUserImage(name = userProfile?.displayName ?: "")
+                        UserGreeting(name = userProfile?.displayName?: "", color = Color.White)
+                        SettingsButton(navController = navController)
+                    }
 
-                        // Grid layout for buttons
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
+                    // Grid layout for buttons
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        Column(
+                            modifier = Modifier.align(Alignment.BottomCenter)
                         ) {
-                            Column(
-                                modifier = Modifier.align(Alignment.BottomCenter)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
                             ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    RankButton(navController = navController)
-                                    Spacer(modifier = Modifier.width(24.dp))
-                                    MapButton(navController = navController)
-                                }
-                                Spacer(modifier = Modifier.height(30.dp))
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    StartGameButton(navController = navController)
-                                    Spacer(modifier = Modifier.width(24.dp))
-                                    MultiplayerButton(multiplayer = multiplayer)
-                                }
+                                RankButton(navController = navController)
+                                Spacer(modifier = Modifier.width(24.dp))
+                                MapButton(navController = navController)
+                            }
+                            Spacer(modifier = Modifier.height(30.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                StartGameButton(navController = navController)
+                                Spacer(modifier = Modifier.width(24.dp))
+                                MultiplayerButton(multiplayer = multiplayer)
                             }
                         }
                     }
@@ -128,6 +135,8 @@ fun ArHomeScreen(
             }
         }
     }
+}
+
 
 
 @Composable
@@ -141,20 +150,20 @@ private fun BackgroundImage() {
 
 @Composable
 private fun SettingsButton(navController: NavController) {
-    Button(
+    ExtendedFloatingActionButton(
+        text = { Text("Settings") },
+        icon = {Icon(Icons.Outlined.Settings, "settings")},
         onClick = { navController.navigate(Route.SettingsScreen.route) },
-        modifier = Modifier
-            .padding(end = 16.dp)
-            .size(width = 150.dp, height = 50.dp)
-            .clip(RoundedCornerShape(ButtonCornerShape))
-    ) {
-        Text(text = "Settings")
-    }
+        contentColor = Color.White,
+        backgroundColor = Color.Gray
+    )
+
 }
 
 
 @Composable
 private fun StartGameButton(navController: NavController){
+    /*
     Button(
         onClick = {navController.navigate(Route.ARScreen.route)},
         modifier = Modifier
@@ -162,43 +171,51 @@ private fun StartGameButton(navController: NavController){
             .clip(RoundedCornerShape(ButtonCornerShape))
     ) {
         Text(text = "Start Game")
-    }
+    }*/
+
+    ExtendedFloatingActionButton(
+        text = { Text("Scan scene") },
+        icon = {Icon(Icons.Outlined.CameraAlt, "scan scene")},
+        onClick = {navController.navigate(Route.ARScreen.route)},
+        contentColor = Color.White,
+        backgroundColor = Color.Gray
+    )
+
 }
 
 @Composable
 private fun MapButton(navController: NavController){
-    Button(
+    ExtendedFloatingActionButton(
+        text = { Text("Map") },
+        icon = {Icon(Icons.Outlined.Place, "Map")},
         onClick = { navController.navigate(Route.MapScreen.route) },
-        modifier = Modifier
-            .size(width = 150.dp, height = 50.dp)
-            .clip(RoundedCornerShape(ButtonCornerShape))
-    ) {
-        Text(text = "Map")
-    }
+        contentColor = Color.White,
+        backgroundColor = Color.Gray
+    )
 }
 
 @Composable
 private fun RankButton(navController: NavController){
-    Button(
+
+    ExtendedFloatingActionButton(
+        text = { Text("Rank") },
+        icon = {Icon(Icons.Outlined.StarBorder, "Rank")},
         onClick = {navController.navigate(Route.RankScreen.route)},
-        modifier = Modifier
-            .size(width = 150.dp, height = 50.dp)
-            .clip(RoundedCornerShape(ButtonCornerShape))
-    ) {
-        Text(text = "Rank")
-    }
+        contentColor = Color.White,
+        backgroundColor = Color.Gray
+    )
 }
 
 @Composable
 private fun MultiplayerButton(multiplayer: Multiplayer){
-    Button(
+
+    ExtendedFloatingActionButton(
+        text = { Text("Multiplayer") },
+        icon = {Icon(Icons.Outlined.Gamepad, "multiplayer battle")},
         onClick = { multiplayer.onSetMultiplayer() },
-        modifier = Modifier
-            .size(width = 150.dp, height = 50.dp)
-            .clip(RoundedCornerShape(ButtonCornerShape))
-    ) {
-        Text(text = "Multiplayer")
-    }
+        contentColor = Color.White,
+        backgroundColor = Color.Gray
+    )
 }
 
 
