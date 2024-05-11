@@ -34,7 +34,18 @@ class GameOverScreen(private val game: GameManager, private val win: Boolean, pr
         table.setFillParent(true)
         table.center()
 
+        addButtonListener()
 
+        table.add(playAgainButton).fillX().center().padTop(40f).padBottom(20f).row()
+        table.add(changeAdversaryButton).fillX().center().padTop(40f).padBottom(20f).row()
+        table.add(exitButton).fillX().center().padTop(40f).padBottom(20f).row()
+
+        stage.addActor(table)
+
+
+    }
+
+    private fun addButtonListener(){
         playAgainButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
 
@@ -59,20 +70,13 @@ class GameOverScreen(private val game: GameManager, private val win: Boolean, pr
         exitButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
 
-                game.endActivity(win)
+                game.endActivityAndSubmitScore(win)
             }
 
             override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
                 return true
             }
         })
-
-        table.add(playAgainButton).fillX().center().padTop(40f).padBottom(20f).row()
-        table.add(changeAdversaryButton).fillX().center().padTop(40f).padBottom(20f).row()
-
-        stage.addActor(table)
-
-
     }
 
     private fun addTitle(text: String){

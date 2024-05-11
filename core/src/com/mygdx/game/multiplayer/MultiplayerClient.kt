@@ -2,6 +2,8 @@ package com.mygdx.game.multiplayer
 
 import com.badlogic.gdx.Gdx
 import com.google.gson.Gson
+import com.mygdx.game.Constants.MULTIPLAYER_SERVER_IP
+import com.mygdx.game.Constants.MULTIPLAYER_SERVER_PORT
 import com.mygdx.game.GameManager
 import com.mygdx.game.dto.CharacterType
 import com.mygdx.game.dto.WebSocketMessage
@@ -41,7 +43,7 @@ class MultiplayerClient(
 
     private lateinit var webSocket: WebSocket
     private var client : OkHttpClient = OkHttpClient()
-    private val webSocketUrl = "ws://192.168.1.34:9000"
+    private val webSocketUrl = "ws://${MULTIPLAYER_SERVER_IP}:${MULTIPLAYER_SERVER_PORT}"
     private var coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO)
     private var gson = Gson()
 

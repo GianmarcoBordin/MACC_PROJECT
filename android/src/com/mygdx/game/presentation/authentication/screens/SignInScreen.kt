@@ -74,6 +74,8 @@ import com.mygdx.game.ui.theme.ArAppTheme
 import com.mygdx.game.util.Constants
 import com.mygdx.game.util.Constants.BIO_AUTH_FAILED
 import com.mygdx.game.util.Constants.BIO_AUTH_SUCCESS
+import com.mygdx.game.util.Constants.BIO_NOT_AVAILABLE
+import com.mygdx.game.util.Constants.LOGIN_FAILED
 import com.mygdx.game.util.Constants.LOGIN_SUCCESS
 
 
@@ -122,11 +124,12 @@ fun DefaultSignInContent(
     ) {
         Text(
             text = "Login",
-            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-            fontSize = 30.sp,
+            //style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+            style = MaterialTheme.typography.displayMedium,
+            fontSize = 45.sp,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center,
-            modifier = Modifier.padding(bottom = 16.dp)
+            modifier = Modifier.padding(bottom = 35.dp)
         )
         OutlinedTextField(
             value = email,
@@ -226,7 +229,9 @@ fun DefaultSignInContent(
                         navController.navigate(Route.SignUpScreen.route)
                         viewModel.onNavigationComplete()
                     }
-            }
+            },
+            modifier = Modifier.padding(top = 5.dp)
+
         )
         Column(
             modifier = Modifier.fillMaxWidth(),
@@ -236,7 +241,7 @@ fun DefaultSignInContent(
             Button(
                 shape = RoundedCornerShape(size = ButtonCornerShape),
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth().padding(top = 25.dp),
                 onClick = {
                     val biometricManager = BiometricManager.from(context)
                     if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS) {
@@ -248,10 +253,12 @@ fun DefaultSignInContent(
                         authenticationResult = "Biometric authentication not available"
                     }
                 }) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
 
                     Text(
-                        text = "Authenticate with Biometric",
+                        text = "Authenticate with biometric",
                         style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
                         fontWeight = FontWeight.SemiBold
                     )
@@ -266,12 +273,26 @@ fun DefaultSignInContent(
                 }
             }
             // Observe changes in data
+
+
             if (data?.isNotEmpty() == true ) {
-                // Display data
-                    Text(
-                        text = if(data != null) data.toString() else "Login Failed",
-                        color = if (data.equals(LOGIN_SUCCESS) ) Color.Green else MaterialTheme.colorScheme.error,
-                    )
+
+                when (data){
+                    LOGIN_FAILED -> {
+                        Text(
+                            text =  LOGIN_FAILED,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.displayMedium
+                        )
+                    }
+                    BIO_AUTH_FAILED -> {
+                        Text(
+                            text =  BIO_AUTH_FAILED,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.displayMedium
+                        )
+                    }
+                }
 
                 // Change page if all ok
                 if (viewModel.navigateToAnotherScreen.value == true) {
@@ -280,31 +301,20 @@ fun DefaultSignInContent(
                 }
 
             }
-            // Observe changes in data
-            if (authenticationResult == BIO_AUTH_SUCCESS || authenticationResult == BIO_AUTH_FAILED || authenticationResult == "Biometric authentication not available") {
-                // Display data
-                if (authenticationResult == BIO_AUTH_SUCCESS) {
-                    viewModel.onUpdateBio(true)
 
+            // Handling authentication result
+            if (authenticationResult in listOf(BIO_AUTH_SUCCESS, BIO_AUTH_FAILED, BIO_NOT_AVAILABLE)) {
+                when (authenticationResult) {
+                    BIO_AUTH_SUCCESS -> viewModel.onUpdateBio(true)
+                    BIO_NOT_AVAILABLE -> viewModel.onUpdateBio(false)
                 }
-                else if (authenticationResult == "Biometric authentication not available"){
-                    viewModel.onUpdateBio(false)
-
-
-                }
-                Text(
-                    text = authenticationResult,
-                    color = if (authenticationResult == BIO_AUTH_SUCCESS) Color.Green else MaterialTheme.colorScheme.error,
-                )
-
-                // Change page if all ok
                 if (viewModel.navigateToAnotherScreen.value == true) {
                     navController.navigate(Route.HomeScreen.route)
                     viewModel.onNavigationComplete()
                     authenticationResult = "nothing"
                 }
-
             }
+
 
             if (isLoading == true) {
                 val progress = remember { Animatable(0f) }

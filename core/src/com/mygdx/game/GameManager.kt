@@ -14,7 +14,8 @@ import com.mygdx.game.screen.StartScreen
  */
 
 interface GameTerminationListener {
-    fun onGameTerminated(username: String, win: Boolean)
+    fun onGameTerminated()
+    fun submitScore(username: String, win: Boolean)
 }
 
 
@@ -98,8 +99,12 @@ class GameManager(val myCollectedSkin: ArrayList<CharacterType>, private val myI
     this method is called from exit button in the game over instance and it's
     used to change activity
      */
-    fun endActivity(win: Boolean = false){
-        gameTerminationListener?.onGameTerminated(username, win)
+    fun endActivity(){
+        gameTerminationListener?.onGameTerminated()
+    }
+
+    fun endActivityAndSubmitScore(win: Boolean){
+        gameTerminationListener?.submitScore(username, win)
     }
 
 

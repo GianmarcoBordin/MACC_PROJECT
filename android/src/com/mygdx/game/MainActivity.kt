@@ -70,24 +70,10 @@ class MainActivity : ComponentActivity(){
                 Box(modifier = Modifier.background(MaterialTheme.colorScheme.background)) {
 
                     val startDestination = viewModel.startDestination
-
                     NavGraph(
                         object: Multiplayer{ override fun onSetMultiplayer() { setMultiplayer() } },
                         startDestination = startDestination
                     )
-
-/*
-                    Button(onClick = {
-
-                        setMultiplayer()
-
-                    }) {
-                        Text(text = "Multiplayer")
-                    }
-
- */
-
-
 
                 }
 
@@ -114,8 +100,8 @@ class MainActivity : ComponentActivity(){
         val intent = Intent(this, AndroidLauncher::class.java)
 
         intent.putExtra(PLAYER_LIST, characters as Serializable)
-        intent.putExtra(USERNAME, userName)//?.removeCharactersAfterAt())
-        intent.putExtra(USER, userEmail.removeCharactersAfterAt()) //?.removeCharactersAfterAt()
+        intent.putExtra(USERNAME, userName)
+        intent.putExtra(USER, userEmail.removeCharactersAfterAt())
 
         startActivity(intent)
 

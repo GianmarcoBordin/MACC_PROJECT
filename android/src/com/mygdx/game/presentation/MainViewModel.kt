@@ -29,7 +29,7 @@ class MainViewModel @Inject constructor(
 ): ViewModel(){
 
 
-    private var _userProfile = MutableLiveData<UserProfileBundle?>(appEntryUseCases.readUser())
+    private var _userProfile = MutableLiveData(appEntryUseCases.readUser())
     val userProfile: LiveData<UserProfileBundle?> = _userProfile
 
     private var entered :Boolean= false
