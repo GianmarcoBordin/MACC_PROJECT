@@ -6,7 +6,6 @@ import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.core.graphics.scale
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mygdx.game.data.dao.GameItem
@@ -33,7 +32,6 @@ import javax.inject.Inject
 import kotlin.math.max
 import kotlin.math.sqrt
 import kotlin.random.Random
-
 
 @HiltViewModel
 class ARViewModel @Inject constructor(
@@ -72,7 +70,7 @@ class ARViewModel @Inject constructor(
             DataStoreEvent.readDataStore -> {
                 gameItem = localUserManager.readGameItem()
                 // set the gameitem and its health
-                _state.value = state.value.copy(gameItem = gameItem, hp = gameItem.hp,)
+                _state.value = state.value.copy(gameItem = gameItem, hp = gameItem.hp)
             }
         }
     }

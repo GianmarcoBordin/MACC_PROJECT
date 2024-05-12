@@ -37,15 +37,21 @@ data class GameItem(
 
     companion object {
         fun fromJson(jsonString: String): GameItem {
-            val gson = Gson()
-            val jsonObject = gson.fromJson(jsonString, JsonObject::class.java)
-            val id = jsonObject.getAsJsonPrimitive("id").asString
-            val rarity = jsonObject.getAsJsonPrimitive("rarity").asInt
-            val hp = jsonObject.getAsJsonPrimitive("hp").asInt
-            val damage = jsonObject.getAsJsonPrimitive("damage").asInt
-            val bitmapString = jsonObject.getAsJsonPrimitive("bitmap").asString
-            val bitmap = convertBitmapStringToBitmap(bitmapString)
-            return GameItem(id, rarity, hp, damage, bitmap)
+            if (jsonString.isNotEmpty()){
+                val gson = Gson()
+                val jsonObject = gson.fromJson(jsonString, JsonObject::class.java)
+                val id = jsonObject.getAsJsonPrimitive("id").asString
+                val rarity = jsonObject.getAsJsonPrimitive("rarity").asInt
+                val hp = jsonObject.getAsJsonPrimitive("hp").asInt
+                val damage = jsonObject.getAsJsonPrimitive("damage").asInt
+                val bitmapString = jsonObject.getAsJsonPrimitive("bitmap").asString
+                val bitmap = convertBitmapStringToBitmap(bitmapString)
+                return GameItem(id, rarity, hp, damage, bitmap)
+            }
+            else
+                return GameItem(id = "0", rarity = 0,hp = 1, damage = 1)
+
+
         }
 
         private fun convertBitmapStringToBitmap(bitmapString: String): Bitmap {

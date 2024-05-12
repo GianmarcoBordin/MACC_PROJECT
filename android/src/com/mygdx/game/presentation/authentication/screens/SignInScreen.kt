@@ -90,13 +90,13 @@ fun SignInScreen(
     viewModel: AuthenticationViewModel,
     navController: NavController) {
 
+
     CustomBackHandler(
         onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher ?: return,
         enabled = true // Set to false to disable back press handling
     ) {
-        // Define your custom back press behavior here
-        // For example, navigate to another destination
     }
+
 
     ArAppTheme {
         DefaultSignInContent(
