@@ -2,6 +2,7 @@ package com.mygdx.game.presentation.authentication.screens
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.biometric.BiometricManager
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.RepeatMode
@@ -71,6 +72,7 @@ import com.mygdx.game.presentation.Dimension.ButtonCornerShape
 import com.mygdx.game.presentation.authentication.AuthenticationViewModel
 import com.mygdx.game.presentation.authentication.events.BioSignInEvent
 import com.mygdx.game.presentation.authentication.events.SignInEvent
+import com.mygdx.game.presentation.components.CustomBackHandler
 
 import com.mygdx.game.presentation.navgraph.Route
 import com.mygdx.game.ui.theme.ArAppTheme
@@ -88,10 +90,12 @@ fun SignInScreen(
     viewModel: AuthenticationViewModel,
     navController: NavController) {
 
-
-
-    BackHandler(enabled = false) {
-        navController.popBackStack()
+    CustomBackHandler(
+        onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher ?: return,
+        enabled = true // Set to false to disable back press handling
+    ) {
+        // Define your custom back press behavior here
+        // For example, navigate to another destination
     }
 
     ArAppTheme {
