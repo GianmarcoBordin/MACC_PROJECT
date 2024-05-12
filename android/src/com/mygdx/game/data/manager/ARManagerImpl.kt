@@ -24,6 +24,17 @@ class ARManagerImpl @Inject constructor(private val dataRepository: DataReposito
         return gameItemLiveData
     }
 
+    override suspend fun getGameItemsUser(username: String): LiveData<List<String>> {
+        val gameItemLiveData = MutableLiveData<List<String>>()
+
+        dataRepository.getGameItemsUser(username).observeForever { gameItemList ->
+            val stringGameItem = gameItemList?.get(0)?.split(" ") ?: emptyList()
+            gameItemLiveData.value = stringGameItem
+        }
+
+        return gameItemLiveData
+    }
+
 
     override suspend fun addOwnership(ownership: Ownership) {
         dataRepository.postOwnership(ownership)

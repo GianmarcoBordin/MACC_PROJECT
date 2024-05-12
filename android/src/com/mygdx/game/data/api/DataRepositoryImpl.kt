@@ -242,6 +242,54 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
         return data
     }
 
+    override suspend fun getGameItemsUser(user: String): LiveData<List<String>> {
+        val data = MutableLiveData<List<String>>()
+        try {
+            val response = suspendCoroutine { continuation ->
+                rankApi?.getGameItemsUser(user)?.enqueue(object : Callback<List<GameItem>> {
+                    override fun onResponse(
+                        call: Call<List<GameItem>>,
+                        response: Response<List<GameItem>>
+                    ) {
+                        continuation.resume(response)
+                    }
+
+                    override fun onFailure(call: Call<List<GameItem>>, t: Throwable) {
+                        continuation.resumeWithException(t)
+                    }
+                })
+            }
+
+            if (response.isSuccessful) {
+                val ranks = response.body()
+                if (ranks == emptyList<GameItem>()) {
+                    data.postValue(emptyList())
+                }
+                if (ranks != null) {
+                    println(response.body())
+                    val rankInfo = ranks.map {
+                        "${it.id} ${it.rarity} ${it.hp} ${it.damage}"
+                    }
+
+                    data.postValue(rankInfo)
+                } else {
+                    // Empty response body
+                    data.postValue(emptyList())
+                }
+            } else {
+                // Unsuccessful response
+                Log.d(TAG, "Error: ${response.code()}" + response)
+                data.postValue(listOf("Error: "))
+            }
+        } catch (e: Exception) {
+            // Failure
+            Log.d(TAG,"Error: ${e.message}"+e.printStackTrace())
+            data.postValue(listOf("Error: "))
+        }
+
+        return data
+    }
+
 
     override suspend fun postOwnership(request: Ownership): LiveData<String> {
         val resultLiveData = MutableLiveData<String>()

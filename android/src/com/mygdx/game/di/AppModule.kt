@@ -42,6 +42,7 @@ import com.mygdx.game.domain.usecase.ar.ARUseCases
 import com.mygdx.game.domain.usecase.ar.AddGameItem
 import com.mygdx.game.domain.usecase.ar.AddOwnership
 import com.mygdx.game.domain.usecase.ar.GetGameItem
+import com.mygdx.game.domain.usecase.ar.GetGameItemsUser
 import com.mygdx.game.domain.usecase.ar.GetOwnership
 import com.mygdx.game.domain.usecase.auth.AuthCheck
 import com.mygdx.game.domain.usecase.auth.AuthenticationUseCases
@@ -282,7 +283,8 @@ object AppModule {
         addGameItem = AddGameItem(arManager),
         getGameItem = GetGameItem(arManager),
         addOwnership = AddOwnership(arManager),
-        getOwnership = GetOwnership(arManager)
+        getOwnership = GetOwnership(arManager),
+        getGameItemsUser = GetGameItemsUser(arManager)
     )
 
     @Provides
