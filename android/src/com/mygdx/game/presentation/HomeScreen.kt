@@ -1,6 +1,9 @@
 package com.mygdx.game.presentation
 
+
+import android.content.Context
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,21 +17,30 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+
+//noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+//noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material.Surface
+//noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.Gamepad
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.StarBorder
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -55,6 +67,9 @@ import com.mygdx.game.presentation.navgraph.Route
 
 import com.mygdx.game.ui.theme.ArAppTheme
 
+
+
+
 @Composable
 fun ArHomeScreen(
     multiplayer: Multiplayer,
@@ -78,7 +93,6 @@ fun ArHomeScreen(
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-
 
             Box(
                 modifier = Modifier.fillMaxSize()
@@ -176,15 +190,6 @@ private fun SettingsButton(navController: NavController) {
 
 @Composable
 private fun StartGameButton(navController: NavController){
-    Button(
-        onClick = {navController.navigate(Route.InventoryScreen.route)},
-        modifier = Modifier
-            .size(width = 150.dp, height = 50.dp)
-            .clip(RoundedCornerShape(ButtonCornerShape))
-    ) {
-        Text(text = "Inventory")
-    }
-    /*
     ExtendedFloatingActionButton(
         text = { Text("Scan scene") },
         icon = {Icon(
@@ -193,8 +198,9 @@ private fun StartGameButton(navController: NavController){
             tint = MaterialTheme.colorScheme.onPrimaryContainer
             )},
         onClick = {navController.navigate(Route.ARScreen.route)},
+
     )
-    */
+
 }
 
 @Composable
