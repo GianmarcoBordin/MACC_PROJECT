@@ -15,8 +15,11 @@ class MapManagerImpl @Inject constructor(private val mapRepository: MapRepositor
     MapManager {
 
 
-    override suspend fun getUserLocation(player: Player, context: Context): Location? {
-        return mapRepository.getUserLocation(player,context)
+    override suspend fun getUserLocation(player: Player, context: Context): Location {
+        val default = Location("provider")
+        default.latitude = 41.89098635680032
+        default.longitude = 12.503826312635637
+        return mapRepository.getUserLocation(player,context) ?: default
     }
 
     override suspend fun getNearbyPlayers(userLocation: Location): List<Player> {
