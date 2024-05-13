@@ -197,7 +197,7 @@ private fun StartGameButton(navController: NavController){
             contentDescription = "scan scene",
             tint = MaterialTheme.colorScheme.onPrimaryContainer
             )},
-        onClick = {navController.navigate(Route.ARScreen.route)},
+        onClick = {navController.navigate(Route.InventoryScreen.route)},
 
     )
 

@@ -35,7 +35,6 @@ import kotlin.random.Random
 
 @HiltViewModel
 class ARViewModel @Inject constructor(
-    private val localUserManager: LocalUserManager,
     private val arUseCases: ARUseCases
 ) : ViewModel(), UpdateListener {
     // -> ARScreen
@@ -68,7 +67,9 @@ class ARViewModel @Inject constructor(
     fun onDataStoreEvent(event: DataStoreEvent) {
         when (event) {
             DataStoreEvent.readDataStore -> {
-                gameItem = localUserManager.readGameItem()
+                viewModelScope.launch {
+                    gameItem = arUseCases.readGameItem()
+                }
                 // set the gameitem and its health
                 _state.value = state.value.copy(gameItem = gameItem, hp = gameItem.hp)
             }
@@ -149,10 +150,12 @@ class ARViewModel @Inject constructor(
             }
 
             is UpdateDatabaseEvent.AddOwnership -> {
-                val username = localUserManager.getUserProfile().displayName
-                val ownership = Ownership(event.itemId, username)
                 viewModelScope.launch {
-                    arUseCases.addOwnership(ownership)
+                    val username = arUseCases.fetchUserProfile()?.displayName
+                    val ownership = username?.let { Ownership(event.itemId, it) }
+                    if (ownership != null) {
+                        arUseCases.addOwnership(ownership)
+                    }
                 }
             }
         }
@@ -180,12 +183,13 @@ class ARViewModel @Inject constructor(
                 // set the bitmap and make the game start
                 _state.value = state.value.copy(shootBitmap = finalBullets, isStarted = true)
 
-                val username = localUserManager.getUserProfile().displayName
+
                 val itemId = state.value.gameItem.id
 
                 viewModelScope.launch {
+                    val username = arUseCases.fetchUserProfile()?.displayName
                     // set if the player already owns the item
-                    if (arUseCases.getOwnership(username, itemId).isNotEmpty()) {
+                    if (username?.let { arUseCases.getOwnership(it, itemId).isNotEmpty() } == true) {
                         _state.value.owned = true
                         // because the player already owns an item, then retrieve it immediately and store it
                         val gameItemString = arUseCases.getGameItem(username, gameItem.rarity.toString())
