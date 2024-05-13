@@ -52,8 +52,9 @@ class InventoryViewModel @Inject constructor(
     private fun fetchData() {
         viewModelScope.launch {
             // Set loading state
-            if(!completed)
-            _isLoading.value = true
+            if(!completed) {
+                _isLoading.value = true
+            }
             _isError.value=false
             delay(1000)
             try {

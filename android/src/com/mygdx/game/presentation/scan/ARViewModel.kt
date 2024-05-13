@@ -18,8 +18,8 @@ import com.mygdx.game.data.dao.Line
 import com.mygdx.game.data.dao.Message
 import com.mygdx.game.data.dao.Ownership
 import com.mygdx.game.data.manager.UpdateListener
-import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.domain.usecase.ar.ARUseCases
+import com.mygdx.game.presentation.map.MapViewModel
 import com.mygdx.game.presentation.scan.events.BitmapEvent
 import com.mygdx.game.presentation.scan.events.DataStoreEvent
 import com.mygdx.game.presentation.scan.events.DimensionsEvent
@@ -213,6 +213,8 @@ class ARViewModel @Inject constructor(
                         delay(16L)
                         _state.value = updateGame(state.value)
                     }
+                    // TODO CHECK now owns the item
+                    _state.value.owned = true
                     // delete all remaining lines
                     _state.value.lines.clear()
                 }

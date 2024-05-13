@@ -41,6 +41,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -66,6 +67,7 @@ import com.google.gson.Gson
 import com.mygdx.game.Constants
 import com.mygdx.game.R
 import com.mygdx.game.data.dao.GameItem
+import com.mygdx.game.data.dao.Item
 import com.mygdx.game.presentation.components.BackButton
 import com.mygdx.game.presentation.map.events.LocationDeniedEvent
 import macc.ar.presentation.map.events.LocationGrantedEvent
@@ -74,6 +76,7 @@ import com.mygdx.game.presentation.map.events.RouteEvent
 import com.mygdx.game.presentation.map.events.UpdateMapEvent
 import com.mygdx.game.presentation.map.utility.findMarker
 import com.mygdx.game.presentation.navgraph.Route
+import com.mygdx.game.presentation.scan.ARViewModel
 import com.mygdx.game.ui.theme.ArAppTheme
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
@@ -313,10 +316,8 @@ fun OsmMap(
     val navPath by viewModel.navPath.observeAsState()
     val thresholdButton = 100
     val thresholdButtonFlag by viewModel.thresholdButtonFlag.observeAsState()
-    var pathOverlay : Polyline = Polyline()
-    var userMarker : Marker = Marker(MapView(LocalContext.current))
-
-
+    var pathOverlay: Polyline = Polyline()
+    var userMarker: Marker = Marker(MapView(LocalContext.current))
 
 
     // Initialize OSM MapView
@@ -397,7 +398,7 @@ fun OsmMap(
 
 
             val distanceString = if (player.distance > thresholdKm) {
-                "%.0f km".format(player.distance/1000)
+                "%.0f km".format(player.distance / 1000)
             } else {
                 "%.2f meters".format(player.distance)
             }
@@ -412,11 +413,11 @@ fun OsmMap(
             objectMarker.position = objectGeoPoint
 
             val distanceString = if (obj.distance > thresholdKm) {
-                "%.0f km".format(obj.distance/1000)
+                "%.0f km".format(obj.distance / 1000)
             } else {
                 "%.2f meters".format(obj.distance)
             }
-            Log.d("DEBUG","item : ${obj.itemId} ${obj.distance} ${distanceString}")
+            Log.d("DEBUG", "item : ${obj.itemId} ${obj.distance} ${distanceString}")
 
             if (obj.distance < thresholdButton) {
                 viewModel.update(obj, true)
@@ -442,18 +443,21 @@ fun OsmMap(
 
     }
 
-        if (thresholdButtonFlag?.isNotEmpty() == true) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth() // Fill the width of the parent
-                    .padding(top = 16.dp), // Optional padding // Center horizontally
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                val itemBitMap: ImageBitmap
-                val hp: Int
-                val damage: Int
-                val firstTrueItemKey = thresholdButtonFlag!!.entries.find { it.value }?.key
+    if (thresholdButtonFlag?.isNotEmpty() == true) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth() // Fill the width of the parent
+                .padding(top = 16.dp), // Optional padding // Center horizontally
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            val itemBitMap: ImageBitmap
+            val hp: Int
+            val damage: Int
+            val firstTrueItemKey = thresholdButtonFlag?.entries
+                ?.firstNotNullOfOrNull { if (it.value) it.key else null }
+            if (firstTrueItemKey != null) {
+
                 when (firstTrueItemKey?.itemRarity) {
                     "1" -> {
                         itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_green)
@@ -536,6 +540,7 @@ fun OsmMap(
             }
         }
     }
+}
 
 
 

@@ -70,6 +70,7 @@ import com.mygdx.game.domain.usecase.settings.SettingsUseCases
 import com.mygdx.game.domain.usecase.settings.SignOut
 import com.mygdx.game.domain.usecase.settings.Update
 import com.mygdx.game.framework.LocationHandler
+import com.mygdx.game.presentation.scan.events.UpdateMappingEvent
 import com.mygdx.game.util.Constants.RANK_URL
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -257,7 +258,8 @@ object AppModule {
         rankManager: RankManager,
         mapManager: MapManager,
         localUserManager: LocalUserManager,
-        contextManager: ContextManager
+        contextManager: ContextManager,
+        arManager: ARManager
 
 
     ) = MapUseCases(
@@ -272,7 +274,9 @@ object AppModule {
         updatePlayerLocation = UpdatePlayerLocation(mapManager),
         updateUserLocation = UpdateUserLocation(rankManager),
         saveGameItem = SaveGameItem(localUserManager),
-        getContext = GetContext(contextManager)
+        getContext = GetContext(contextManager),
+        getOwnership = GetOwnership(arManager),
+        readUser = ReadUser(localUserManager)
     )
 
     @Provides
@@ -287,7 +291,7 @@ object AppModule {
         getOwnership = GetOwnership(arManager),
         readGameItem = ReadGameItem(localUserManager),
         fetchUserProfile = ReadUser(localUserManager),
-        getGameItemsUser = GetGameItemsUser(arManager)
+        getGameItemsUser = GetGameItemsUser(arManager),
     )
 
     @Provides

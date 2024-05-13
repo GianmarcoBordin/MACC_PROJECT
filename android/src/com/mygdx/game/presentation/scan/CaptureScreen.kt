@@ -52,12 +52,13 @@ import com.mygdx.game.util.Constants
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.unit.Dp
+import com.mygdx.game.presentation.scan.events.UpdateMappingEvent
 
 @Composable
 fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHandler: (GameEvent.StartGame) -> Unit,
                   lineAddHandler: (LineEvent.AddNewLine) -> Unit, lineDeleteHandler: (LineEvent.DeleteAllLines) -> Unit,
                   addDatabaseHandler: (UpdateDatabaseEvent.AddItem) -> Unit, updateDatabaseHandler: (UpdateDatabaseEvent.IncrementItemStats) -> Unit,
-                  addOwnershipHandler: (UpdateDatabaseEvent.AddOwnership) -> Unit, resetGameHandler: (GameEvent.ResetGame) -> Unit) {
+                  addOwnershipHandler: (UpdateDatabaseEvent.AddOwnership) -> Unit, resetGameHandler: (GameEvent.ResetGame) -> Unit, updateMappingHandler: (UpdateMappingEvent.UpdateMapping) -> Unit,) {
     // collectAsState() allows Canvas' recomposition
     val gameState by viewModel.state.collectAsState()
 
@@ -186,6 +187,9 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                             textStats = "Stats: \n" +
                                     "- HP: ${gameState.gameItem.hp}\n" +
                                     "- Damage: ${gameState.gameItem.damage}"
+                            updateMappingHandler(UpdateMappingEvent.UpdateMapping)
+
+
                         } else {
                             updateDatabaseHandler(UpdateDatabaseEvent.IncrementItemStats(1, 1))
                             val rarity: String = when(gameState.gameItem.rarity) {

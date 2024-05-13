@@ -51,6 +51,7 @@ import androidx.navigation.NavController
 import com.mygdx.game.R
 import com.mygdx.game.data.dao.GameItem
 import com.mygdx.game.presentation.Dimension
+import com.mygdx.game.presentation.components.BackButton
 import com.mygdx.game.presentation.inventory.events.GameItemEvent
 import com.mygdx.game.presentation.inventory.events.ItemEvent
 import com.mygdx.game.presentation.rank.UserRankingItem
@@ -114,7 +115,7 @@ fun InventoryScreen(retrieveItemsHandler: (ItemEvent.RetrieveItems) -> Unit,
                     }
                 }
             } else if (isLoading==false){
-                InventoryPage(viewModel.items, innerPadding, updateBitmapHandler)
+                InventoryPage(navController,viewModel.items, innerPadding, updateBitmapHandler)
             }
 
         }
@@ -156,7 +157,7 @@ fun InventoryItem(item: GameItem) {
 }
 
 @Composable
-fun InventoryPage(items: List<GameItem>, innerPadding: PaddingValues, updateBitmapHandler: (GameItemEvent.UpdateBitmap) -> Unit) {
+fun InventoryPage(navController:NavController,items: List<GameItem>, innerPadding: PaddingValues, updateBitmapHandler: (GameItemEvent.UpdateBitmap) -> Unit) {
     LazyColumn (
         modifier = Modifier
             .padding(innerPadding)
@@ -173,7 +174,9 @@ fun InventoryPage(items: List<GameItem>, innerPadding: PaddingValues, updateBitm
                 }
                 updateBitmapHandler(GameItemEvent.UpdateBitmap(index, bitmap))
             }
+            BackButton(onClick = {  navController.popBackStack()})
             InventoryItem(items[index])
+
         }
     }
 }

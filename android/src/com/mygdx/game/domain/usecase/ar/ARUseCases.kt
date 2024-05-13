@@ -11,5 +11,5 @@ data class ARUseCases (
     val addOwnership: AddOwnership,
     val getOwnership: GetOwnership,
     val readGameItem: ReadGameItem,
-    val fetchUserProfile: ReadUser
+    val fetchUserProfile: ReadUser,
 )
