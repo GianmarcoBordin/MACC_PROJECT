@@ -18,8 +18,8 @@ import com.mygdx.game.data.dao.Line
 import com.mygdx.game.data.dao.Message
 import com.mygdx.game.data.dao.Ownership
 import com.mygdx.game.data.manager.UpdateListener
-import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.domain.usecase.ar.ARUseCases
+import com.mygdx.game.presentation.map.MapViewModel
 import com.mygdx.game.presentation.scan.events.BitmapEvent
 import com.mygdx.game.presentation.scan.events.DataStoreEvent
 import com.mygdx.game.presentation.scan.events.DimensionsEvent
@@ -35,7 +35,6 @@ import kotlin.random.Random
 
 @HiltViewModel
 class ARViewModel @Inject constructor(
-    private val localUserManager: LocalUserManager,
     private val arUseCases: ARUseCases
 ) : ViewModel(), UpdateListener {
     // -> ARScreen
@@ -68,7 +67,9 @@ class ARViewModel @Inject constructor(
     fun onDataStoreEvent(event: DataStoreEvent) {
         when (event) {
             DataStoreEvent.readDataStore -> {
-                gameItem = localUserManager.readGameItem()
+                viewModelScope.launch {
+                    gameItem = arUseCases.readGameItem()
+                }
                 // set the gameitem and its health
                 _state.value = state.value.copy(gameItem = gameItem, hp = gameItem.hp)
             }
@@ -126,7 +127,7 @@ class ARViewModel @Inject constructor(
 
     // bitmap is not used because it is pointless to save it on the db
     // (it requires more bandwidth, but provide no benefit for the user)
-     fun onUpdateDatabaseEvent(event: UpdateDatabaseEvent) {
+    fun onUpdateDatabaseEvent(event: UpdateDatabaseEvent) {
         when (event) {
             is UpdateDatabaseEvent.IncrementItemStats -> {
                 val updatedGameItem = GameItem(ownedGameItem.id,
@@ -149,16 +150,16 @@ class ARViewModel @Inject constructor(
             }
 
             is UpdateDatabaseEvent.AddOwnership -> {
-                val username = localUserManager.getUserProfile().displayName
-                val ownership = Ownership(event.itemId, username)
                 viewModelScope.launch {
+                    val username = arUseCases.fetchUserProfile().displayName
+                    val ownership = Ownership(event.itemId, username)
                     arUseCases.addOwnership(ownership)
                 }
             }
         }
     }
 
-     fun onGameEvent(event: GameEvent) {
+    fun onGameEvent(event: GameEvent) {
         when (event) {
             is GameEvent.StartGame -> {
                 // compute the ratio of the background image
@@ -180,12 +181,12 @@ class ARViewModel @Inject constructor(
                 // set the bitmap and make the game start
                 _state.value = state.value.copy(shootBitmap = finalBullets, isStarted = true)
 
-                val username = localUserManager.getUserProfile().displayName
                 val itemId = state.value.gameItem.id
 
                 viewModelScope.launch {
+                    val username = arUseCases.fetchUserProfile().displayName
                     // set if the player already owns the item
-                    if (arUseCases.getOwnership(username, itemId).isNotEmpty()) {
+                    if (username.let { arUseCases.getOwnership(it, itemId).isNotEmpty() }) {
                         _state.value.owned = true
                         // because the player already owns an item, then retrieve it immediately and store it
                         val gameItemString = arUseCases.getGameItem(username, gameItem.rarity.toString())
@@ -209,6 +210,8 @@ class ARViewModel @Inject constructor(
                         delay(16L)
                         _state.value = updateGame(state.value)
                     }
+                    // TODO CHECK now owns the item
+                    _state.value.owned = true
                     // delete all remaining lines
                     _state.value.lines.clear()
                 }

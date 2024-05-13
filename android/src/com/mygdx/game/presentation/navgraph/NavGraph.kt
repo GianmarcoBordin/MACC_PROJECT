@@ -45,6 +45,8 @@ fun NavGraph(
     val navController = rememberNavController()
     val authenticationViewModel : AuthenticationViewModel = init()
     val arViewModel : ARViewModel = hiltViewModel()
+    val  mapViewModel : MapViewModel = hiltViewModel()
+
 
 
     NavHost(navController = navController, startDestination = startDestination){
@@ -90,12 +92,11 @@ fun NavGraph(
                 route = Route.MapScreen.route
             ) {
                 // set screen as the node state
-                val  viewModel : MapViewModel = hiltViewModel()
                 MapScreen(
-                    mapUpdateHandler = viewModel::onMapUpdateEvent, mapRetryHandler = viewModel::onMapRetryEvent,
-                    locationGrantedHandler = viewModel::onLocationGrantedEvent, locationDeniedHandler = viewModel::onLocationDeniedEvent,
-                    routeHandler = viewModel::onRouteEvent,
-                    navController = navController, viewModel = viewModel
+                    mapUpdateHandler = mapViewModel::onMapUpdateEvent, mapRetryHandler = mapViewModel::onMapRetryEvent,
+                    locationGrantedHandler = mapViewModel::onLocationGrantedEvent, locationDeniedHandler = mapViewModel::onLocationDeniedEvent,
+                    routeHandler = mapViewModel::onRouteEvent,
+                    navController = navController, viewModel = mapViewModel
                 )
             }
             composable(
@@ -109,7 +110,8 @@ fun NavGraph(
                     updateDatabaseHandler = arViewModel::onUpdateDatabaseEvent,
                     addDatabaseHandler = arViewModel::onUpdateDatabaseEvent,
                     addOwnershipHandler = arViewModel::onUpdateDatabaseEvent,
-                    resetGameHandler = arViewModel::onGameEvent
+                    resetGameHandler = arViewModel::onGameEvent,
+                    updateMappingHandler = mapViewModel::onUpdateMappingEvent
                 )
             }
             composable(

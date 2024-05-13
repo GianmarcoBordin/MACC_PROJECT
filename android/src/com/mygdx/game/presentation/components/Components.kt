@@ -1,6 +1,5 @@
 package com.mygdx.game.presentation.components
 
-
 //noinspection UsingMaterialAndMaterial3Libraries
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.activity.OnBackPressedCallback
@@ -20,6 +19,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+
 @Composable
 fun CustomBackHandler(
     onBackPressedDispatcher: OnBackPressedDispatcher,
@@ -43,6 +43,7 @@ fun CustomBackHandler(
         }
     }
 }
+
 @Composable
 fun BackButton(onClick: () -> Unit) {
     Box(

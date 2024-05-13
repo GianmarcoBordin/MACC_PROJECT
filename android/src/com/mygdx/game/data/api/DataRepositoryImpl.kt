@@ -266,7 +266,6 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
                     data.postValue(emptyList())
                 }
                 if (ranks != null) {
-                    println(response.body())
                     val rankInfo = ranks.map {
                         "${it.id} ${it.rarity} ${it.hp} ${it.damage}"
                     }

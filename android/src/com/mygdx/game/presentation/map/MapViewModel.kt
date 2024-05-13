@@ -5,8 +5,6 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.location.Location
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,8 +19,6 @@ import com.mygdx.game.data.dao.Item
 import com.mygdx.game.data.dao.Message
 import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.manager.UpdateListener
-import com.mygdx.game.domain.manager.ContextManager
-import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.domain.usecase.appEntry.AppEntryUseCases
 import com.mygdx.game.domain.usecase.map.MapUseCases
 import com.mygdx.game.presentation.map.events.LocationDeniedEvent
@@ -30,6 +26,7 @@ import macc.ar.presentation.map.events.LocationGrantedEvent
 import com.mygdx.game.presentation.map.events.RetryMapEvent
 import com.mygdx.game.presentation.map.events.RouteEvent
 import com.mygdx.game.presentation.map.events.UpdateMapEvent
+import com.mygdx.game.presentation.scan.events.UpdateMappingEvent
 import com.mygdx.game.util.Constants
 import com.mygdx.game.util.Constants.DEFAULT_LOCATION_LATITUDE
 import com.mygdx.game.util.Constants.DEFAULT_LOCATION_LONGITUDE
@@ -74,6 +71,9 @@ class MapViewModel  @Inject constructor(
 
     private val isActive = MutableLiveData<Boolean>()
 
+    private val ownerships = MutableLiveData<HashMap<String, Boolean>?>()
+
+
 
 
     init {
@@ -91,8 +91,25 @@ class MapViewModel  @Inject constructor(
     }
 
      fun update(item:Item,value:Boolean) {
-          val _map = HashMap<Item, Boolean>()
-         _map.set(item,value)
+         // Fetch the ownerships
+         val username = mapUseCases.readUser()
+
+         viewModelScope.launch {
+             val list = mapUseCases.getOwnership(username.displayName,item.itemId)
+             val _map = HashMap<Item, Boolean>()
+             if (list.size >= 1){
+                 _map.set(item,false)
+
+             }else{
+                 _map.set(item,true)
+
+             }
+             _thresholdButtonFlag.value=_map
+         }
+    }
+
+    fun updateMapping() {
+        val _map = HashMap<Item, Boolean>()
         _thresholdButtonFlag.value=_map
     }
 
@@ -153,6 +170,8 @@ class MapViewModel  @Inject constructor(
                 objs = mapUseCases.getNearbyObjects(userLoc)
 
 
+
+
             }.onFailure { e ->
                 // Handle error only if user location is null
                 Log.d(TAG, "Error fetching data: ${e.message}")
@@ -181,6 +200,15 @@ class MapViewModel  @Inject constructor(
     fun onMapUpdateEvent(event: UpdateMapEvent) {
         when (event) {
             is UpdateMapEvent.MapUpdate -> {
+                goMapUpdate()
+            }
+
+        }
+    }
+
+    fun onUpdateMappingEvent(event: UpdateMappingEvent) {
+        when (event) {
+            is UpdateMappingEvent.UpdateMapping -> {
                 goMapUpdate()
             }
 

@@ -42,15 +42,15 @@ import com.mygdx.game.domain.usecase.ar.ARUseCases
 import com.mygdx.game.domain.usecase.ar.AddGameItem
 import com.mygdx.game.domain.usecase.ar.AddOwnership
 import com.mygdx.game.domain.usecase.ar.GetGameItem
-import com.mygdx.game.domain.usecase.ar.GetGameItemsUser
+import com.mygdx.game.domain.usecase.inventory.GetGameItemsUser
 import com.mygdx.game.domain.usecase.ar.GetOwnership
+import com.mygdx.game.domain.usecase.ar.ReadGameItem
 import com.mygdx.game.domain.usecase.auth.AuthCheck
 import com.mygdx.game.domain.usecase.auth.AuthenticationUseCases
 import com.mygdx.game.domain.usecase.auth.BioSignIn
 import com.mygdx.game.domain.usecase.auth.SignIn
 import com.mygdx.game.domain.usecase.auth.SignUp
 import com.mygdx.game.domain.usecase.inventory.InventoryUseCases
-import com.mygdx.game.domain.usecase.inventory.RetrieveItems
 import com.mygdx.game.domain.usecase.map.FetchUserLocation
 import com.mygdx.game.domain.usecase.map.GetContext
 import com.mygdx.game.domain.usecase.map.GetNearbyObjects
@@ -257,7 +257,8 @@ object AppModule {
         rankManager: RankManager,
         mapManager: MapManager,
         localUserManager: LocalUserManager,
-        contextManager: ContextManager
+        contextManager: ContextManager,
+        arManager: ARManager
 
 
     ) = MapUseCases(
@@ -272,26 +273,32 @@ object AppModule {
         updatePlayerLocation = UpdatePlayerLocation(mapManager),
         updateUserLocation = UpdateUserLocation(rankManager),
         saveGameItem = SaveGameItem(localUserManager),
-        getContext = GetContext(contextManager)
+        getContext = GetContext(contextManager),
+        getOwnership = GetOwnership(arManager),
+        readUser = ReadUser(localUserManager)
     )
 
     @Provides
     @Singleton
     fun provideARUseCases(
-        arManager: ARManager
+        arManager: ARManager,
+        localUserManager: LocalUserManager,
     ) = ARUseCases(
         addGameItem = AddGameItem(arManager),
         getGameItem = GetGameItem(arManager),
         addOwnership = AddOwnership(arManager),
         getOwnership = GetOwnership(arManager),
-        getGameItemsUser = GetGameItemsUser(arManager)
+        readGameItem = ReadGameItem(localUserManager),
+        fetchUserProfile = ReadUser(localUserManager),
     )
 
     @Provides
     @Singleton
     fun provideInventoryUseCases(
-        inventoryManager: InventoryManager
+        inventoryManager: InventoryManager,
+        localUserManager: LocalUserManager
     ) = InventoryUseCases(
-        retrieveItems = RetrieveItems(inventoryManager)
+        getGameItemsUser = GetGameItemsUser(inventoryManager) ,
+        fetchUserProfile = ReadUser(localUserManager)
     )
 }
