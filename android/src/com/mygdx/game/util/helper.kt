@@ -1,6 +1,19 @@
 package com.mygdx.game.util
 
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.mygdx.game.R
 import com.mygdx.game.player.PlayerSkin
+import com.mygdx.game.util.Constants.RARITY_1_DAMAGE
+import com.mygdx.game.util.Constants.RARITY_1_HP
+import com.mygdx.game.util.Constants.RARITY_2_DAMAGE
+import com.mygdx.game.util.Constants.RARITY_2_HP
+import com.mygdx.game.util.Constants.RARITY_3_DAMAGE
+import com.mygdx.game.util.Constants.RARITY_3_HP
+import com.mygdx.game.util.Constants.RARITY_4_DAMAGE
+import com.mygdx.game.util.Constants.RARITY_4_HP
+import com.mygdx.game.util.Constants.RARITY_5_DAMAGE
+import com.mygdx.game.util.Constants.RARITY_5_HP
 
 fun cleanUpString(input: String): String {
 
@@ -41,4 +54,53 @@ fun fromIntegerToSkin(value: Int): PlayerSkin {
             PlayerSkin.BLACK
         }
     }
+}
+
+fun getItemDetails(itemRarity: String?): Triple<Int, Int, Int> {
+    val defaultColor = R.drawable.gunner_green
+    val defaultHp = RARITY_1_HP
+    val defaultDamage = RARITY_1_DAMAGE
+
+    return when (itemRarity) {
+        "1" -> Triple(R.drawable.gunner_green, RARITY_1_HP, RARITY_1_DAMAGE)
+        "2" -> Triple(R.drawable.gunner_red, RARITY_2_HP, RARITY_2_DAMAGE)
+        "3" -> Triple(R.drawable.gunner_yellow, RARITY_3_HP, RARITY_3_DAMAGE)
+        "4" -> Triple(R.drawable.gunner_blue, RARITY_4_HP, RARITY_4_DAMAGE)
+        "5" -> Triple(R.drawable.gunner_black, RARITY_5_HP, RARITY_5_DAMAGE)
+        else -> Triple(defaultColor, defaultHp, defaultDamage)
+    }
+}
+
+fun getItemDrawable(itemRarity: String?): Int {
+    val defaultColor = R.drawable.gunner_green
+
+    return when (itemRarity) {
+        "1" -> R.drawable.gunner_green
+        "2" -> R.drawable.gunner_red
+        "3" -> R.drawable.gunner_yellow
+        "4" -> R.drawable.gunner_blue
+        "5" -> R.drawable.gunner_black
+        else -> defaultColor
+    }
+}
+
+
+
+
+fun serializeObject(objectProperty: List<Pair<String, String>>): String{
+    val gson = Gson()
+    val jsonObject = JsonObject()
+
+    objectProperty.forEach {
+        jsonObject.addProperty(it.first,it.second)
+    }
+
+    return gson.toJson(jsonObject)
+}
+
+fun deserializeObject(jsonString: String): JsonObject {
+    val gson = Gson()
+    return gson.fromJson(jsonString, JsonObject::class.java)
+
+
 }

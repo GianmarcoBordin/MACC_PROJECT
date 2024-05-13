@@ -9,10 +9,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
@@ -46,13 +48,13 @@ fun BackButton(onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .background(
-                color = androidx.compose.material3.MaterialTheme.colorScheme.surface,
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp)
+                color = MaterialTheme.colorScheme.surface,
+                //shape = RoundedCornerShape(20.dp)
             )
     ){
         IconButton(
             onClick = onClick,
-            modifier = Modifier.padding(8.dp).background(color=androidx.compose.material3.MaterialTheme.colorScheme.surface)
+            modifier = Modifier.padding(8.dp).background(MaterialTheme.colorScheme.surface)
         ) {
             BackIcon()
         }

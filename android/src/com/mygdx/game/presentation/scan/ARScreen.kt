@@ -251,7 +251,7 @@ fun Screen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (Visibil
                 .padding(top = 16.dp, start = 32.dp, end = 32.dp),
             textAlign = TextAlign.Center,
             fontSize = 28.sp,
-            color = MaterialTheme.colorScheme.onSurface,
+            color = Color.White,
             text = if (isVisible) "Scanning the object..."
             else if (childNodes.isEmpty()) "Point your phone down at an empty space, and move it around slowly"
             else "Look for the object and stay still during scanning"

@@ -3,6 +3,9 @@ package com.mygdx.game.presentation.map
 import android.Manifest
 import android.content.ContentValues.TAG
 import android.content.pm.PackageManager.PERMISSION_GRANTED
+import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.location.Location
 import android.util.Log
 import android.view.MotionEvent
@@ -27,7 +30,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 //noinspection UsingMaterialAndMaterial3Libraries
 
 import androidx.compose.material3.CircularProgressIndicator
@@ -43,6 +45,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,19 +57,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.scale
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
-import com.google.gson.Gson
-import com.mygdx.game.Constants
 import com.mygdx.game.R
 import com.mygdx.game.data.dao.GameItem
 import com.mygdx.game.presentation.components.BackButton
+import com.mygdx.game.presentation.map.components.InfoButton
+import com.mygdx.game.presentation.map.components.InfoDialog
+import com.mygdx.game.presentation.map.components.MyBackButton
+import com.mygdx.game.presentation.map.components.ObjectDialog
+import com.mygdx.game.presentation.map.components.RefreshButton
 import com.mygdx.game.presentation.map.events.LocationDeniedEvent
 import macc.ar.presentation.map.events.LocationGrantedEvent
 import com.mygdx.game.presentation.map.events.RetryMapEvent
@@ -75,6 +82,16 @@ import com.mygdx.game.presentation.map.events.UpdateMapEvent
 import com.mygdx.game.presentation.map.utility.findMarker
 import com.mygdx.game.presentation.navgraph.Route
 import com.mygdx.game.ui.theme.ArAppTheme
+import com.mygdx.game.util.Constants.MARKER_HEIGHT
+import com.mygdx.game.util.Constants.MARKER_WIDTH
+import com.mygdx.game.util.Constants.OBJECT_MARKER_HEIGHT
+import com.mygdx.game.util.Constants.OBJECT_MARKER_WIDTH
+import com.mygdx.game.util.deserializeObject
+import com.mygdx.game.util.getItemDetails
+import com.mygdx.game.util.getItemDrawable
+import com.mygdx.game.util.serializeObject
+
+
 import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.BoundingBox
@@ -99,43 +116,16 @@ fun MapScreen(
     //lifecycle
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    DisposableEffect(lifecycleOwner) {
-        val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                viewModel.resume()
-            }
-            if (event == Lifecycle.Event.ON_PAUSE) {
-                viewModel.release()
+    ManageLifecycle(lifecycleOwner = lifecycleOwner, viewModel = viewModel)
 
-            }
-            if (event == Lifecycle.Event.ON_DESTROY) {
-                viewModel.release()
-
-            }
-            if (event == Lifecycle.Event.ON_STOP) {
-                viewModel.release()
-
-            }
-            if (event == Lifecycle.Event.ON_START) {
-                viewModel.resume()
-
-            }
-        }
-        lifecycleOwner.lifecycle.addObserver(observer)
-        onDispose {
-            lifecycleOwner.lifecycle.removeObserver(observer)
-        }
-        // if startProcessIndicatorAnimation() then stop
-
-    }
     ArAppTheme {
         Permission(locationGrantedHandler, locationDeniedHandler)
-        Surface(color = androidx.compose.material3.MaterialTheme.colorScheme.surface){
+        Surface(color = MaterialTheme.colorScheme.surface){
             Column(modifier = Modifier.fillMaxSize()) {
                     if (isLocGranted== true) {
                         DefaultMapContent(
                             mapUpdateHandler = mapUpdateHandler,
-                            mapRetryHandler =mapRetryHandler,
+                            mapRetryHandler = mapRetryHandler,
                             routeHandler= routeHandler,
                             viewModel = viewModel,
                             navController = navController
@@ -205,6 +195,13 @@ fun DefaultMapContent(
     val isLoading by viewModel.isLoading.observeAsState()
     val isError by viewModel.isError.observeAsState()
 
+    // state variable used to trigger info dialog display
+    val openInfoDialog = remember {
+        mutableStateOf(false)
+    }
+
+
+
 
     Box(
         contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
@@ -236,13 +233,14 @@ fun DefaultMapContent(
                     progress = { progress.value },
                     color = MaterialTheme.colorScheme.primary,
                 )
+                /*
                 Button(
                     shape = RoundedCornerShape(size = 16.dp),
                     onClick = { mapRetryHandler(RetryMapEvent.MapRetry)
                     }) {
                     Text(text = "Retry")
 
-                }
+                }*/
 
                 if (isError==true) {
                     Text(
@@ -261,7 +259,6 @@ fun DefaultMapContent(
                         routeHandler = routeHandler,
                         navController,
                         viewModel = viewModel, modifier =  Modifier
-
                     )
                     Row(
                         modifier = Modifier
@@ -270,22 +267,36 @@ fun DefaultMapContent(
                         verticalAlignment = Alignment.Top,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        BackButton(onClick = { navController.popBackStack() })
-
-                        Button(
-                            shape = RoundedCornerShape(size = 16.dp),
-                            onClick = {
-                                mapUpdateHandler(UpdateMapEvent.MapUpdate)
-                            }) {
-                            Text(
-                                text = "Refresh"
-                            )
+                        MyBackButton(onClick = { navController.popBackStack() })
+                        RefreshButton(onClick = {mapUpdateHandler(UpdateMapEvent.MapUpdate) })
+                        InfoButton(onClick = { openInfoDialog.value = true})
+                        if (openInfoDialog.value) {
+                            InfoDialog(onDismissRequest = {openInfoDialog.value = false})
                         }
+
                     }
                 }
         }
     }
 }
+
+@Preview
+@Composable
+fun Prev(){
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalAlignment = Alignment.Top,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        MyBackButton(onClick = {  })
+        RefreshButton(onClick = { })
+        InfoButton(onClick = { })
+
+    }
+}
+
 
 
 
@@ -311,13 +322,29 @@ fun OsmMap(
     val players by viewModel.players.observeAsState()
     val objects by viewModel.objects.observeAsState()
     val navPath by viewModel.navPath.observeAsState()
+
+    // observe state to open dialog of clicked object
+    val openObjectDialog = remember {
+        mutableStateOf(false)
+    }
+    val objectContent = remember {
+        mutableStateOf("")
+    }
+
     val thresholdButton = 100
     val thresholdButtonFlag by viewModel.thresholdButtonFlag.observeAsState()
-    var pathOverlay : Polyline = Polyline()
-    var userMarker : Marker = Marker(MapView(LocalContext.current))
+    var pathOverlay: Polyline = Polyline()
+    var userMarker: Marker = Marker(MapView(LocalContext.current))
 
 
+    val playerMarkerIcon = ImageBitmap.imageResource(R.drawable.main_player_location)
+    val otherPlayerLocationIcon = ImageBitmap.imageResource(R.drawable.other_player_location)
 
+    val greenGunner = ImageBitmap.imageResource(R.drawable.gunner_green)
+    val redGunner = ImageBitmap.imageResource(R.drawable.gunner_red)
+    val yellowGunner = ImageBitmap.imageResource(R.drawable.gunner_yellow)
+    val blueGunner = ImageBitmap.imageResource(R.drawable.gunner_blue)
+    val blackGunner = ImageBitmap.imageResource(R.drawable.gunner_black)
 
     // Initialize OSM MapView
     AndroidView(
@@ -337,29 +364,35 @@ fun OsmMap(
                 // Register a touch event listener
                 setOnTouchListener { _, event ->
                     when (event.action) {
+
+
+
                         MotionEvent.ACTION_DOWN -> {
                             val clickedMarker = findMarker(event.x, event.y)
+
+                            // clicked item is an object
                             if (clickedMarker != null && clickedMarker.position.latitude != userLocation?.latitude && clickedMarker.position.longitude != userLocation?.longitude) {
                                 // If a marker is clicked, show marker details
-                                Toast.makeText(
-                                    context,
-                                    "${clickedMarker.title}",
-                                    Toast.LENGTH_LONG
-                                ).show()
-                                performClick() // Simulate a click event on the map view
+                                // TODO here code to trigger object dialog
+                                openObjectDialog.value = true
+                                objectContent.value = clickedMarker.title
+
                                 // Convert GeoPoints to Locations
-                                val to = Location("provider").apply {
+                                Location("provider").apply {
                                     latitude = clickedMarker.position.latitude
                                     longitude = clickedMarker.position.longitude
                                 }
-                                //routeHandler(RouteEvent.Route(userLocation, to))
+
                                 true
+
+                            // clicked marker is the current user or another user
                             } else {
                                 if (clickedMarker != null) {
                                     // If a marker is clicked, show marker details
+
                                     Toast.makeText(
                                         context,
-                                        "${clickedMarker?.title}",
+                                        clickedMarker.title,
                                         Toast.LENGTH_SHORT
                                     ).show()
                                     performClick() // Simulate a click event on the map view
@@ -377,52 +410,125 @@ fun OsmMap(
         }
     ) { mapView ->
         val thresholdKm = 1000 // Set the threshold to 1 kilometer
-        // Add user's location marker
+
+
+        // add current user
         userLocation?.let { location ->
             mapView.overlays.remove(userMarker)
             mapView.invalidate()
             val userGeoPoint = GeoPoint(location.latitude, location.longitude)
             mapView.controller.setCenter(userGeoPoint)
+
             userMarker = Marker(mapView)
+
+            userMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+
             userMarker.position = userGeoPoint
             userMarker.title = "Your Location"
+            userMarker.icon = scaleBitmap(
+                mapView.context.resources,
+                playerMarkerIcon,
+                MARKER_WIDTH,
+                MARKER_HEIGHT
+            )
+
             mapView.overlays.add(userMarker)
         }
 
+        // add other user location
         players?.forEach { player ->
-            //println(player)
+
             val playerGeoPoint = GeoPoint(player.location.latitude, player.location.longitude)
             val playerMarker = Marker(mapView)
             playerMarker.position = playerGeoPoint
 
 
             val distanceString = if (player.distance > thresholdKm) {
-                "%.0f km".format(player.distance/1000)
+                "%.0f km".format(player.distance / 1000)
             } else {
                 "%.2f meters".format(player.distance)
             }
-            playerMarker.title =
-                "Username: ${player.username} Distance From Me: $distanceString"
+            playerMarker.title = "Username: ${player.username} Distance From Me: $distanceString"
+            playerMarker.icon = scaleBitmap(
+                mapView.context.resources,
+                otherPlayerLocationIcon,
+                MARKER_WIDTH,
+                MARKER_HEIGHT
+            )
+
             mapView.overlays.add(playerMarker)
         }
 
+        // add objects
         objects?.forEach { obj ->
             val objectGeoPoint = GeoPoint(obj.location.latitude, obj.location.longitude)
             val objectMarker = Marker(mapView)
             objectMarker.position = objectGeoPoint
 
             val distanceString = if (obj.distance > thresholdKm) {
-                "%.0f km".format(obj.distance/1000)
+                "%.0f km".format(obj.distance / 1000)
             } else {
                 "%.2f meters".format(obj.distance)
             }
-            Log.d("DEBUG","item : ${obj.itemId} ${obj.distance} ${distanceString}")
+            Log.d("DEBUG", "item : ${obj.itemId} ${obj.distance} $distanceString")
 
             if (obj.distance < thresholdButton) {
                 viewModel.update(obj, true)
             }
-            objectMarker.title =
-                "Item Name: ${obj.itemId} Item Rarity: ${obj.itemRarity} Distance From Me: $distanceString"
+            // TODO is itemId used?
+            //objectMarker.title = "Item Name: ${obj.itemId} Item Rarity: ${obj.itemRarity} Distance From Me: $distanceString"
+
+
+            val properties = listOf(
+                "itemRarity" to obj.itemRarity,
+                "distanceFromMe" to distanceString
+            )
+
+            objectMarker.title = serializeObject(properties)
+
+
+            val objectMarkerIcon: ImageBitmap
+
+
+            when (obj.itemRarity) {
+                "1" -> {
+                    objectMarkerIcon = greenGunner
+                }
+
+                "2" -> {
+                    objectMarkerIcon = redGunner
+
+                }
+
+                "3" -> {
+                    objectMarkerIcon = yellowGunner
+
+                }
+
+                "4" -> {
+                    objectMarkerIcon = blueGunner
+
+                }
+
+                "5" -> {
+                    objectMarkerIcon = blackGunner
+
+                }
+
+                else -> {
+                    objectMarkerIcon = greenGunner
+
+                }
+
+            }
+
+            objectMarker.icon = scaleBitmap(
+                mapView.context.resources,
+                objectMarkerIcon,
+                OBJECT_MARKER_WIDTH,
+                OBJECT_MARKER_HEIGHT
+            )
+
             mapView.overlays.add(objectMarker)
         }
 
@@ -437,75 +543,48 @@ fun OsmMap(
             pathOverlay.setPoints(navPath)
             mapView.overlays.add(pathOverlay)
 
-
         }
 
     }
 
-        if (thresholdButtonFlag?.isNotEmpty() == true) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth() // Fill the width of the parent
-                    .padding(top = 16.dp), // Optional padding // Center horizontally
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                val itemBitMap: ImageBitmap
-                val hp: Int
-                val damage: Int
-                val firstTrueItemKey = thresholdButtonFlag!!.entries.find { it.value }?.key
-                when (firstTrueItemKey?.itemRarity) {
-                    "1" -> {
-                        itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_green)
-                        // Parse JSON string to Item object
-                        hp = com.mygdx.game.util.Constants.RARITY_1_HP
-                        damage = com.mygdx.game.util.Constants.RARITY_1_DAMAGE
-                    }
-
-                    "2" -> {
-                        itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_red)
-                        hp = com.mygdx.game.util.Constants.RARITY_2_HP
-                        damage = com.mygdx.game.util.Constants.RARITY_2_DAMAGE
-                    }
-
-                    "3" -> {
-                        itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_yellow)
-                        hp = com.mygdx.game.util.Constants.RARITY_3_HP
-                        damage = com.mygdx.game.util.Constants.RARITY_3_DAMAGE
-                    }
-
-                    "4" -> {
-                        itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_blue)
-                        hp = com.mygdx.game.util.Constants.RARITY_4_HP
-                        damage = com.mygdx.game.util.Constants.RARITY_4_DAMAGE
-                    }
-
-                    "5" -> {
-                        itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_black)
-                        hp = com.mygdx.game.util.Constants.RARITY_5_HP
-                        damage = com.mygdx.game.util.Constants.RARITY_5_DAMAGE
-                    }
-
-                    else -> {
-                        itemBitMap = ImageBitmap.imageResource(id = R.drawable.gunner_green)
-                        hp = com.mygdx.game.util.Constants.RARITY_1_HP
-                        damage = com.mygdx.game.util.Constants.RARITY_1_DAMAGE
-                    }
-
-                }
-
-                val configuration = LocalConfiguration.current
-                val screenWidth =
-                    with(LocalDensity.current) { configuration.screenWidthDp.dp.toPx().toInt() }
 
 
-                Button(
-                    colors = ButtonDefaults.buttonColors(), // Set the background color of the button
-                    shape = RoundedCornerShape(size = 20.dp),
-                    onClick = {
 
-                        // -> bitmap of the item
-                        // convert to bitmap
+    if (thresholdButtonFlag?.isNotEmpty() == true) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth() // Fill the width of the parent
+                .padding(top = 16.dp), // Optional padding // Center horizontally
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            val firstTrueItemKey = thresholdButtonFlag!!.entries.find { it.value }?.key
+
+            // get item details according to the item rarity
+            val (color, hp, damage) = getItemDetails(firstTrueItemKey?.itemRarity)
+            val itemBitMap: ImageBitmap = ImageBitmap.imageResource(color)
+
+            val configuration = LocalConfiguration.current
+            val screenWidth =
+                with(LocalDensity.current) { configuration.screenWidthDp.dp.toPx().toInt() }
+
+
+            if (openObjectDialog.value) {
+
+                val jsonObject = deserializeObject(objectContent.value)
+
+                val itemRarity = jsonObject.getAsJsonPrimitive("itemRarity").asString
+                val distanceFromMe = jsonObject.getAsJsonPrimitive("distanceFromMe").asString
+
+                val imageId = getItemDrawable(itemRarity)
+
+                // show the Composable dialog with all the required informations
+                ObjectDialog(
+                    imageId = imageId,
+                    distanceFromMe = distanceFromMe,
+                    enabled = thresholdButtonFlag!!.any { it.value },
+                    onCatchObject = {
                         val itemBitmap = itemBitMap.asAndroidBitmap()
                         // scale the item so that its width is 1/4 of the screen width,
                         // but the ratio between its dimensions is maintained
@@ -524,18 +603,48 @@ fun OsmMap(
                         viewModel.saveGameItem(finalGameItem)
                         navController.navigate(Route.ARScreen.route)
                     },
-                    enabled = thresholdButtonFlag!!.any { it.value },
+                    onDismissRequest = {openObjectDialog.value = false}
+                )
 
-                    ) {
-                    Text(
-                        text = "Catch ${firstTrueItemKey?.itemId}",
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
             }
+
+
         }
     }
+}
+
+
+
+fun scaleBitmap(resources: Resources,bitmap: ImageBitmap, newWidth: Int, newHeight: Int): BitmapDrawable {
+    val scaledBitmap = Bitmap.createScaledBitmap(
+        bitmap.asAndroidBitmap(),
+        newWidth,
+        newHeight,
+        true
+    )
+    return BitmapDrawable(resources, scaledBitmap)
+}
+
+
+
+
+@Composable
+private fun ManageLifecycle(lifecycleOwner: LifecycleOwner, viewModel: MapViewModel) {
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_RESUME, Lifecycle.Event.ON_START, Lifecycle.Event.ON_CREATE -> viewModel.resume()
+                Lifecycle.Event.ON_PAUSE, Lifecycle.Event.ON_STOP, Lifecycle.Event.ON_DESTROY -> viewModel.release()
+                else -> { }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+}
+
 
 
 

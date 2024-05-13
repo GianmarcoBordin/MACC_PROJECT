@@ -55,5 +55,14 @@ object Constants {
     const val MAPS_URL = "https://api.openrouteservice.org/v2/directions/driving-car"
     const val MAPS_URL2 = "https://api.openrouteservice.org/v2/directions/driving-car/geojson"
 
+    // Default location of the user if GPS doesn't work correctly
+    const val DEFAULT_LOCATION_LATITUDE = 41.89098635680032
+    const val DEFAULT_LOCATION_LONGITUDE = 12.503826312635637
+
+    const val MARKER_WIDTH = 50
+    const val MARKER_HEIGHT = 50
+
+    const val OBJECT_MARKER_WIDTH = (MARKER_WIDTH / 1.5).toInt()
+    const val OBJECT_MARKER_HEIGHT = (MARKER_HEIGHT / 1.5).toInt()
 
 }

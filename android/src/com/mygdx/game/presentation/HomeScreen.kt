@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.Gamepad
+import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.StarBorder
@@ -124,6 +125,7 @@ fun ArHomeScreen(
                         Column(
                             modifier = Modifier.align(Alignment.BottomCenter)
                         ) {
+
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Center
@@ -137,7 +139,8 @@ fun ArHomeScreen(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Center
                             ) {
-                                StartGameButton(navController = navController)
+                                //StartGameButton(navController = navController)
+                                InventoryButton(navController = navController)
                                 Spacer(modifier = Modifier.width(24.dp))
                                 MultiplayerButton(multiplayer = multiplayer)
                             }
@@ -185,6 +188,20 @@ private fun SettingsButton(navController: NavController) {
         onClick = { navController.navigate(Route.SettingsScreen.route) },
 
     )
+
+}
+
+@Composable
+private fun InventoryButton(navController: NavController) {
+    ExtendedFloatingActionButton(
+        text = { Text("Inventory") },
+        icon = {Icon(
+            imageVector = Icons.Outlined.Inventory2,
+            contentDescription = "inventory",
+            tint = MaterialTheme.colorScheme.onPrimaryContainer)},
+        onClick = { navController.navigate(Route.InventoryScreen.route) },
+
+        )
 
 }
 

@@ -46,6 +46,7 @@ fun InventoryScreen(retrieveItemsHandler: (ItemEvent.RetrieveItems) -> Unit,
                     viewModel: InventoryViewModel) {
 
     val retrieved by viewModel.retrieved.observeAsState()
+    //val isLoading by viewModel.isLoading.observeAsState()
 
     if (retrieved == false) {
         retrieveItemsHandler(ItemEvent.RetrieveItems)

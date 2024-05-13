@@ -31,6 +31,8 @@ import com.mygdx.game.presentation.map.events.RetryMapEvent
 import com.mygdx.game.presentation.map.events.RouteEvent
 import com.mygdx.game.presentation.map.events.UpdateMapEvent
 import com.mygdx.game.util.Constants
+import com.mygdx.game.util.Constants.DEFAULT_LOCATION_LATITUDE
+import com.mygdx.game.util.Constants.DEFAULT_LOCATION_LONGITUDE
 import org.osmdroid.util.GeoPoint
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -122,8 +124,8 @@ class MapViewModel  @Inject constructor(
         viewModelScope.launch {
             var userLoc = Location("provider")
             // DEFAULT LOCATION
-            userLoc.latitude = 41.89098635680032
-            userLoc.longitude = 12.503826312635637
+            userLoc.latitude = DEFAULT_LOCATION_LATITUDE
+            userLoc.longitude = DEFAULT_LOCATION_LONGITUDE
             var ps: List<Player>? = null
             var objs: List<Item>? = null
             // Set loading state

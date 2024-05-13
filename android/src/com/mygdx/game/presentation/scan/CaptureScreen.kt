@@ -1,6 +1,7 @@
 package com.mygdx.game.presentation.scan
 
 import android.graphics.Bitmap
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -51,7 +52,15 @@ import com.mygdx.game.presentation.scan.events.UpdateDatabaseEvent
 import com.mygdx.game.util.Constants
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import com.mygdx.game.presentation.components.CustomBackHandler
+import com.mygdx.game.ui.theme.Poppins
 
 @Composable
 fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHandler: (GameEvent.StartGame) -> Unit,
@@ -60,6 +69,14 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                   addOwnershipHandler: (UpdateDatabaseEvent.AddOwnership) -> Unit, resetGameHandler: (GameEvent.ResetGame) -> Unit) {
     // collectAsState() allows Canvas' recomposition
     val gameState by viewModel.state.collectAsState()
+
+    CustomBackHandler(
+        onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher ?: return,
+        enabled = true // Set to false to disable back press handling
+    ) {
+
+        navController.navigate(Route.MapScreen.route)
+    }
 
     val item = when(gameState.gameItem.rarity) {
         1 -> ImageBitmap.imageResource(id = R.drawable.gunner_green)
@@ -102,7 +119,9 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                 Text(modifier = Modifier
                         .padding(top = 6.dp),
                     color = Color.Red,
-                    text = "HP: ${gameState.hp}/${gameState.gameItem.hp}"
+
+                    text = "HP: ${gameState.hp}/${gameState.gameItem.hp}",
+                    style = MaterialTheme.typography.titleLarge
                 )
             }
             Canvas(
@@ -219,12 +238,11 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                                 // so that the game can be played again
                                 resetGameHandler(GameEvent.ResetGame)
                                 // go back to map screen
-                                navController.navigate(Route.MapScreen.route)
+                                navController.navigate(Route.HomeScreen.route)
                             },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.onPrimaryContainer)
                         ) {
                             Text(
-                                color = Color.White,
                                 text = "OK"
                             )
                         }
@@ -234,6 +252,213 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
         }
     }
 }
+
+// TODO implement in the above code
+@Composable
+fun TextObject(){
+    Column(
+        modifier = Modifier.padding(horizontal = 50.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+        Text(
+            modifier = Modifier.padding(bottom = 5.dp),
+            text = "Your Yellow Gunner has received an upgrade!",
+            textAlign = TextAlign.Center)
+
+        Column {
+            Row(horizontalArrangement = Arrangement.Center) {
+                Text(
+                    text = "HP:",
+                    textAlign = TextAlign.Center,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                    )
+                )
+
+                Spacer(modifier = Modifier.padding(5.dp))
+                Text(
+                    text = "1",
+                    textAlign = TextAlign.Center)
+            }
+
+            Row(horizontalArrangement = Arrangement.Center){
+                Text(
+                    text = "Damage",
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                    )
+                )
+                Spacer(modifier = Modifier.padding(5.dp))
+                Text(text = "1")
+            }
+        }
+
+
+    }
+}
+
+
+@Preview
+@Composable
+fun CardPreview() {
+
+    val textStats = "Your Yellow Gunner has received an upgrade!\n" +
+            "Updated Stats: \n" +
+            "- HP: 1\n" +
+            "- Damage: 1"
+
+
+    Dialog(
+        onDismissRequest = {
+        },
+        properties = DialogProperties(
+            dismissOnClickOutside = false,
+            dismissOnBackPress = false
+        )
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 10.dp
+            ),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                modifier = Modifier,
+                //.width(width = (100 / 2).dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    modifier = Modifier
+                        //.width(width = (500 / 2).dp)
+                        .padding(16.dp),
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                    ),
+                    text = "Item captured!"
+
+                )
+
+                /*Text(
+                    modifier = Modifier
+                        .padding(16.dp),
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    text = textStats
+                )*/
+                TextObject()
+
+                ElevatedButton(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 16.dp),
+                    onClick = {
+
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                ) {
+                    Text(
+                        text = "OK"
+                    )
+                }
+
+
+            }
+        }
+    }
+
+    /*
+    Dialog(
+        onDismissRequest = {
+        },
+        properties = DialogProperties(
+            dismissOnClickOutside = false,
+            dismissOnBackPress = false
+        )
+    ) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceVariant
+            ),
+            elevation = CardDefaults.cardElevation(
+                defaultElevation = 10.dp
+            ),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                modifier = Modifier,
+                //.width(width = (100 / 2).dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    modifier = Modifier
+                        //.width(width = (500 / 2).dp)
+                        .padding(16.dp),
+                    textAlign = TextAlign.Center,
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    text = "Item captured!"
+
+                )
+
+                Text(
+                    modifier = Modifier
+                        .padding(16.dp),
+                    textAlign = TextAlign.Center,
+                    fontSize = 18.sp,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Your Yellow Gunner has received an upgrade!\n")
+                        }
+                        append("Updated Stats: \n")
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("- HP: 1\n")
+                            append("- Damage: 1")
+                        }
+                    }
+                )
+                ElevatedButton(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(bottom = 16.dp),
+                    onClick = {
+
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                ) {
+                    Text(
+                        text = "OK"
+                    )
+                }
+
+
+            }
+        }
+    }*/
+
+
+
+}
+
 
 private fun DrawScope.drawLines(lines: List<Line>) {
     lines.forEach { line ->
