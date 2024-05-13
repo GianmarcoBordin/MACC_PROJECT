@@ -56,7 +56,16 @@ fun InventoryScreen(retrieveItemsHandler: (ItemEvent.RetrieveItems) -> Unit,
     val isError by viewModel.isError.observeAsState()
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Inventory") }) },
+        topBar = {
+            TopAppBar(
+                navigationIcon = {
+                    BackButton(onClick = { navController.popBackStack() })
+                },
+                title = {
+                    Text(
+                        text = "Inventory"
+                    )
+            }) },
         content = { innerPadding ->
             if (isLoading == true) {
                 val progress = remember { Animatable(0f) }
@@ -69,7 +78,6 @@ fun InventoryScreen(retrieveItemsHandler: (ItemEvent.RetrieveItems) -> Unit,
                             repeatMode = RepeatMode.Reverse
                         )
                     )
-
                 }
 
                 Column(
@@ -102,8 +110,7 @@ fun InventoryScreen(retrieveItemsHandler: (ItemEvent.RetrieveItems) -> Unit,
                     }
                 }
             } else if (isLoading == false) {
-                BackButton(onClick = {  navController.popBackStack()})
-                InventoryPage(navController,viewModel.items, innerPadding, updateBitmapHandler)
+                InventoryPage(viewModel.items, innerPadding, updateBitmapHandler)
             }
         }
     )
@@ -144,7 +151,7 @@ fun InventoryItem(item: GameItem) {
 }
 
 @Composable
-fun InventoryPage(navController:NavController, items: List<GameItem>, innerPadding: PaddingValues, updateBitmapHandler: (GameItemEvent.UpdateBitmap) -> Unit) {
+fun InventoryPage(items: List<GameItem>, innerPadding: PaddingValues, updateBitmapHandler: (GameItemEvent.UpdateBitmap) -> Unit) {
     LazyColumn (
         modifier = Modifier
             .padding(innerPadding)

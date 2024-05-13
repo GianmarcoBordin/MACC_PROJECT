@@ -174,7 +174,7 @@ private fun SettingsButton(navController: NavController) {
 @Composable
 private fun StartGameButton(navController: NavController){
     ExtendedFloatingActionButton(
-        text = { Text("Scan scene") },
+        text = { Text("Inventory") },
         icon = {Icon(
             imageVector =  Icons.Outlined.CameraAlt,
             contentDescription = "scan scene",
