@@ -1,9 +1,6 @@
 package com.mygdx.game.presentation
 
-
-import android.content.Context
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,12 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 
-//noinspection UsingMaterialAndMaterial3Libraries
-
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -35,19 +28,13 @@ import androidx.compose.material.icons.outlined.Gamepad
 import androidx.compose.material.icons.outlined.Place
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.StarBorder
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SmallTopAppBar
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.style.TextAlign
@@ -59,16 +46,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.mygdx.game.Multiplayer
-import com.mygdx.game.presentation.Dimension.ButtonCornerShape
 import com.mygdx.game.presentation.components.CustomBackHandler
 import com.mygdx.game.presentation.components.LogoUserImage
 import com.mygdx.game.presentation.components.UserGreeting
 import com.mygdx.game.presentation.navgraph.Route
 
 import com.mygdx.game.ui.theme.ArAppTheme
-
-
-
 
 @Composable
 fun ArHomeScreen(

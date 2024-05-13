@@ -9,7 +9,7 @@ import com.mygdx.game.domain.manager.LocalUserManager
 class ReadGameItem(
     private val localUserManager: LocalUserManager
 ) {
-    suspend operator fun invoke(): GameItem {
+    operator fun invoke(): GameItem {
         return localUserManager.readGameItem()
     }
 }

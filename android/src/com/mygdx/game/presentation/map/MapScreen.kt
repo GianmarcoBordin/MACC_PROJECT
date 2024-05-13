@@ -133,7 +133,7 @@ fun MapScreen(
     }
     ArAppTheme {
         Permission(locationGrantedHandler, locationDeniedHandler)
-        Surface(color = androidx.compose.material3.MaterialTheme.colorScheme.surface){
+        Surface(color = MaterialTheme.colorScheme.surface){
             Column(modifier = Modifier.fillMaxSize()) {
                     if (isLocGranted== true) {
                         DefaultMapContent(
@@ -190,7 +190,6 @@ fun Permission(
             locationGrantedHandler(LocationGrantedEvent.LocationGranted)
         }
     }
-
 }
 
 
@@ -255,7 +254,7 @@ fun DefaultMapContent(
                     )
                 }
             }
-        } else if (isLoading==false){
+        } else if (isLoading==false) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()

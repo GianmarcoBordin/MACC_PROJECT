@@ -4,5 +4,5 @@ import androidx.lifecycle.LiveData
 import com.mygdx.game.data.dao.GameItem
 
 interface InventoryManager {
-    suspend fun retrieveItems(username: String) : List<List<String>>
+    suspend fun getGameItemsUser(username: String): LiveData<List<String>>
 }

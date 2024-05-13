@@ -5,7 +5,6 @@ import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,16 +14,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -37,15 +32,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.mygdx.game.R
@@ -54,9 +44,6 @@ import com.mygdx.game.presentation.Dimension
 import com.mygdx.game.presentation.components.BackButton
 import com.mygdx.game.presentation.inventory.events.GameItemEvent
 import com.mygdx.game.presentation.inventory.events.ItemEvent
-import com.mygdx.game.presentation.rank.UserRankingItem
-import com.mygdx.game.presentation.rank.events.RankUpdateEvent
-import com.mygdx.game.presentation.rank.events.RetryEvent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,10 +52,8 @@ fun InventoryScreen(retrieveItemsHandler: (ItemEvent.RetrieveItems) -> Unit,
                     navController: NavController,
                     viewModel: InventoryViewModel) {
 
-
     val isLoading by viewModel.isLoading.observeAsState()
     val isError by viewModel.isError.observeAsState()
-
 
     Scaffold(
         topBar = { TopAppBar(title = { Text("Inventory") }) },
@@ -101,12 +86,14 @@ fun InventoryScreen(retrieveItemsHandler: (ItemEvent.RetrieveItems) -> Unit,
                     )
                     Button(
                         shape = RoundedCornerShape(size = Dimension.ButtonCornerShape),
-                        onClick = { retrieveItemsHandler(ItemEvent.RetrieveItems)
-                        }) {
+                        onClick = {
+                            retrieveItemsHandler(ItemEvent.RetrieveItems)
+                        }
+                    ) {
                         Text(text = "Retry")
                     }
 
-                    if (isError==true) {
+                    if (isError == true) {
                         Text(
                             text = "Check your internet connection and retry later",
                             color = MaterialTheme.colorScheme.onError,
@@ -114,10 +101,10 @@ fun InventoryScreen(retrieveItemsHandler: (ItemEvent.RetrieveItems) -> Unit,
                         )
                     }
                 }
-            } else if (isLoading==false){
+            } else if (isLoading == false) {
+                BackButton(onClick = {  navController.popBackStack()})
                 InventoryPage(navController,viewModel.items, innerPadding, updateBitmapHandler)
             }
-
         }
     )
 }
@@ -157,7 +144,7 @@ fun InventoryItem(item: GameItem) {
 }
 
 @Composable
-fun InventoryPage(navController:NavController,items: List<GameItem>, innerPadding: PaddingValues, updateBitmapHandler: (GameItemEvent.UpdateBitmap) -> Unit) {
+fun InventoryPage(navController:NavController, items: List<GameItem>, innerPadding: PaddingValues, updateBitmapHandler: (GameItemEvent.UpdateBitmap) -> Unit) {
     LazyColumn (
         modifier = Modifier
             .padding(innerPadding)
@@ -174,9 +161,7 @@ fun InventoryPage(navController:NavController,items: List<GameItem>, innerPaddin
                 }
                 updateBitmapHandler(GameItemEvent.UpdateBitmap(index, bitmap))
             }
-            BackButton(onClick = {  navController.popBackStack()})
             InventoryItem(items[index])
-
         }
     }
 }

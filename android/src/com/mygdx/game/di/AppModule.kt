@@ -42,7 +42,7 @@ import com.mygdx.game.domain.usecase.ar.ARUseCases
 import com.mygdx.game.domain.usecase.ar.AddGameItem
 import com.mygdx.game.domain.usecase.ar.AddOwnership
 import com.mygdx.game.domain.usecase.ar.GetGameItem
-import com.mygdx.game.domain.usecase.ar.GetGameItemsUser
+import com.mygdx.game.domain.usecase.inventory.GetGameItemsUser
 import com.mygdx.game.domain.usecase.ar.GetOwnership
 import com.mygdx.game.domain.usecase.ar.ReadGameItem
 import com.mygdx.game.domain.usecase.auth.AuthCheck
@@ -70,7 +70,6 @@ import com.mygdx.game.domain.usecase.settings.SettingsUseCases
 import com.mygdx.game.domain.usecase.settings.SignOut
 import com.mygdx.game.domain.usecase.settings.Update
 import com.mygdx.game.framework.LocationHandler
-import com.mygdx.game.presentation.scan.events.UpdateMappingEvent
 import com.mygdx.game.util.Constants.RANK_URL
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -291,16 +290,15 @@ object AppModule {
         getOwnership = GetOwnership(arManager),
         readGameItem = ReadGameItem(localUserManager),
         fetchUserProfile = ReadUser(localUserManager),
-        getGameItemsUser = GetGameItemsUser(arManager),
     )
 
     @Provides
     @Singleton
     fun provideInventoryUseCases(
-        arManager: ARManager,
+        inventoryManager: InventoryManager,
         localUserManager: LocalUserManager
     ) = InventoryUseCases(
-        getGameItemsUser = GetGameItemsUser(arManager) ,
+        getGameItemsUser = GetGameItemsUser(inventoryManager) ,
         fetchUserProfile = ReadUser(localUserManager)
     )
 }

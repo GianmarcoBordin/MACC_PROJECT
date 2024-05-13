@@ -1,7 +1,5 @@
 package com.mygdx.game.presentation.authentication.screens
 
-import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.biometric.BiometricManager
 import androidx.compose.animation.core.Animatable
@@ -39,7 +37,6 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material3.Text
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextFieldDefaults
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,7 +48,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -80,8 +76,6 @@ import com.mygdx.game.util.Constants.BIO_AUTH_FAILED
 import com.mygdx.game.util.Constants.BIO_AUTH_SUCCESS
 import com.mygdx.game.util.Constants.BIO_NOT_AVAILABLE
 import com.mygdx.game.util.Constants.LOGIN_FAILED
-import com.mygdx.game.util.Constants.LOGIN_SUCCESS
-
 
 @Composable
 fun SignInScreen(

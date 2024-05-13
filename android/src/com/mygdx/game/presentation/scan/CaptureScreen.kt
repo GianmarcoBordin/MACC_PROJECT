@@ -285,13 +285,3 @@ fun HealthBar(health: Int, maxHealth: Int, barWidth: Dp, barHeight: Dp) {
         }
     }
 }
-
-fun scaleDown(realImage: Bitmap, maxImageSize: Float, filter: Boolean): Bitmap {
-    val ratio = min(
-        (maxImageSize / realImage.getWidth()).toDouble(),
-        (maxImageSize / realImage.getHeight()).toDouble()
-    ).toFloat()
-    val width = Math.round(ratio * realImage.getWidth())
-    val height = Math.round(ratio * realImage.getHeight())
-    return Bitmap.createScaledBitmap(realImage, width, height, filter)
-}
