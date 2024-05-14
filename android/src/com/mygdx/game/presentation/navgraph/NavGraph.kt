@@ -1,15 +1,6 @@
 package com.mygdx.game.presentation.navgraph
 
-import android.content.ContentValues.TAG
-import android.util.Log
-import android.view.GestureDetector
-import android.view.MotionEvent
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInteropFilter
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.view.GestureDetectorCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -36,7 +27,6 @@ import com.mygdx.game.presentation.settings.SettingsScreen
 import com.mygdx.game.presentation.settings.SettingsViewModel
 
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun NavGraph(
     multiplayer: Multiplayer,
@@ -45,9 +35,7 @@ fun NavGraph(
     val navController = rememberNavController()
     val authenticationViewModel : AuthenticationViewModel = init()
     val arViewModel : ARViewModel = hiltViewModel()
-    val  mapViewModel : MapViewModel = hiltViewModel()
-
-
+    val mapViewModel : MapViewModel = hiltViewModel()
 
     NavHost(navController = navController, startDestination = startDestination){
         // construct a nested nav graph
@@ -60,7 +48,6 @@ fun NavGraph(
             ) {
                 // set screen as the node state
                 SignUpScreen(signInHandler = authenticationViewModel::onSignUpEvent, viewModel = authenticationViewModel, navController = navController)
-
             }
             composable(
                 route = Route.SettingsScreen.route
@@ -139,7 +126,6 @@ fun NavGraph(
         composable(
             route = Route.SignInScreen.route
         ) {
-
             SignInScreen(signInHandler = authenticationViewModel::onSignInEvent, viewModel = authenticationViewModel, bioSignInHandler = authenticationViewModel::onBioSignInEvent,
                 navController = navController)
         }
@@ -155,7 +141,6 @@ fun NavGraph(
             )
         }
     }
-
 }
 
 @Composable

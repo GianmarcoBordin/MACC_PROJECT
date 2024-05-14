@@ -73,9 +73,6 @@ class MapViewModel  @Inject constructor(
 
     private val ownerships = MutableLiveData<HashMap<String, Boolean>?>()
 
-
-
-
     init {
         // Set granting state
         _isLocGranted.value=false
@@ -84,13 +81,13 @@ class MapViewModel  @Inject constructor(
             periodicExecution(3)
         }
     }
+
     override fun onCleared() {
         super.onCleared()
         release()
-
     }
 
-     fun update(item:Item,value:Boolean) {
+     fun update(item:Item, value:Boolean) {
          // Fetch the ownerships
          val username = mapUseCases.readUser()
 
@@ -99,18 +96,11 @@ class MapViewModel  @Inject constructor(
              val _map = HashMap<Item, Boolean>()
              if (list.size >= 1){
                  _map.set(item,false)
-
              }else{
                  _map.set(item,true)
-
              }
              _thresholdButtonFlag.value=_map
          }
-    }
-
-    fun updateMapping() {
-        val _map = HashMap<Item, Boolean>()
-        _thresholdButtonFlag.value=_map
     }
 
      fun saveGameItem(gameItem: GameItem){
@@ -165,12 +155,8 @@ class MapViewModel  @Inject constructor(
                 // Fetch nearby players
                 ps = mapUseCases.getNearbyPlayers(userLoc)
 
-
                 // Fetch nearby objects
                 objs = mapUseCases.getNearbyObjects(userLoc)
-
-
-
 
             }.onFailure { e ->
                 // Handle error only if user location is null
@@ -189,6 +175,7 @@ class MapViewModel  @Inject constructor(
             }
         }
     }
+
     fun onMapRetryEvent(event: RetryMapEvent) {
         when (event) {
             is RetryMapEvent.MapRetry -> {
@@ -197,12 +184,12 @@ class MapViewModel  @Inject constructor(
 
         }
     }
+
     fun onMapUpdateEvent(event: UpdateMapEvent) {
         when (event) {
             is UpdateMapEvent.MapUpdate -> {
                 goMapUpdate()
             }
-
         }
     }
 
@@ -211,9 +198,9 @@ class MapViewModel  @Inject constructor(
             is UpdateMappingEvent.UpdateMapping -> {
                 goMapUpdate()
             }
-
         }
     }
+
     fun onRouteEvent(event: RouteEvent) {
         when (event) {
             is RouteEvent.Route -> {
@@ -222,6 +209,7 @@ class MapViewModel  @Inject constructor(
 
         }
     }
+
     private fun goRouting(from:  Location?, to: Location) {
         _to.value=to
         viewModelScope.launch {
@@ -235,6 +223,7 @@ class MapViewModel  @Inject constructor(
             _navPath.value = navPath
         }
     }
+
     fun onLocationGrantedEvent(event: LocationGrantedEvent) {
         when (event) {
             is LocationGrantedEvent.LocationGranted -> {
@@ -245,6 +234,7 @@ class MapViewModel  @Inject constructor(
 
         }
     }
+
     fun onLocationDeniedEvent(event: LocationDeniedEvent) {
         when (event) {
             is LocationDeniedEvent.LocationDenied -> {
@@ -254,14 +244,16 @@ class MapViewModel  @Inject constructor(
 
         }
     }
+
     private fun goMapUpdate(){
         release()
-        fetchData(context =mapUseCases.getContext() )
-       }
+        fetchData( context =mapUseCases.getContext() )
+    }
     private fun goMapRetry(){
         release()
         fetchData(context=mapUseCases.getContext())
-   }
+
+    }
     fun release() {
         _userLocation.value = null
         _players.value = null
@@ -272,15 +264,18 @@ class MapViewModel  @Inject constructor(
         _to.value=null
         stopLocationUpdates()
     }
+
     fun resume() {
         isActive.value=true
         startLocationUpdates()
         fetchData(mapUseCases.getContext())
     }
-     private fun startLocationUpdates() {
+
+    private fun startLocationUpdates() {
         mapUseCases.startLocUpdates()
     }
-     private fun stopLocationUpdates() {
+
+    private fun stopLocationUpdates() {
         mapUseCases.stopLocUpdates()
     }
 

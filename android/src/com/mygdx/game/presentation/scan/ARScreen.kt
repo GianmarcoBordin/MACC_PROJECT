@@ -7,16 +7,14 @@ import android.graphics.ImageFormat
 import android.graphics.Rect
 import android.graphics.YuvImage
 import android.opengl.Matrix
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -36,11 +34,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import com.google.accompanist.permissions.shouldShowRationale
 import com.google.android.filament.Engine
 import com.google.ar.core.Anchor
 import com.google.ar.core.Config
@@ -69,17 +67,26 @@ import com.mygdx.game.presentation.scan.events.FocusEvent
 import com.mygdx.game.presentation.scan.events.VisibilityEvent
 import java.io.ByteArrayOutputStream
 import com.mygdx.game.presentation.components.BackButton
+import com.mygdx.game.presentation.components.CustomBackHandler
+import com.mygdx.game.presentation.components.ExitPopup
 import com.mygdx.game.presentation.scan.events.BitmapEvent
 import com.mygdx.game.presentation.scan.events.DataStoreEvent
+import com.mygdx.game.ui.theme.ArAppTheme
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ARScreen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (VisibilityEvent.Visible) -> Unit,
              dimensionsHandler: (DimensionsEvent.Dimensions) -> Unit, bitmapHandler: (BitmapEvent.BitmapCreated) -> Unit,
              readDataStoreHandler: (DataStoreEvent.readDataStore) -> Unit, viewModel: ARViewModel, navController: NavController) {
+
     // Camera permission state
     var permissionRequested by remember { mutableStateOf(false) }
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
+
+    // lifecycle
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    val openPopup = remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         if (!permissionRequested) {
@@ -90,32 +97,22 @@ fun ARScreen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (Visib
 
     if (cameraPermissionState.status.isGranted) {
         // If camera permission is granted, show the screen
-        Screen(focusHandler, visibilityHandler, dimensionsHandler, bitmapHandler,
-            readDataStoreHandler, viewModel, navController)
-
-    } else {
-        Column {
-            val textToShow = if (cameraPermissionState.status.shouldShowRationale) {
-                // If the user has denied the permission but the rationale can be shown,
-                // then gently explain why the app requires this permission
-                "The camera is important for this app. Please grant the permission."
-            } else {
-                // If it's the first time the user lands on this feature, or the user
-                // doesn't want to be asked again for this permission, explain that the
-                // permission is required
-                "Camera permission required for this feature to be available. " +
-                        "Please grant the permission"
-            }
-            Text(textToShow)
-            BackButton(onClick = {  navController.popBackStack()})
-            Button(onClick = { cameraPermissionState.launchPermissionRequest() }) {
-                Text("Request permission")
-            }
+        ArAppTheme {
+            Screen(focusHandler, visibilityHandler, dimensionsHandler, bitmapHandler,
+                readDataStoreHandler, viewModel, navController)
+            ExitPopup(openPopup)
         }
+    } else {
+        navController.navigate(Route.HomeScreen.route)
     }
 
-    Lifecycle(viewModel = viewModel) // TODO
-
+    ManageLifecycle(lifecycleOwner = lifecycleOwner, viewModel = viewModel)
+    CustomBackHandler(
+        onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher ?: return,
+        enabled = true // Set to false to disable back press handling
+    ) {
+        openPopup.value = true
+    }
 }
 
 @Composable
@@ -182,7 +179,7 @@ fun Screen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (Visibil
                 // used to populate the scene with exactly one new item if there is no item on the scene
                 // and no item has already been captured
                 if (childNodes.isEmpty() && !viewModel.scanned) {
-                    readDataStoreHandler(DataStoreEvent.readDataStore)
+                    //readDataStoreHandler(DataStoreEvent.readDataStore) <-----------------------
                     updatedFrame.getUpdatedPlanes()
                         // if the first element is a Plane of type "Plane.Type.HORIZONTAL_UPWARD_FACING"
                         // (if the detected plane is a floor or a table)
@@ -270,95 +267,23 @@ fun Screen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (Visibil
 }
 
 @Composable
-fun Lifecycle(viewModel: ARViewModel){
-    //lifecycle
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val isActive = remember { mutableStateOf(false) }
-
-
-    LaunchedEffect(Unit) {
-        isActive.value=true
-    }
+private fun ManageLifecycle(lifecycleOwner: LifecycleOwner, viewModel: ARViewModel) {
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                isActive.value=true
-
-                if (isActive.value) {
-                    viewModel.resume()
-                    // Perform operations when the activity is in the foreground
-                    // For example:
-                    //startLocationUpdates()
-                    //startAnimations()
-                    // Any other operations you want to resume
-                }
-            }
-            if (event == Lifecycle.Event.ON_PAUSE) {
-                isActive.value=false
-
-                if (!isActive.value) {
-                    viewModel.release()
-                    // Perform operations when the activity goes into the background
-                    // For example:
-                    // release resources bitmap.recycle()
-                    // release vars mutableState.clear()
-                    // release coroutines launched on this scope coroutineScope.cancel()
-                    // release registered listeners sensorManager.unregisterListener(sensorEventListener)
-                    // release some resources of view model or other that I have the ref viewmodel.clear
-                    //stopLocationUpdates()
-                    //stopAnimations()
-                    // Any other operations you want to pause or stop
-                }
-            }
-            if (event == Lifecycle.Event.ON_DESTROY) {
-                isActive.value=false
-                viewModel.release()
-                // Perform cleanup operations when the activity is being destroyed
-                // For example:
-                //releaseResources()
-                //releaseResources()
-                //unregisterListeners()
-                //cancelOngoingProcesses()
-                //cleanupUIComponents()
-                //persistDataIfNecessary()
-                // Any other cleanup operations
-            }
-            if (event == Lifecycle.Event.ON_STOP) {
-                isActive.value=false
-
-                if (!isActive.value) {
-                    viewModel.release()
-                    // Perform operations when the activity stops and is no longer visible to the user
-                    // release resources bitmap.recycle()
-                    // release vars mutableState.clear()
-                    // release coroutines launched on this scope coroutineScope.cancel()
-                    // release registered listeners sensorManager.unregisterListener(sensorEventListener)
-                    // release some resources of view model or other that I have the ref viewmodel.clear
-                    // For example:
-                    //pauseLocationUpdates()
-                    //pauseAnimations()
-                    // Any other operations you want to pause
-                }
-            }
-            if (event == Lifecycle.Event.ON_START) {
-                isActive.value=true
-                if (isActive.value) {
-                    viewModel.resume()
-
-                    // Perform operations when the activity starts and is visible to the user
-                    // For example:
-                    //resumeLocationUpdates()
-                    //resumeAnimations()
-                    // Any other operations you want to resume
-                }
+            when (event) {
+                Lifecycle.Event.ON_CREATE -> viewModel.createAR()
+                Lifecycle.Event.ON_START -> viewModel.startAR()
+                Lifecycle.Event.ON_RESUME -> viewModel.resumeAR()
+                Lifecycle.Event.ON_PAUSE -> viewModel.pauseAR()
+                Lifecycle.Event.ON_STOP -> viewModel.stopAR()
+                Lifecycle.Event.ON_DESTROY -> viewModel.destroyAR()
+                else -> { }
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
         onDispose {
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
-        // if startProcessIndicatorAnimation() then stop
-
     }
 }
 
@@ -492,4 +417,3 @@ private fun captureFrame(frame: Frame): Bitmap {
     val byteArray = byteArrayOutputStream.toByteArray()
     return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
 }
-

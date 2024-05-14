@@ -1,6 +1,5 @@
 package com.mygdx.game.presentation.scan
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -42,7 +41,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.mygdx.game.R
-import kotlin.math.min
 import com.mygdx.game.data.dao.Line
 import com.mygdx.game.presentation.navgraph.Route
 import com.mygdx.game.presentation.scan.events.GameEvent

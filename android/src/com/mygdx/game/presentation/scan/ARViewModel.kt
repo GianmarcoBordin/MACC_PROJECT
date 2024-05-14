@@ -19,7 +19,6 @@ import com.mygdx.game.data.dao.Message
 import com.mygdx.game.data.dao.Ownership
 import com.mygdx.game.data.manager.UpdateListener
 import com.mygdx.game.domain.usecase.ar.ARUseCases
-import com.mygdx.game.presentation.map.MapViewModel
 import com.mygdx.game.presentation.scan.events.BitmapEvent
 import com.mygdx.game.presentation.scan.events.DataStoreEvent
 import com.mygdx.game.presentation.scan.events.DimensionsEvent
@@ -181,13 +180,11 @@ class ARViewModel @Inject constructor(
                 // set the bitmap and make the game start
                 _state.value = state.value.copy(shootBitmap = finalBullets, isStarted = true)
 
-                val itemId = state.value.gameItem.id
-
                 viewModelScope.launch {
                     val username = arUseCases.fetchUserProfile().displayName
+                    val rarityItem = state.value.gameItem.rarity
                     // set if the player already owns the item
-                    if (username.let { arUseCases.getOwnership(it, itemId).isNotEmpty() }) {
-                        _state.value.owned = true
+                    if (arUseCases.getOwnership(username, rarityItem.toString()).isNotEmpty()) {
                         // because the player already owns an item, then retrieve it immediately and store it
                         val gameItemString = arUseCases.getGameItem(username, gameItem.rarity.toString())
                         gameItemString.value?.let {
@@ -197,6 +194,7 @@ class ARViewModel @Inject constructor(
                             val hp = it[2]
                             val damage = it[3]
                             ownedGameItem = GameItem(id, rarity.toInt(), hp.toInt(), damage.toInt())
+                            _state.value.owned = true
                         }
                     } else {
                         _state.value.owned = false
@@ -210,8 +208,6 @@ class ARViewModel @Inject constructor(
                         delay(16L)
                         _state.value = updateGame(state.value)
                     }
-                    // TODO CHECK now owns the item
-                    _state.value.owned = true
                     // delete all remaining lines
                     _state.value.lines.clear()
                 }
@@ -488,6 +484,34 @@ class ARViewModel @Inject constructor(
         return mutableListOf()
     }
 
+    fun createAR() {
+
+    }
+
+    fun startAR() {
+        viewModelScope.launch {
+            gameItem = arUseCases.readGameItem()
+        }
+        // set the gameitem and its health
+        _state.value = state.value.copy(gameItem = gameItem, hp = gameItem.hp)
+    }
+
+    fun resumeAR(){
+
+    }
+
+    fun pauseAR() {
+
+    }
+
+    fun stopAR() {
+
+    }
+
+    fun destroyAR() {
+
+    }
+
     override fun onUpdate(data: Location) {
     }
 
@@ -497,19 +521,4 @@ class ARViewModel @Inject constructor(
     override fun onUpdate(data: Message) {
         //
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        release()
-    }
-
-    fun release(){
-
-    }
-
-    fun resume(){
-
-    }
-
-
 }

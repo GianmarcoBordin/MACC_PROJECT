@@ -34,6 +34,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
@@ -48,6 +50,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.mygdx.game.Multiplayer
 import com.mygdx.game.presentation.components.CustomBackHandler
+import com.mygdx.game.presentation.components.ExitPopup
 import com.mygdx.game.presentation.components.LogoUserImage
 import com.mygdx.game.presentation.components.UserGreeting
 import com.mygdx.game.presentation.navgraph.Route
@@ -62,22 +65,22 @@ fun ArHomeScreen(
 ) {
     // mutable state
     val userProfile by viewModel.userProfile.observeAsState()
-    //lifecycle
+    // lifecycle
     val lifecycleOwner = LocalLifecycleOwner.current
+    val openPopup = remember { mutableStateOf(false) }
+
     ManageLifecycle(lifecycleOwner, viewModel)
     CustomBackHandler(
         onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher ?: return,
         enabled = true // Set to false to disable back press handling
     ) {
-        // Define your custom back press behavior here
-        // For example, navigate to another destination
+        openPopup.value = true
     }
 
     ArAppTheme {
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -130,16 +133,14 @@ fun ArHomeScreen(
                         }
                     }
                 }
+                ExitPopup(openPopup)
             }
         }
     }
 }
 
-
-
 @Composable
 private fun Background() {
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -156,7 +157,6 @@ private fun Background() {
             modifier = Modifier.padding(bottom = 35.dp)
         )
     }
-
 }
 
 
@@ -169,9 +169,7 @@ private fun SettingsButton(navController: NavController) {
             contentDescription = "settings",
             tint = MaterialTheme.colorScheme.onPrimaryContainer)},
         onClick = { navController.navigate(Route.SettingsScreen.route) },
-
     )
-
 }
 
 @Composable
@@ -183,33 +181,15 @@ private fun InventoryButton(navController: NavController) {
             contentDescription = "inventory",
             tint = MaterialTheme.colorScheme.onPrimaryContainer)},
         onClick = { navController.navigate(Route.InventoryScreen.route) },
-
         )
-
 }
 
 @Composable
-private fun StartGameButton(navController: NavController){
-    ExtendedFloatingActionButton(
-        text = { Text("Inventory") },
-        icon = {Icon(
-            imageVector =  Icons.Outlined.CameraAlt,
-            contentDescription = "scan scene",
-            tint = MaterialTheme.colorScheme.onPrimaryContainer
-            )},
-        onClick = {navController.navigate(Route.InventoryScreen.route)},
-
-    )
-
-}
-
-@Composable
-private fun MapButton(navController: NavController){
+private fun MapButton(navController: NavController) {
     ExtendedFloatingActionButton(
         text = { Text("Map") },
         icon = {Icon(Icons.Outlined.Place, "Map")},
         onClick = { navController.navigate(Route.MapScreen.route) },
-
     )
 }
 
@@ -226,16 +206,12 @@ private fun RankButton(navController: NavController){
 
 @Composable
 private fun MultiplayerButton(multiplayer: Multiplayer){
-
     ExtendedFloatingActionButton(
         text = { Text("Multiplayer") },
         icon = {Icon(Icons.Outlined.Gamepad, "multiplayer battle")},
         onClick = { multiplayer.onSetMultiplayer() },
-
     )
 }
-
-
 
 @Composable
 private fun ManageLifecycle(lifecycleOwner: LifecycleOwner, viewModel: MainViewModel) {
