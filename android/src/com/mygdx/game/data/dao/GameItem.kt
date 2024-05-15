@@ -2,15 +2,13 @@ package com.mygdx.game.data.dao
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.util.Base64
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
 data class GameItem(
-    val id: String = "",
+    val owner: String = "",
     val rarity: Int = 0,
     val hp: Int = 0,
     val damage: Int = 0,
@@ -19,7 +17,7 @@ data class GameItem(
     fun toJson(): String {
         val gson = Gson()
         val jsonObject = JsonObject()
-        jsonObject.addProperty("id", id)
+        jsonObject.addProperty("owner", owner)
         jsonObject.addProperty("rarity", rarity)
         jsonObject.addProperty("hp", hp)
         jsonObject.addProperty("damage", damage)
@@ -40,7 +38,7 @@ data class GameItem(
             if (jsonString.isNotEmpty()){
                 val gson = Gson()
                 val jsonObject = gson.fromJson(jsonString, JsonObject::class.java)
-                val id = jsonObject.getAsJsonPrimitive("id").asString
+                val id = jsonObject.getAsJsonPrimitive("owner").asString
                 val rarity = jsonObject.getAsJsonPrimitive("rarity").asInt
                 val hp = jsonObject.getAsJsonPrimitive("hp").asInt
                 val damage = jsonObject.getAsJsonPrimitive("damage").asInt
@@ -49,9 +47,7 @@ data class GameItem(
                 return GameItem(id, rarity, hp, damage, bitmap)
             }
             else
-                return GameItem(id = "0", rarity = 0,hp = 1, damage = 1)
-
-
+                return GameItem(owner = "0", rarity = 0,hp = 1, damage = 1)
         }
 
         private fun convertBitmapStringToBitmap(bitmapString: String): Bitmap {

@@ -76,10 +76,10 @@ class MapRepositoryImpl(
         return getNearbyPlayers(userLocation)
     }
 
-
     override suspend fun updateItemsLocation(userLocation: Location): List<Item> {
        return getNearbyObjects(userLocation)
     }
+
     override suspend fun getNearbyPlayers(userLocation: Location): List<Player> {
         return suspendCoroutine { continuation ->
             // Call queryPlayersLocation() function to get list of players
@@ -227,19 +227,12 @@ class MapRepositoryImpl(
     }
     private fun queryPlayersLocation(callback: (List<Player>) -> Unit, userLocation: Location) {
         // Query nearby locations within a certain radius
-        val center = GeoPoint(userLocation.latitude, userLocation.longitude)  // Center point
-        //val center = com.mygdx.game.test.GeoPoint(40.7128, -74.0060) // New York City coordinates
-        val radius = RADIUS2  // Radius in kilometers
+
+        val radius = RADIUS2  // Radius in meters
         val defaultLocationGeoPoint =
             com.google.firebase.firestore.GeoPoint(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
 
         val query = firestore?.collection("players")
-            ?.whereLessThan("location",
-                com.google.firebase.firestore.GeoPoint(
-                    center.latitude + radius,
-                    center.longitude + radius
-                )
-            )
 
         query?.get()
             ?.addOnCompleteListener { task ->
@@ -253,8 +246,10 @@ class MapRepositoryImpl(
                         location.latitude = locationGeoPoint.latitude
                         location.longitude = locationGeoPoint.longitude
                         val distance = calculateDistance(userLocation,location)
-                        val player = Player(username, location, distance)
-                        playersList.add(player)
+                        if (distance < radius) {
+                            val player = Player(username, location, distance)
+                            playersList.add(player)
+                        }
                     }
                     Log.w(TAG, "Success getting documents. $playersList")
                     callback(playersList)
@@ -288,23 +283,15 @@ class MapRepositoryImpl(
                 callback(false)
             }
     }
+
     private fun queryItemsLocation(userLocation: Location, callback: (List<Item>) -> Unit) {
         // Query nearby locations within a certain radius
-        //val center = GeoPoint(userLocation.latitude, userLocation.longitude)  // Center point
-        val center = GeoPoint(40.7128, -74.0060) // New York City coordinates
 
-        val radius = RADIUS2  // Radius in kilometers
+        val radius = RADIUS2  // Radius in meters
         val defaultLocationGeoPoint =
             com.google.firebase.firestore.GeoPoint(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)
 
-
         val query = firestore?.collection("items")
-            ?.whereLessThan("location",
-                com.google.firebase.firestore.GeoPoint(
-                    center.latitude + radius,
-                    center.longitude + radius
-                )
-            )
 
         query?.get()
             ?.addOnCompleteListener { task ->
@@ -319,8 +306,10 @@ class MapRepositoryImpl(
                         location.latitude = locationGeoPoint.latitude
                         location.longitude = locationGeoPoint.longitude
                         val distance = calculateDistance(userLocation,location)
-                        val obj = Item(itemId.toString(), itemRarity, distance, location)
-                        objectsList.add(obj)
+                        if (distance < radius) {
+                            val obj = Item(itemId.toString(), itemRarity, distance, location)
+                            objectsList.add(obj)
+                        }
                     }
                     callback(objectsList)
                 } else {
@@ -329,6 +318,7 @@ class MapRepositoryImpl(
                 }
             }
     }
+
     private fun calculateDistance(location1: Location, location2: Location): Double {
         val earthRadius = 6371 // Earth's radius in kilometers
 
@@ -358,11 +348,13 @@ class MapRepositoryImpl(
 
         return distanceString.replace(Regex("[^0-9.]"), "").toDouble()
     }
+
     private fun getLastStoredTimeFromPreferences(context: Context): Long {
         // Retrieve the last stored time from SharedPreferences
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
         return sharedPreferences.getLong(LAST_STORED_TIME_KEY, 0)
     }
+
     private fun saveLastStoredTimeToPreferences(context: Context, lastStoredTime: Long) {
         // Save the last stored time to SharedPreferences
         val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
@@ -370,5 +362,4 @@ class MapRepositoryImpl(
         editor.putLong(LAST_STORED_TIME_KEY, lastStoredTime)
         editor.apply()
     }
-
 }

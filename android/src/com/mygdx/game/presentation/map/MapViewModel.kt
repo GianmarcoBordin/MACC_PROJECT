@@ -64,14 +64,9 @@ class MapViewModel  @Inject constructor(
     private val _navPath = MutableLiveData<List<GeoPoint>?>()
     val navPath: LiveData<List<GeoPoint>?> = _navPath
 
-    private val _thresholdButtonFlag = MutableLiveData<HashMap<Item, Boolean>?>()
-    val thresholdButtonFlag: LiveData<HashMap<Item, Boolean>?> = _thresholdButtonFlag
-
     private val _to = MutableLiveData<Location?>()
 
     private val isActive = MutableLiveData<Boolean>()
-
-    private val ownerships = MutableLiveData<HashMap<String, Boolean>?>()
 
     init {
         // Set granting state
@@ -85,22 +80,6 @@ class MapViewModel  @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         release()
-    }
-
-     fun update(item:Item, value:Boolean) {
-         // Fetch the ownerships
-         val username = mapUseCases.readUser()
-
-         viewModelScope.launch {
-             val list = mapUseCases.getOwnership(username.displayName,item.itemId)
-             val _map = HashMap<Item, Boolean>()
-             if (list.size >= 1){
-                 _map.set(item,false)
-             }else{
-                 _map.set(item,true)
-             }
-             _thresholdButtonFlag.value=_map
-         }
     }
 
      fun saveGameItem(gameItem: GameItem){
@@ -260,7 +239,6 @@ class MapViewModel  @Inject constructor(
         _objects.value=null
         _navPath.value=null
         isActive.value=false
-        _thresholdButtonFlag.value=null
         _to.value=null
         stopLocationUpdates()
     }

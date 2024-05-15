@@ -3,7 +3,6 @@ package com.mygdx.game.data.manager
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.mygdx.game.data.dao.GameItem
-import com.mygdx.game.data.dao.Ownership
 import com.mygdx.game.domain.api.DataRepository
 import com.mygdx.game.domain.manager.ARManager
 import javax.inject.Inject
@@ -22,14 +21,5 @@ class ARManagerImpl @Inject constructor(private val dataRepository: DataReposito
         }
 
         return gameItemLiveData
-    }
-
-    override suspend fun addOwnership(ownership: Ownership) {
-        dataRepository.postOwnership(ownership)
-    }
-
-    override suspend fun getOwnership(username: String, itemId: String): List<String> {
-        val listOfOwnership = dataRepository.getOwnership(username, itemId).value
-        return listOfOwnership ?: listOf()
     }
 }

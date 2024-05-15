@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.mygdx.game.data.dao.Line
 import com.mygdx.game.data.dao.Message
-import com.mygdx.game.data.dao.Ownership
 import com.mygdx.game.data.manager.UpdateListener
 import com.mygdx.game.domain.usecase.ar.ARUseCases
 import com.mygdx.game.presentation.scan.events.BitmapEvent
@@ -129,7 +128,7 @@ class ARViewModel @Inject constructor(
     fun onUpdateDatabaseEvent(event: UpdateDatabaseEvent) {
         when (event) {
             is UpdateDatabaseEvent.IncrementItemStats -> {
-                val updatedGameItem = GameItem(ownedGameItem.id,
+                val updatedGameItem = GameItem(ownedGameItem.owner,
                     ownedGameItem.rarity,
                     ownedGameItem.hp + event.hpIncrement,
                     ownedGameItem.damage + event.damageIncrement)
@@ -139,20 +138,12 @@ class ARViewModel @Inject constructor(
             }
 
             UpdateDatabaseEvent.AddItem -> {
-                val newGameItem = GameItem(state.value.gameItem.id,
+                val newGameItem = GameItem(state.value.gameItem.owner,
                     state.value.gameItem.rarity,
                     state.value.gameItem.hp,
                     state.value.gameItem.damage)
                 viewModelScope.launch {
                     arUseCases.addGameItem(newGameItem)
-                }
-            }
-
-            is UpdateDatabaseEvent.AddOwnership -> {
-                viewModelScope.launch {
-                    val username = arUseCases.fetchUserProfile().displayName
-                    val ownership = Ownership(event.itemId, username)
-                    arUseCases.addOwnership(ownership)
                 }
             }
         }
@@ -182,22 +173,22 @@ class ARViewModel @Inject constructor(
 
                 viewModelScope.launch {
                     val username = arUseCases.fetchUserProfile().displayName
-                    val rarityItem = state.value.gameItem.rarity
+                    val rarityItem = state.value.gameItem.rarity.toString()
                     // set if the player already owns the item
-                    if (arUseCases.getOwnership(username, rarityItem.toString()).isNotEmpty()) {
-                        // because the player already owns an item, then retrieve it immediately and store it
-                        val gameItemString = arUseCases.getGameItem(username, gameItem.rarity.toString())
-                        gameItemString.value?.let {
-                            Log.e("DEBUG", gameItemString.toString())
+                    val gameItemString = arUseCases.getGameItem(username, rarityItem)
+                    gameItemString.value?.let {
+                        if (it.isNotEmpty()) {
+                            // because the player already owns an item, then retrieve it immediately and store it
+                            Log.e("DEBUG", it.toString())
                             val id = it[0]
                             val rarity = it[1]
                             val hp = it[2]
                             val damage = it[3]
                             ownedGameItem = GameItem(id, rarity.toInt(), hp.toInt(), damage.toInt())
                             _state.value.owned = true
+                        } else {
+                            _state.value.owned = false
                         }
-                    } else {
-                        _state.value.owned = false
                     }
 
                     Log.e("DEBUG", "OWNED = ${state.value.owned}")

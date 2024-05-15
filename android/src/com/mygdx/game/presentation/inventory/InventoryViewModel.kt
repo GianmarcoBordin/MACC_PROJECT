@@ -48,7 +48,7 @@ class InventoryViewModel @Inject constructor(
             is GameItemEvent.UpdateBitmap -> {
                 // create a new object with the updated bitmap and replace the old one with the new one
                 items[event.index] = GameItem(
-                    items[event.index].id,
+                    items[event.index].owner,
                     items[event.index].rarity,
                     items[event.index].hp,
                     items[event.index].damage,

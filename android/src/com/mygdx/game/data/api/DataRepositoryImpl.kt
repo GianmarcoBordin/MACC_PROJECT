@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.mygdx.game.data.dao.GameItem
-import com.mygdx.game.data.dao.Ownership
 import com.squareup.okhttp.ResponseBody
 import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.dao.Rank
@@ -116,7 +115,6 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
         return data
     }
 
-
     override suspend fun postRank(request: Rank): LiveData<String> {
             val resultLiveData = MutableLiveData<String>()
 
@@ -167,9 +165,6 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
         return resultLiveData
     }
 
-
-
-
     override suspend fun postGameItem(request: GameItem): LiveData<String> {
         val resultLiveData = MutableLiveData<String>()
 
@@ -196,46 +191,47 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
     }
     override suspend fun getGameItem(user: String, rarity:String): LiveData<List<String>> {
         val data = MutableLiveData<List<String>>()
+
         try {
-                val response = suspendCoroutine { continuation ->
-                    rankApi?.getGameItem(user, rarity)?.enqueue(object : Callback<List<GameItem>> {
-                        override fun onResponse(
-                            call: Call<List<GameItem>>,
-                            response: Response<List<GameItem>>
-                        ) {
-                            continuation.resume(response)
-                        }
+            val response = suspendCoroutine { continuation ->
+                rankApi?.getGameItem(user, rarity)?.enqueue(object : Callback<List<GameItem>> {
+                    override fun onResponse(
+                        call: Call<List<GameItem>>,
+                        response: Response<List<GameItem>>
+                    ) {
+                        continuation.resume(response)
+                    }
 
-                        override fun onFailure(call: Call<List<GameItem>>, t: Throwable) {
-                            continuation.resumeWithException(t)
-                        }
-                    })
+                    override fun onFailure(call: Call<List<GameItem>>, t: Throwable) {
+                        continuation.resumeWithException(t)
+                    }
+                })
+            }
+
+            if (response.isSuccessful) {
+                val ranks = response.body()
+                if (ranks == emptyList<GameItem>()) {
+                    data.postValue(emptyList())
                 }
-
-                if (response.isSuccessful) {
-                    val ranks = response.body()
-                    if (ranks == emptyList<GameItem>()) {
-                        data.postValue(emptyList())
+                if (ranks != null) {
+                    println(response.body())
+                    val rankInfo = ranks.map {
+                        "${it.owner} ${it.rarity} ${it.hp} ${it.damage}"
                     }
-                    if (ranks != null) {
-                        println(response.body())
-                        val rankInfo = ranks.map {
-                            "${it.id} ${it.rarity} ${it.hp} ${it.damage}"
-                        }
 
-                        data.postValue(rankInfo)
-                    } else {
-                        // Empty response body
-                        data.postValue(emptyList())
-                    }
+                    data.postValue(rankInfo)
                 } else {
-                    // Unsuccessful response
-                    Log.d(TAG, "Error: ${response.code()}" + response)
-                    data.postValue(listOf("Error: "))
+                    // Empty response body
+                    data.postValue(emptyList())
                 }
+            } else {
+                // Unsuccessful response
+                Log.d(TAG, "Error: ${response.code()}" + response)
+                data.postValue(listOf("Error: "))
+            }
         } catch (e: Exception) {
             // Failure
-            Log.d(TAG,"Error: ${e.message}"+e.printStackTrace())
+            Log.d(TAG, "Error: ${e.message}" + e.printStackTrace())
             data.postValue(listOf("Error: "))
         }
 
@@ -267,7 +263,7 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
                 }
                 if (ranks != null) {
                     val rankInfo = ranks.map {
-                        "${it.id} ${it.rarity} ${it.hp} ${it.damage}"
+                        "${it.owner} ${it.rarity} ${it.hp} ${it.damage}"
                     }
 
                     data.postValue(rankInfo)
@@ -285,75 +281,6 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
             Log.d(TAG,"Error: ${e.message}"+e.printStackTrace())
             data.postValue(listOf("Error: "))
         }
-
-        return data
-    }
-
-
-    override suspend fun postOwnership(request: Ownership): LiveData<String> {
-        val resultLiveData = MutableLiveData<String>()
-
-        try {
-            val response = suspendCoroutine { continuation ->
-                rankApi?.postOwnership(request)?.enqueue(object : Callback<Result<ResponseBody>> {
-                    override fun onResponse(
-                        call: Call<Result<ResponseBody>>,
-                        response: Response<Result<ResponseBody>>
-                    ) {
-                        continuation.resume(response)                        }
-
-                    override fun onFailure(call: Call<Result<ResponseBody>>, t: Throwable) {
-                        continuation.resumeWithException(t)
-                    }
-                })
-            }
-            resultLiveData.value =response.isSuccessful.toString()
-        } catch (e: Exception) {
-            resultLiveData.value = e.message
-        }
-
-        return resultLiveData
-    }
-
-    override suspend fun getOwnership(user: String, item: String): LiveData<List<String>> {
-        val data = MutableLiveData<List<String>>()
-        try {
-            val response = suspendCoroutine { continuation ->
-                rankApi?.getOwnership(user, item)?.enqueue(object : Callback<List<Ownership>> {
-                    override fun onResponse(call: Call<List<Ownership>>, response: Response<List<Ownership>>) {
-                        continuation.resume(response)
-                    }
-
-                    override fun onFailure(call: Call<List<Ownership>>, t: Throwable) {
-                        continuation.resumeWithException(t)
-                    }
-                })
-            }
-
-            if (response.isSuccessful) {
-                val ranks = response.body()
-                if (ranks == emptyList<Ownership>()){
-                    data.value = emptyList()
-                }
-                if (ranks != null) {
-                    val rankInfo = ranks.map {
-                        "${it.username} ${it.itemId}" }
-                    data.value = rankInfo
-                } else {
-                    // Empty response body
-                    data.value = emptyList()
-                }
-            } else {
-                // Unsuccessful response
-                Log.d(TAG,"Error: ${response.code()}"+response)
-                data.value = listOf("Error: ")
-            }
-        } catch (e: Exception) {
-            // Failure
-            Log.d(TAG,"Error: ${e.message}"+e.printStackTrace())
-            data.value = listOf("Error: ")
-        }
-
 
         return data
     }

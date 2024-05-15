@@ -103,9 +103,7 @@ import org.osmdroid.views.overlay.Polyline
 
 @Composable
 fun MapScreen(
-    mapRetryHandler: (RetryMapEvent.MapRetry) -> Unit,
     mapUpdateHandler:(UpdateMapEvent.MapUpdate) -> Unit,
-    routeHandler: (RouteEvent.Route) -> Unit,
     locationGrantedHandler: (LocationGrantedEvent.LocationGranted) -> Unit,
     locationDeniedHandler:(LocationDeniedEvent.LocationDenied) -> Unit,
     viewModel: MapViewModel,
@@ -133,8 +131,6 @@ fun MapScreen(
                 if (isLocGranted == true) {
                     DefaultMapContent(
                         mapUpdateHandler = mapUpdateHandler,
-                        mapRetryHandler = mapRetryHandler,
-                        routeHandler= routeHandler,
                         viewModel = viewModel,
                         navController = navController
                     )
@@ -191,8 +187,6 @@ fun Permission(
 @Composable
 fun DefaultMapContent(
     mapUpdateHandler: (UpdateMapEvent.MapUpdate) -> Unit,
-    mapRetryHandler: (RetryMapEvent.MapRetry) -> Unit,
-    routeHandler: (RouteEvent.Route) -> Unit,
     navController:NavController,
     viewModel: MapViewModel
 ) {
@@ -212,13 +206,13 @@ fun DefaultMapContent(
             val progress = remember { Animatable(0f) }
             LaunchedEffect(Unit) {
 
-                    progress.animateTo(
-                        targetValue = 1f,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(durationMillis = 1000),
-                            repeatMode = RepeatMode.Reverse
-                        )
+                progress.animateTo(
+                    targetValue = 1f,
+                    animationSpec = infiniteRepeatable(
+                        animation = tween(durationMillis = 1000),
+                        repeatMode = RepeatMode.Reverse
                     )
+                )
             }
 
             BackButton(onClick = { navController.navigate(Route.HomeScreen.route) })
@@ -244,37 +238,36 @@ fun DefaultMapContent(
                 }
             }
         } else if (isLoading == false){
-                Box(
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                OsmMap(
+                    navController =  navController,
+                    viewModel = viewModel,
+                    modifier =  Modifier
+                )
+                Row(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    OsmMap(
-                        routeHandler = routeHandler,
-                        navController,
-                        viewModel = viewModel, modifier =  Modifier
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.Top,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        MyBackButton(onClick = { navController.navigate(Route.HomeScreen.route) })
-                        RefreshButton(onClick = {mapUpdateHandler(UpdateMapEvent.MapUpdate) })
-                        InfoButton(onClick = { openInfoDialog.value = true})
-                        if (openInfoDialog.value) {
-                            InfoDialog(onDismissRequest = {openInfoDialog.value = false})
-                        }
+                    MyBackButton(onClick = { navController.navigate(Route.HomeScreen.route) })
+                    RefreshButton(onClick = {mapUpdateHandler(UpdateMapEvent.MapUpdate) })
+                    InfoButton(onClick = { openInfoDialog.value = true})
+                    if (openInfoDialog.value) {
+                        InfoDialog(onDismissRequest = {openInfoDialog.value = false})
                     }
                 }
+            }
         }
     }
 }
 
 @Composable
 fun OsmMap(
-    routeHandler: (RouteEvent.Route)->Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
     viewModel: MapViewModel
@@ -302,11 +295,8 @@ fun OsmMap(
         mutableStateOf("")
     }
 
-    val thresholdButton = 100
-    val thresholdButtonFlag by viewModel.thresholdButtonFlag.observeAsState()
     var pathOverlay: Polyline = Polyline()
     var userMarker: Marker = Marker(MapView(LocalContext.current))
-
 
     val playerMarkerIcon = ImageBitmap.imageResource(R.drawable.main_player_location)
     val otherPlayerLocationIcon = ImageBitmap.imageResource(R.drawable.other_player_location)
@@ -335,8 +325,6 @@ fun OsmMap(
                 // Register a touch event listener
                 setOnTouchListener { _, event ->
                     when (event.action) {
-
-
 
                         MotionEvent.ACTION_DOWN -> {
                             val clickedMarker = findMarker(event.x, event.y)
@@ -371,17 +359,13 @@ fun OsmMap(
                                 true
                             }
                         }
-
                         else -> false // Continue processing other touch events
                     }
                 }
-
-
             }
         }
     ) { mapView ->
         val thresholdKm = 1000 // Set the threshold to 1 kilometer
-
 
         // add current user
         userLocation?.let { location ->
@@ -443,12 +427,8 @@ fun OsmMap(
             }
             Log.d("DEBUG", "item : ${obj.itemId} ${obj.distance} $distanceString")
 
-            if (obj.distance < thresholdButton) {
-                viewModel.update(obj, true)
-            }
             // TODO is itemId used?
             //objectMarker.title = "Item Name: ${obj.itemId} Item Rarity: ${obj.itemRarity} Distance From Me: $distanceString"
-
 
             val properties = listOf(
                 "itemRarity" to obj.itemRarity,
@@ -457,39 +437,13 @@ fun OsmMap(
 
             objectMarker.title = serializeObject(properties)
 
-
-            val objectMarkerIcon: ImageBitmap
-
-
-            when (obj.itemRarity) {
-                "1" -> {
-                    objectMarkerIcon = greenGunner
-                }
-
-                "2" -> {
-                    objectMarkerIcon = redGunner
-
-                }
-
-                "3" -> {
-                    objectMarkerIcon = yellowGunner
-
-                }
-
-                "4" -> {
-                    objectMarkerIcon = blueGunner
-
-                }
-
-                "5" -> {
-                    objectMarkerIcon = blackGunner
-
-                }
-
-                else -> {
-                    objectMarkerIcon = greenGunner
-
-                }
+            val objectMarkerIcon: ImageBitmap = when (obj.itemRarity) {
+                "1" -> greenGunner
+                "2" -> redGunner
+                "3" -> yellowGunner
+                "4" -> blueGunner
+                "5" -> blackGunner
+                else -> greenGunner
             }
 
             objectMarker.icon = scaleBitmap(
@@ -500,7 +454,6 @@ fun OsmMap(
             )
             mapView.overlays.add(objectMarker)
         }
-
 
         // Show navigation path
         navPath?.let {
@@ -514,69 +467,61 @@ fun OsmMap(
         }
     }
 
-    if (thresholdButtonFlag?.isNotEmpty() == true) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth() // Fill the width of the parent
-                .padding(top = 16.dp), // Optional padding // Center horizontally
-            verticalArrangement = Arrangement.Bottom,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            val firstTrueItemKey = thresholdButtonFlag!!.entries.find { it.value }?.key
+    Column(
+        modifier = Modifier
+            .fillMaxWidth() // Fill the width of the parent
+            .padding(top = 16.dp), // Optional padding // Center horizontally
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        objects?.forEach { obj ->
+            // get item details according to the item rarity
+            val (color, hp, damage) = getItemDetails(obj.itemRarity)
+            val itemBitMap: ImageBitmap = ImageBitmap.imageResource(color)
 
-            if (firstTrueItemKey != null) {
-                // get item details according to the item rarity
-                val (color, hp, damage) = getItemDetails(firstTrueItemKey.itemRarity)
-                val itemBitMap: ImageBitmap = ImageBitmap.imageResource(color)
+            val configuration = LocalConfiguration.current
+            val screenWidth =
+                with(LocalDensity.current) { configuration.screenWidthDp.dp.toPx().toInt() }
 
-                val configuration = LocalConfiguration.current
-                val screenWidth =
-                    with(LocalDensity.current) { configuration.screenWidthDp.dp.toPx().toInt() }
+            if (openObjectDialog.value) {
 
+                val jsonObject = deserializeObject(objectContent.value)
 
-                if (openObjectDialog.value) {
+                val itemRarity = jsonObject.getAsJsonPrimitive("itemRarity").asString
+                val distanceFromMe = jsonObject.getAsJsonPrimitive("distanceFromMe").asString
 
-                    val jsonObject = deserializeObject(objectContent.value)
+                val imageId = getItemDrawable(itemRarity)
 
-                    val itemRarity = jsonObject.getAsJsonPrimitive("itemRarity").asString
-                    val distanceFromMe = jsonObject.getAsJsonPrimitive("distanceFromMe").asString
-
-                    val imageId = getItemDrawable(itemRarity)
-
-                    // show the Composable dialog with all the required information
-                    ObjectDialog(
-                        imageId = imageId,
-                        distanceFromMe = distanceFromMe,
-                        enabled = thresholdButtonFlag!!.any { it.value },
-                        onCatchObject = {
-                            val itemBitmap = itemBitMap.asAndroidBitmap()
-                            // scale the item so that its width is 1/4 of the screen width,
-                            // but the ratio between its dimensions is maintained
-                            val itemWidth = screenWidth / 4
-                            val itemOriginalWidth = itemBitmap.width
-                            val itemRatio = itemWidth.toDouble() / itemOriginalWidth
-                            val itemHeight = (itemBitmap.height * itemRatio).toInt()
-                            val finalItemBitmap = itemBitmap.scale(itemWidth, itemHeight)
-                            val finalGameItem = GameItem(
-                                firstTrueItemKey!!.itemId,
-                                firstTrueItemKey.itemRarity.toInt(),
-                                hp,
-                                damage,
-                                finalItemBitmap
-                            )
-                            viewModel.saveGameItem(finalGameItem)
-                            navController.navigate(Route.ARScreen.route)
-                        },
-                        onDismissRequest = { openObjectDialog.value = false }
-                    )
-
-                }
+                // show the Composable dialog with all the required information
+                ObjectDialog(
+                    imageId = imageId,
+                    distanceFromMe = distanceFromMe,
+                    enabled = true,
+                    onCatchObject = {
+                        val itemBitmap = itemBitMap.asAndroidBitmap()
+                        // scale the item so that its width is 1/4 of the screen width,
+                        // but the ratio between its dimensions is maintained
+                        val itemWidth = screenWidth / 4
+                        val itemOriginalWidth = itemBitmap.width
+                        val itemRatio = itemWidth.toDouble() / itemOriginalWidth
+                        val itemHeight = (itemBitmap.height * itemRatio).toInt()
+                        val finalItemBitmap = itemBitmap.scale(itemWidth, itemHeight)
+                        val finalGameItem = GameItem(
+                            obj.itemId,
+                            obj.itemRarity.toInt(),
+                            hp,
+                            damage,
+                            finalItemBitmap
+                        )
+                        viewModel.saveGameItem(finalGameItem)
+                        navController.navigate(Route.ARScreen.route)
+                    },
+                    onDismissRequest = { openObjectDialog.value = false }
+                )
             }
         }
     }
 }
-
-
 
 fun scaleBitmap(resources: Resources,bitmap: ImageBitmap, newWidth: Int, newHeight: Int): BitmapDrawable {
     val scaledBitmap = Bitmap.createScaledBitmap(
@@ -587,9 +532,6 @@ fun scaleBitmap(resources: Resources,bitmap: ImageBitmap, newWidth: Int, newHeig
     )
     return BitmapDrawable(resources, scaledBitmap)
 }
-
-
-
 
 @Composable
 private fun ManageLifecycle(lifecycleOwner: LifecycleOwner, viewModel: MapViewModel) {

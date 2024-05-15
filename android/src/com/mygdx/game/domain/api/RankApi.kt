@@ -1,7 +1,6 @@
 package com.mygdx.game.domain.api
 
 import com.mygdx.game.data.dao.GameItem
-import com.mygdx.game.data.dao.Ownership
 import com.squareup.okhttp.ResponseBody
 import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.dao.Rank
@@ -32,12 +31,5 @@ interface RankApi {
 
     @POST("/game_items")
     fun postGameItem(@Body request: GameItem): Call<Result<ResponseBody>>
-    @GET("/ownerships")
-    fun getOwnership(@Query("user") user: String, @Query("item") item: String): Call<List<Ownership>>
-
-    @POST("/ownerships")
-    fun postOwnership(@Body request: Ownership): Call<Result<ResponseBody>>
-
-
 }
 

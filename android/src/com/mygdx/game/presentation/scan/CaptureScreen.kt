@@ -56,7 +56,7 @@ import com.mygdx.game.presentation.scan.events.UpdateMappingEvent
 fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHandler: (GameEvent.StartGame) -> Unit,
                   lineAddHandler: (LineEvent.AddNewLine) -> Unit, lineDeleteHandler: (LineEvent.DeleteAllLines) -> Unit,
                   addDatabaseHandler: (UpdateDatabaseEvent.AddItem) -> Unit, updateDatabaseHandler: (UpdateDatabaseEvent.IncrementItemStats) -> Unit,
-                  addOwnershipHandler: (UpdateDatabaseEvent.AddOwnership) -> Unit, resetGameHandler: (GameEvent.ResetGame) -> Unit, updateMappingHandler: (UpdateMappingEvent.UpdateMapping) -> Unit,) {
+                  resetGameHandler: (GameEvent.ResetGame) -> Unit, updateMappingHandler: (UpdateMappingEvent.UpdateMapping) -> Unit,) {
     // collectAsState() allows Canvas' recomposition
     val gameState by viewModel.state.collectAsState()
 
@@ -180,13 +180,11 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
 
                         val textStats: String
                         if (!gameState.owned) {
-                            addOwnershipHandler(UpdateDatabaseEvent.AddOwnership(gameState.gameItem.id))
                             addDatabaseHandler(UpdateDatabaseEvent.AddItem)
                             textStats = "Stats: \n" +
                                     "- HP: ${gameState.gameItem.hp}\n" +
                                     "- Damage: ${gameState.gameItem.damage}"
                             updateMappingHandler(UpdateMappingEvent.UpdateMapping)
-
 
                         } else {
                             updateDatabaseHandler(UpdateDatabaseEvent.IncrementItemStats(1, 1))

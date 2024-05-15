@@ -9,7 +9,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.tasks.await
 import com.mygdx.game.data.dao.Biometric
 import com.mygdx.game.data.dao.GameItem
@@ -29,9 +28,7 @@ import com.mygdx.game.util.Constants.LOGIN_SUCCESS
 import com.mygdx.game.util.Constants.SIGN_UP_SUCCESS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface UpdateListener {
@@ -76,7 +73,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                             dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ")
                                 ?: emptyList()
                         val gameItem = GameItem(
-                            id = skin[0],
+                            owner = skin[0],
                             rarity = skin[1].toInt(),
                             hp = skin[2].toInt(),
                             damage = skin[3].toInt()
@@ -163,7 +160,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                                         dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ")
                                             ?: emptyList()
                                     val gameItem = GameItem(
-                                        id = skin[0],
+                                        owner = skin[0],
                                         rarity = skin[1].toInt(),
                                         hp = skin[2].toInt(),
                                         damage = skin[3].toInt()
@@ -241,7 +238,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                                                     dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ")
                                                         ?: emptyList()
                                                 val gameItem = GameItem(
-                                                    id = skin[0],
+                                                    owner = skin[0],
                                                     rarity = skin[1].toInt(),
                                                     hp = skin[2].toInt(),
                                                     damage = skin[3].toInt()

@@ -101,6 +101,4 @@ fun serializeObject(objectProperty: List<Pair<String, String>>): String{
 fun deserializeObject(jsonString: String): JsonObject {
     val gson = Gson()
     return gson.fromJson(jsonString, JsonObject::class.java)
-
-
 }

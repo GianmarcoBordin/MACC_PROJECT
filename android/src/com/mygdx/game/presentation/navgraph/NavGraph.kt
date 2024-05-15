@@ -80,10 +80,11 @@ fun NavGraph(
             ) {
                 // set screen as the node state
                 MapScreen(
-                    mapUpdateHandler = mapViewModel::onMapUpdateEvent, mapRetryHandler = mapViewModel::onMapRetryEvent,
-                    locationGrantedHandler = mapViewModel::onLocationGrantedEvent, locationDeniedHandler = mapViewModel::onLocationDeniedEvent,
-                    routeHandler = mapViewModel::onRouteEvent,
-                    navController = navController, viewModel = mapViewModel
+                    mapUpdateHandler = mapViewModel::onMapUpdateEvent,
+                    locationGrantedHandler = mapViewModel::onLocationGrantedEvent,
+                    locationDeniedHandler = mapViewModel::onLocationDeniedEvent,
+                    navController = navController,
+                    viewModel = mapViewModel
                 )
             }
             composable(
@@ -96,7 +97,6 @@ fun NavGraph(
                     lineDeleteHandler = arViewModel::onLineEvent,
                     updateDatabaseHandler = arViewModel::onUpdateDatabaseEvent,
                     addDatabaseHandler = arViewModel::onUpdateDatabaseEvent,
-                    addOwnershipHandler = arViewModel::onUpdateDatabaseEvent,
                     resetGameHandler = arViewModel::onGameEvent,
                     updateMappingHandler = mapViewModel::onUpdateMappingEvent
                 )

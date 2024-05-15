@@ -40,10 +40,8 @@ import com.mygdx.game.domain.usecase.appEntry.SaveAppEntry
 import com.mygdx.game.domain.usecase.appEntry.SaveUser
 import com.mygdx.game.domain.usecase.ar.ARUseCases
 import com.mygdx.game.domain.usecase.ar.AddGameItem
-import com.mygdx.game.domain.usecase.ar.AddOwnership
 import com.mygdx.game.domain.usecase.ar.GetGameItem
 import com.mygdx.game.domain.usecase.inventory.GetGameItemsUser
-import com.mygdx.game.domain.usecase.ar.GetOwnership
 import com.mygdx.game.domain.usecase.ar.ReadGameItem
 import com.mygdx.game.domain.usecase.auth.AuthCheck
 import com.mygdx.game.domain.usecase.auth.AuthenticationUseCases
@@ -274,7 +272,6 @@ object AppModule {
         updateUserLocation = UpdateUserLocation(rankManager),
         saveGameItem = SaveGameItem(localUserManager),
         getContext = GetContext(contextManager),
-        getOwnership = GetOwnership(arManager),
         readUser = ReadUser(localUserManager)
     )
 
@@ -286,8 +283,6 @@ object AppModule {
     ) = ARUseCases(
         addGameItem = AddGameItem(arManager),
         getGameItem = GetGameItem(arManager),
-        addOwnership = AddOwnership(arManager),
-        getOwnership = GetOwnership(arManager),
         readGameItem = ReadGameItem(localUserManager),
         fetchUserProfile = ReadUser(localUserManager),
     )

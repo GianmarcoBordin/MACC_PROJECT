@@ -115,7 +115,7 @@ class SettingsManagerImpl @Inject constructor(
             // clear rank state
             val rank= Rank("",0)
             localUserManager.saveScore(rank)
-            // clear anchor id
+            // clear anchor owner
             localUserManager.saveAnchorId("")
             // clear user profile state
             val userProfileBundle= UserProfileBundle("", "")

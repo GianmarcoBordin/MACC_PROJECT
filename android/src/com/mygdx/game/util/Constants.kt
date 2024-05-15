@@ -26,7 +26,7 @@ object Constants {
     const val PLAYER_LIST = "player_list"
     const val MAP = "map"
     const val RADIUS = 2000
-    const val RADIUS2 = 10.0
+    const val RADIUS2 = 50.0
     const val USER_AUTH = "userAuth"
     const val USER_RANK = "userRank"
     const val APP_ENTRY = "appEntry"
