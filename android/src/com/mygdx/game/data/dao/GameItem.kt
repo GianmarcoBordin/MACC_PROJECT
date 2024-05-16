@@ -8,7 +8,7 @@ import com.google.gson.JsonObject
 import java.io.ByteArrayOutputStream
 
 data class GameItem(
-    val owner: String = "",
+    var owner: String = "",
     val rarity: Int = 0,
     val hp: Int = 0,
     val damage: Int = 0,
@@ -37,6 +37,7 @@ data class GameItem(
         fun fromJson(jsonString: String): GameItem {
             if (jsonString.isNotEmpty()){
                 val gson = Gson()
+                println(jsonString)
                 val jsonObject = gson.fromJson(jsonString, JsonObject::class.java)
                 val id = jsonObject.getAsJsonPrimitive("owner").asString
                 val rarity = jsonObject.getAsJsonPrimitive("rarity").asInt

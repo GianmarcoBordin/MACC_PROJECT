@@ -137,7 +137,7 @@ class LocalUserManagerImpl(
             updateListener?.onUpdate(location)
             val userProfileBundle=getUserProfile()
             dataScope.launch {
-                val userPlayer= Player(userProfileBundle.displayName, location, 0.0)
+                val userPlayer= Player(readFirestoreDocumentId(), location, 0.0)
                 postPlayerToFirestore(firestore,userPlayer) }
         }
     }
@@ -175,6 +175,7 @@ class LocalUserManagerImpl(
         val data = context.dataStore.data
         val preferences = runBlocking { data.first() } // Blocking operation to get the first emission
         val gameItemString = preferences[PreferencesKeys.GAME_ITEM] ?: ""
+
         return GameItem.fromJson(gameItemString)
     }
 

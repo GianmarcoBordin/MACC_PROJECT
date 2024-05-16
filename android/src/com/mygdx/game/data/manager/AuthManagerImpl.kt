@@ -78,6 +78,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                             hp = skin[2].toInt(),
                             damage = skin[3].toInt()
                         )
+                        println(gameItem)
                         // save user skin
                         localUserManager.saveObject("SKIN_${i}", gameItem)
                     }

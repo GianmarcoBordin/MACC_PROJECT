@@ -83,8 +83,10 @@ class MapViewModel  @Inject constructor(
     }
 
      fun saveGameItem(gameItem: GameItem){
+         val user = mapUseCases.readUser().displayName
+         gameItem.owner = user
          viewModelScope.launch {
-             mapUseCases.saveGameItem(gameItem)
+            mapUseCases.saveGameItem(gameItem)
          }
     }
 
