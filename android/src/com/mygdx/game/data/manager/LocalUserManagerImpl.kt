@@ -102,6 +102,19 @@ class LocalUserManagerImpl(
 
     }
 
+    override suspend fun saveFirestoreDocumentId(name: String) {
+        context.dataStore.edit { settings ->
+            settings[PreferencesKeys.FIRESTORE_ID] = name
+        }
+    }
+
+    override fun readFirestoreDocumentId(): String {
+        val data = context.dataStore.data
+        val preferences = runBlocking { data.first() } // Blocking operation to get the first emission
+        val name = preferences[PreferencesKeys.FIRESTORE_ID] ?: ""
+        return name
+    }
+
     override suspend fun saveScore(rank: Rank) {
         context.dataStore.edit { settings ->
             settings[PreferencesKeys.SCORE] = rank.score.toString()
@@ -181,6 +194,8 @@ private object PreferencesKeys{
     // ar entry preferences
     val CLOUD_ANCHOR_ID = stringPreferencesKey(name = Constants.CLOUD_ANCHOR_ID )
     val GAME_ITEM = stringPreferencesKey(name = Constants.GAME_ITEM )
+    // firestore
+    val FIRESTORE_ID = stringPreferencesKey(name = Constants.FIRESTORE_ID)
 
     // auth user
     val DISPLAY_NAME = stringPreferencesKey("display_name")

@@ -253,6 +253,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                                             location =localUserManager.readLocation() ?: Location("provider"),
                                             distance =0.0
                                         )
+                                        localUserManager.saveFirestoreDocumentId(name)
                                         postPlayerToFirestore(firestore,player)
                                         // Save bio application state
                                         val bio = Biometric(userEmail = email, userPass = password)

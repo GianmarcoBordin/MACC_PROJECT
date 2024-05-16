@@ -37,7 +37,7 @@ fun postPlayerToFirestore(firestore: FirebaseFirestore, player: Player): Boolean
 
  fun updatePlayerFirestore(firestore: FirebaseFirestore, name: String, newName: String): String {
     val playerDocument = firestore.collection("players").document(name)
-
+    println(name+newName)
     return try {
         // Update the existing document with the new name
         playerDocument.update("username", newName)
