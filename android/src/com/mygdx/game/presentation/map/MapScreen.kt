@@ -392,26 +392,28 @@ fun OsmMap(
 
         // add other user location
         players?.forEach { player ->
+            if (player.distance > 0.0) {
+                val playerGeoPoint = GeoPoint(player.location.latitude, player.location.longitude)
+                val playerMarker = Marker(mapView)
+                playerMarker.position = playerGeoPoint
 
-            val playerGeoPoint = GeoPoint(player.location.latitude, player.location.longitude)
-            val playerMarker = Marker(mapView)
-            playerMarker.position = playerGeoPoint
 
+                val distanceString = if (player.distance > thresholdKm) {
+                    "%.0f km".format(player.distance / 1000)
+                } else {
+                    "%.2f meters".format(player.distance)
+                }
+                playerMarker.title =
+                    "Username: ${player.username} Distance From Me: $distanceString"
+                playerMarker.icon = scaleBitmap(
+                    mapView.context.resources,
+                    otherPlayerLocationIcon,
+                    MARKER_WIDTH,
+                    MARKER_HEIGHT
+                )
 
-            val distanceString = if (player.distance > thresholdKm) {
-                "%.0f km".format(player.distance / 1000)
-            } else {
-                "%.2f meters".format(player.distance)
+                mapView.overlays.add(playerMarker)
             }
-            playerMarker.title = "Username: ${player.username} Distance From Me: $distanceString"
-            playerMarker.icon = scaleBitmap(
-                mapView.context.resources,
-                otherPlayerLocationIcon,
-                MARKER_WIDTH,
-                MARKER_HEIGHT
-            )
-
-            mapView.overlays.add(playerMarker)
         }
 
         // add objects
