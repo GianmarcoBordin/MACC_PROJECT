@@ -394,8 +394,10 @@ fun OsmMap(
             mapView.overlays.add(userMarker)
         }
 
+        Log.d("DEBUG","$players")
         // add other user location
         players?.forEach { player ->
+
             if (player.distance > 0.0) {
                 val playerGeoPoint = GeoPoint(player.location.latitude, player.location.longitude)
                 val playerMarker = Marker(mapView)
@@ -475,53 +477,60 @@ fun OsmMap(
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        objects?.forEach { obj ->
-            // get item details according to the item rarity
-            val (color, hp, damage) = getItemDetails(obj.itemRarity)
-            val itemBitMap: ImageBitmap = ImageBitmap.imageResource(color)
 
-            val configuration = LocalConfiguration.current
-            val screenWidth =
-                with(LocalDensity.current) { configuration.screenWidthDp.dp.toPx().toInt() }
+        if (openObjectDialog.value){
+            val jsonObject = deserializeObject(objectContent.value)
+            Log.d("DEBUG","JSON OBJECT $jsonObject")
 
-            if (openObjectDialog.value) {
+            val itemRarity = jsonObject.getAsJsonPrimitive("itemRarity").asString
+            val distanceFromMe = jsonObject.getAsJsonPrimitive("distanceFromMe").asString
 
-                val jsonObject = deserializeObject(objectContent.value)
+            objects?.forEach { obj ->
 
-                val itemRarity = jsonObject.getAsJsonPrimitive("itemRarity").asString
-                val distanceFromMe = jsonObject.getAsJsonPrimitive("distanceFromMe").asString
+                if (obj.itemRarity == itemRarity) {
+                    val (color, hp, damage) = getItemDetails(obj.itemRarity)
+                    val itemBitMap: ImageBitmap = ImageBitmap.imageResource(color)
 
-                val imageId = getItemDrawable(itemRarity)
+                    val configuration = LocalConfiguration.current
+                    val screenWidth =
+                        with(LocalDensity.current) { configuration.screenWidthDp.dp.toPx().toInt() }
 
-                // show the Composable dialog with all the required information
-                ObjectDialog(
-                    imageId = imageId,
-                    distanceFromMe = distanceFromMe,
-                    enabled = true,
-                    onCatchObject = {
-                        val itemBitmap = itemBitMap.asAndroidBitmap()
-                        // scale the item so that its width is 1/4 of the screen width,
-                        // but the ratio between its dimensions is maintained
-                        val itemWidth = screenWidth / 4
-                        val itemOriginalWidth = itemBitmap.width
-                        val itemRatio = itemWidth.toDouble() / itemOriginalWidth
-                        val itemHeight = (itemBitmap.height * itemRatio).toInt()
-                        val finalItemBitmap = itemBitmap.scale(itemWidth, itemHeight)
-                        val finalGameItem = GameItem(
-                            obj.itemId,
-                            obj.itemRarity.toInt(),
-                            hp,
-                            damage,
-                            finalItemBitmap
-                        )
-                        println("$finalGameItem GAMEEEEE <------------------")
-                        saveGameItemHandler(GameItemEvent.SaveGameItem(finalGameItem))
-                        navController.navigate(Route.ARScreen.route)
-                    },
-                    onDismissRequest = { openObjectDialog.value = false }
-                )
+                    val imageId = getItemDrawable(itemRarity)
+
+                    ObjectDialog(
+                        imageId = imageId,
+                        distanceFromMe = distanceFromMe,
+                        enabled = true,
+                        onCatchObject = {
+                            val itemBitmap = itemBitMap.asAndroidBitmap()
+                            // scale the item so that its width is 1/4 of the screen width,
+                            // but the ratio between its dimensions is maintained
+                            val itemWidth = screenWidth / 4
+                            val itemOriginalWidth = itemBitmap.width
+                            val itemRatio = itemWidth.toDouble() / itemOriginalWidth
+                            val itemHeight = (itemBitmap.height * itemRatio).toInt()
+                            val finalItemBitmap = itemBitmap.scale(itemWidth, itemHeight)
+                            val finalGameItem = GameItem(
+                                obj.itemId,
+                                obj.itemRarity.toInt(),
+                                hp,
+                                damage,
+                                finalItemBitmap
+                            )
+                            saveGameItemHandler(GameItemEvent.SaveGameItem(finalGameItem))
+                            navController.navigate(Route.ARScreen.route)
+                        },
+                        onDismissRequest = { openObjectDialog.value = false }
+                    )
+
+                    return
+                }
+
             }
+
         }
+
+
     }
 }
 

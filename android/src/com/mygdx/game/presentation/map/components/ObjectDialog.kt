@@ -59,8 +59,6 @@ fun ObjectDialog(imageId: Int, distanceFromMe: String, enabled: Boolean, onCatch
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
-                // TODO structure dialog content
-                //Text(text = dialogContent)
                 ObjectDialogLine(imageId = imageId, distance = distanceFromMe)
 
                 Row(
@@ -79,6 +77,7 @@ fun ObjectDialog(imageId: Int, distanceFromMe: String, enabled: Boolean, onCatch
                     Button(
                         modifier = Modifier.padding(start = 5.dp),
                         onClick = onCatchObject,
+                        enabled = enabled
                     ) {
                         Text("Catch")
                     }

@@ -76,7 +76,7 @@ class GameScreen(
         multiplayerClient.setGameEventListener(this)
 
         camera = OrthographicCamera(WORLD_WIDTH, WORLD_HEIGHT)
-        camera!!.setToOrtho(false, WORLD_WIDTH, WORLD_HEIGHT)
+        camera?.setToOrtho(false, WORLD_WIDTH, WORLD_HEIGHT)
         viewport = ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT, camera)
         batch = SpriteBatch()
 
@@ -171,10 +171,10 @@ class GameScreen(
 
     override fun render(delta: Float) {
         // translate the view of the camera to the screen using projection matrix
-        batch!!.projectionMatrix = camera!!.combined
+        batch?.projectionMatrix = camera?.combined
 
         // open the sprite batch buffer for drawing
-        batch!!.begin()
+        batch?.begin()
 
         // handle the input
         handleMovingInput(delta)
@@ -183,7 +183,7 @@ class GameScreen(
         secondPlayer.update(delta)
 
         // draw the background image
-        batch!!.draw(background,0f,0f, WORLD_WIDTH, WORLD_HEIGHT)
+        batch?.draw(background,0f,0f, WORLD_WIDTH, WORLD_HEIGHT)
 
         firstPlayer.draw(batch!!)
         secondPlayer.draw(batch!!)
@@ -201,7 +201,7 @@ class GameScreen(
         firstPlayerHealthBar.draw(batch!!, firstPlayer.life)
         secondPlayerHealthBar.draw(batch!!, secondPlayer.life)
 
-        batch!!.end()
+        batch?.end()
 
         controller.draw()
         headsUp.draw()
@@ -218,7 +218,7 @@ class GameScreen(
 
     override fun hide() {
         //multiplayerClient.disconnect()
-        batch!!.dispose()
+        batch?.dispose()
         textureAtlas.dispose()
         soundManager.dispose()
         soundManager.stopBattle()
