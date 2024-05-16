@@ -481,7 +481,7 @@ class ARViewModel @Inject constructor(
 
     fun startAR() {
         viewModelScope.launch {
-            gameItem = arUseCases.readGameItem()
+            gameItem = arUseCases.readGameItem() // TODO first time ar screen started it fails so must return a default game item
         }
         // set the gameitem and its health
         _state.value = state.value.copy(gameItem = gameItem, hp = gameItem.hp)

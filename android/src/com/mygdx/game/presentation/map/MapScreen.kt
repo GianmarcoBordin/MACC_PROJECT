@@ -332,7 +332,7 @@ fun OsmMap(
                             // clicked item is an object
                             if (clickedMarker != null && clickedMarker.position.latitude != userLocation?.latitude && clickedMarker.position.longitude != userLocation?.longitude) {
                                 // If a marker is clicked, show marker details
-                                // TODO here code to trigger object dialog
+
                                 openObjectDialog.value = true
                                 objectContent.value = clickedMarker.title
 
@@ -425,10 +425,6 @@ fun OsmMap(
             } else {
                 "%.2f meters".format(obj.distance)
             }
-            Log.d("DEBUG", "item : ${obj.itemId} ${obj.distance} $distanceString")
-
-            // TODO is itemId used?
-            //objectMarker.title = "Item Name: ${obj.itemId} Item Rarity: ${obj.itemRarity} Distance From Me: $distanceString"
 
             val properties = listOf(
                 "itemRarity" to obj.itemRarity,
