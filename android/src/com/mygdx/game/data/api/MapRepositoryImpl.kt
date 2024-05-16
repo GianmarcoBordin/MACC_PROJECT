@@ -50,7 +50,7 @@ class MapRepositoryImpl(
             val minimumTimeDifference = MINIMUM_TIME_BETWEEN_LOCATION_UPDATES // Set your minimum time here, e.g., 1 hour
             if (timeDifference >= minimumTimeDifference) {
                 // Store the user's location in Firestore
-                val updatePlayer= Player(
+                val updatePlayer = Player(
                     username = player.username,
                     location = userLocation,
                     distance = 0.0
@@ -69,9 +69,9 @@ class MapRepositoryImpl(
                 }
             }
         }
-
         return userLocation
     }
+
     override suspend fun updatePlayersLocation(userLocation: Location): List<Player> {
         return getNearbyPlayers(userLocation)
     }
@@ -91,6 +91,7 @@ class MapRepositoryImpl(
             )
         }
     }
+
     override suspend fun getNearbyObjects(userLocation: Location): List<Item> {
         return suspendCoroutine { continuation ->
             // Call queryPlayersLocation() function to get list of players
@@ -99,6 +100,7 @@ class MapRepositoryImpl(
             }
         }
     }
+
     override suspend fun getRoute(from: Location, to: Location): Route {
         val apiKey = "5b3ce3597851110001cf62487ba938b5799c43f9b3e02eb1a95b62ee"
         val startPointStr = "${from.latitude},${from.longitude}"
@@ -133,6 +135,7 @@ class MapRepositoryImpl(
             postRoute(from, to)
         }
     }
+
     private suspend fun postRoute(from: Location, to: Location): Route {
         val apiKey = "5b3ce3597851110001cf62487ba938b5799c43f9b3e02eb1a95b62ee"
         // more than 2000 meters radius in foot
@@ -177,12 +180,15 @@ class MapRepositoryImpl(
             Route(emptyList())
         }
     }
+
     override fun startLocUpdates() {
         localUserManager.startLocUpdates()
     }
+
     override fun stopLocUpdates() {
         localUserManager.stopLocUpdates()
     }
+
     private fun extractGeometry(jsonObj: JsonObject): JsonObject? {
         // Check if the input JSON object contains the "features" property
         if (jsonObj.has("features")) {
@@ -197,9 +203,9 @@ class MapRepositoryImpl(
                 }
             }
         }
-
         return null
     }
+
     private fun extractGeometryPoints(jsonObj: JsonObject,switch:Boolean): List<org.osmdroid.util.GeoPoint> {
         val geometryPoints = mutableListOf<org.osmdroid.util.GeoPoint>()
 
@@ -222,9 +228,9 @@ class MapRepositoryImpl(
             // Create a GeoPoint object and add it to the list of geometry points
             geometryPoints.add(org.osmdroid.util.GeoPoint(latitude, longitude))
         }
-
         return geometryPoints
     }
+
     private fun queryPlayersLocation(callback: (List<Player>) -> Unit, userLocation: Location) {
         // Query nearby locations within a certain radius
 
@@ -259,6 +265,7 @@ class MapRepositoryImpl(
                 }
             }
     }
+
     private fun postPlayerLocation(player: Player, callback: (Boolean) -> Unit) {
         // Create a new document with a generated ID
         val document = firestore?.collection("players")?.document(player.username)
@@ -271,7 +278,6 @@ class MapRepositoryImpl(
                 player.location.longitude
             ),
         )
-
 
         document?.set(playerData)
             ?.addOnSuccessListener {

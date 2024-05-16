@@ -27,8 +27,6 @@ interface LocalUserManager {
     fun stopLocUpdates()
 
     fun setUpdateListener(ref: UpdateListener)
-    fun readGameItem(): GameItem
-    suspend fun saveGameItem(gameItem: GameItem)
     fun getObject(key: String): String
     fun saveObject(key: String, item: Any)
     suspend fun saveFirestoreDocumentId(name: String)

@@ -57,14 +57,11 @@ class LocalUserManagerImpl(
         return gson.fromJson(jsonString, String::class.java)
     }
 
-
-
     override suspend fun saveAppEntry() {
         context.dataStore.edit { settings ->
             settings[PreferencesKeys.APP_ENTRY] = true
         }
     }
-
 
     override fun readAppEntry(): List<Boolean> {
         val result = mutableListOf<Boolean>()
@@ -163,26 +160,9 @@ class LocalUserManagerImpl(
         saveObject(Constants.USERNAME,userProfile.displayName)
     }
 
-    override suspend fun saveGameItem(gameItem: GameItem) {
-        // serialise tu string
-        val jsonString = gameItem.toJson()
-        context.dataStore.edit { settings ->
-            settings[PreferencesKeys.GAME_ITEM] = jsonString
-        }
-    }
-
-    override fun readGameItem(): GameItem {
-        val data = context.dataStore.data
-        val preferences = runBlocking { data.first() } // Blocking operation to get the first emission
-        val gameItemString = preferences[PreferencesKeys.GAME_ITEM] ?: ""
-
-        return GameItem.fromJson(gameItemString)
-    }
-
     override fun setUpdateListener(ref: UpdateListener) {
-        updateListener=ref    }
-
-
+        updateListener = ref
+    }
 }
 
 // Define a datastore to keep user preferences
@@ -193,8 +173,7 @@ private object PreferencesKeys{
     // app entry preferences
     val APP_ENTRY = booleanPreferencesKey(name = Constants.APP_ENTRY)
     // ar entry preferences
-    val CLOUD_ANCHOR_ID = stringPreferencesKey(name = Constants.CLOUD_ANCHOR_ID )
-    val GAME_ITEM = stringPreferencesKey(name = Constants.GAME_ITEM )
+    val CLOUD_ANCHOR_ID = stringPreferencesKey(name = Constants.CLOUD_ANCHOR_ID)
     // firestore
     val FIRESTORE_ID = stringPreferencesKey(name = Constants.FIRESTORE_ID)
 
@@ -203,6 +182,5 @@ private object PreferencesKeys{
     val EMAIL = stringPreferencesKey("email")
     // user ranking and player
     val SCORE = stringPreferencesKey("score")
-
 }
 

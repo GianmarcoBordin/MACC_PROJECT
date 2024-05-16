@@ -70,14 +70,13 @@ import com.mygdx.game.presentation.components.BackButton
 import com.mygdx.game.presentation.components.CustomBackHandler
 import com.mygdx.game.presentation.components.ExitPopup
 import com.mygdx.game.presentation.scan.events.BitmapEvent
-import com.mygdx.game.presentation.scan.events.DataStoreEvent
 import com.mygdx.game.ui.theme.ArAppTheme
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ARScreen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (VisibilityEvent.Visible) -> Unit,
              dimensionsHandler: (DimensionsEvent.Dimensions) -> Unit, bitmapHandler: (BitmapEvent.BitmapCreated) -> Unit,
-             readDataStoreHandler: (DataStoreEvent.readDataStore) -> Unit, viewModel: ARViewModel, navController: NavController) {
+             viewModel: ARViewModel, navController: NavController) {
 
     // Camera permission state
     var permissionRequested by remember { mutableStateOf(false) }
@@ -98,8 +97,7 @@ fun ARScreen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (Visib
     if (cameraPermissionState.status.isGranted) {
         // If camera permission is granted, show the screen
         ArAppTheme {
-            Screen(focusHandler, visibilityHandler, dimensionsHandler, bitmapHandler,
-                readDataStoreHandler, viewModel, navController)
+            Screen(focusHandler, visibilityHandler, dimensionsHandler, bitmapHandler, viewModel, navController)
             ExitPopup(openPopup)
         }
     } else {
@@ -118,7 +116,7 @@ fun ARScreen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (Visib
 @Composable
 fun Screen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (VisibilityEvent.Visible) -> Unit,
            dimensionsHandler: (DimensionsEvent.Dimensions) -> Unit, bitmapHandler: (BitmapEvent.BitmapCreated) -> Unit,
-           readDataStoreHandler: (DataStoreEvent.readDataStore) -> Unit, viewModel: ARViewModel, navController: NavController) {
+           viewModel: ARViewModel, navController: NavController) {
     Box(
         modifier = Modifier.fillMaxSize(),
     ) {
@@ -179,7 +177,6 @@ fun Screen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (Visibil
                 // used to populate the scene with exactly one new item if there is no item on the scene
                 // and no item has already been captured
                 if (childNodes.isEmpty() && !viewModel.scanned) {
-                    //readDataStoreHandler(DataStoreEvent.readDataStore) <-----------------------
                     updatedFrame.getUpdatedPlanes()
                         // if the first element is a Plane of type "Plane.Type.HORIZONTAL_UPWARD_FACING"
                         // (if the detected plane is a floor or a table)

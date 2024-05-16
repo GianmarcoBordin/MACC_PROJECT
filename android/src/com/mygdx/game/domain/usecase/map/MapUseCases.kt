@@ -13,7 +13,6 @@ data class MapUseCases (
     val startLocUpdates: StartLocUpdates,
     val stopLocUpdates: StopLocUpdates,
     val getContext : GetContext,
-    val saveGameItem: SaveGameItem,
     val updateUserLocation: UpdateUserLocation,
     val subscribe: Subscribe,
     val readUser: ReadUser

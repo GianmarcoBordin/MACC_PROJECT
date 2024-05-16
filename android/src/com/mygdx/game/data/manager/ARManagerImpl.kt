@@ -16,7 +16,8 @@ class ARManagerImpl @Inject constructor(private val dataRepository: DataReposito
         val gameItemLiveData = MutableLiveData<List<String>>()
 
         dataRepository.getGameItem(username, rarity).observeForever { gameItemList ->
-            val stringGameItem = gameItemList?.get(0)?.split(" ") ?: emptyList()
+            val stringGameItem = if (gameItemList.isEmpty()) emptyList()
+                                else gameItemList[0].split(" ")
             gameItemLiveData.value = stringGameItem
         }
 

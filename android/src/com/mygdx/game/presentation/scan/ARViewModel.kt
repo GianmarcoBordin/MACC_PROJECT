@@ -19,10 +19,10 @@ import com.mygdx.game.data.dao.Message
 import com.mygdx.game.data.manager.UpdateListener
 import com.mygdx.game.domain.usecase.ar.ARUseCases
 import com.mygdx.game.presentation.scan.events.BitmapEvent
-import com.mygdx.game.presentation.scan.events.DataStoreEvent
 import com.mygdx.game.presentation.scan.events.DimensionsEvent
 import com.mygdx.game.presentation.scan.events.FocusEvent
 import com.mygdx.game.presentation.scan.events.GameEvent
+import com.mygdx.game.presentation.scan.events.GameItemEvent
 import com.mygdx.game.presentation.scan.events.LineEvent
 import com.mygdx.game.presentation.scan.events.UpdateDatabaseEvent
 import com.mygdx.game.presentation.scan.events.VisibilityEvent
@@ -62,12 +62,11 @@ class ARViewModel @Inject constructor(
     private val _state = MutableStateFlow(GameState())
     val state = _state.asStateFlow()
 
-    fun onDataStoreEvent(event: DataStoreEvent) {
+    fun onGameItemEvent(event: GameItemEvent) {
         when (event) {
-            DataStoreEvent.readDataStore -> {
-                viewModelScope.launch {
-                    gameItem = arUseCases.readGameItem()
-                }
+            is GameItemEvent.SaveGameItem -> {
+                println("${event.gameItem} <--------------------------")
+                gameItem = event.gameItem
                 // set the gameitem and its health
                 _state.value = state.value.copy(gameItem = gameItem, hp = gameItem.hp)
             }
@@ -179,7 +178,6 @@ class ARViewModel @Inject constructor(
                     gameItemString.value?.let {
                         if (it.isNotEmpty()) {
                             // because the player already owns an item, then retrieve it immediately and store it
-                            Log.e("DEBUG", it.toString())
                             val id = it[0]
                             val rarity = it[1]
                             val hp = it[2]
@@ -189,6 +187,7 @@ class ARViewModel @Inject constructor(
                         } else {
                             _state.value.owned = false
                         }
+                        Log.e("DEBUG", it.toString())
                     }
 
                     Log.e("DEBUG", "OWNED = ${state.value.owned}")
@@ -480,11 +479,7 @@ class ARViewModel @Inject constructor(
     }
 
     fun startAR() {
-        viewModelScope.launch {
-            gameItem = arUseCases.readGameItem() // TODO first time ar screen started it fails so must return a default game item
-        }
-        // set the gameitem and its health
-        _state.value = state.value.copy(gameItem = gameItem, hp = gameItem.hp)
+
     }
 
     fun resumeAR(){

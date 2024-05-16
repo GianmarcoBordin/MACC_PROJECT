@@ -83,8 +83,5 @@ class LocationHandler(private val context: Context?) {
             return null
         }
     }
-
-
-
 }
 

@@ -5,6 +5,5 @@ import com.mygdx.game.domain.usecase.appEntry.ReadUser
 data class ARUseCases (
     val addGameItem: AddGameItem,
     val getGameItem: GetGameItem,
-    val readGameItem: ReadGameItem,
     val fetchUserProfile: ReadUser,
 )

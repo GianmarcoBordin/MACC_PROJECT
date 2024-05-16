@@ -15,7 +15,6 @@ object Constants {
     const val SIGN_OUT_SUCCESS = "Sign-out success"
     const val SIGN_UP_SUCCESS = "SignUp Success"
 
-
     const val EMAIL_IS_IN_USE = "Email is already in use"
 
     const val USER_SETTINGS = "userSettings"
@@ -33,7 +32,6 @@ object Constants {
     const val APP_ENTRY = "appEntry"
     const val CLOUD_ANCHOR_ID = "anchorId"
     const val LAST_STORED_TIME_KEY = "last_stored_time"
-    const val GAME_ITEM = "game_item"
     const val RARITY_1_HP = 1
     const val RARITY_2_HP = 2
     const val RARITY_3_HP = 3

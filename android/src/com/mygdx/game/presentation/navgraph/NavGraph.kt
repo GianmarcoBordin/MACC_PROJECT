@@ -64,7 +64,6 @@ fun NavGraph(
                     visibilityHandler = arViewModel::onVisibilityEvent,
                     dimensionsHandler = arViewModel::onDimensionsEvent,
                     bitmapHandler = arViewModel::onBitmapEvent,
-                    readDataStoreHandler = arViewModel::onDataStoreEvent,
                     viewModel = arViewModel,
                     navController = navController)
             }
@@ -83,6 +82,7 @@ fun NavGraph(
                     mapUpdateHandler = mapViewModel::onMapUpdateEvent,
                     locationGrantedHandler = mapViewModel::onLocationGrantedEvent,
                     locationDeniedHandler = mapViewModel::onLocationDeniedEvent,
+                    saveGameItemHandler = arViewModel::onGameItemEvent,
                     navController = navController,
                     viewModel = mapViewModel
                 )

@@ -1,6 +1,5 @@
 package com.mygdx.game.presentation.map
 
-
 import android.content.ContentValues.TAG
 import android.content.Context
 import android.location.Location
@@ -23,8 +22,6 @@ import com.mygdx.game.domain.usecase.appEntry.AppEntryUseCases
 import com.mygdx.game.domain.usecase.map.MapUseCases
 import com.mygdx.game.presentation.map.events.LocationDeniedEvent
 import macc.ar.presentation.map.events.LocationGrantedEvent
-import com.mygdx.game.presentation.map.events.RetryMapEvent
-import com.mygdx.game.presentation.map.events.RouteEvent
 import com.mygdx.game.presentation.map.events.UpdateMapEvent
 import com.mygdx.game.presentation.scan.events.UpdateMappingEvent
 import com.mygdx.game.util.Constants
@@ -70,7 +67,7 @@ class MapViewModel  @Inject constructor(
 
     init {
         // Set granting state
-        _isLocGranted.value=false
+        _isLocGranted.value = false
         mapUseCases.subscribe.invoke(this, Constants.MAP)
         viewModelScope.launch {
             periodicExecution(3)
@@ -81,15 +78,6 @@ class MapViewModel  @Inject constructor(
         super.onCleared()
         release()
     }
-
-     fun saveGameItem(gameItem: GameItem){
-         val user = mapUseCases.readUser().displayName
-         gameItem.owner = user
-         viewModelScope.launch {
-            mapUseCases.saveGameItem(gameItem)
-         }
-    }
-
 
     override fun onUpdate(data: Location) { // receives updates from data layer
         _userLocation.value=data
@@ -157,15 +145,6 @@ class MapViewModel  @Inject constructor(
         }
     }
 
-    fun onMapRetryEvent(event: RetryMapEvent) {
-        when (event) {
-            is RetryMapEvent.MapRetry -> {
-                goMapRetry()
-            }
-
-        }
-    }
-
     fun onMapUpdateEvent(event: UpdateMapEvent) {
         when (event) {
             is UpdateMapEvent.MapUpdate -> {
@@ -179,15 +158,6 @@ class MapViewModel  @Inject constructor(
             is UpdateMappingEvent.UpdateMapping -> {
                 goMapUpdate()
             }
-        }
-    }
-
-    fun onRouteEvent(event: RouteEvent) {
-        when (event) {
-            is RouteEvent.Route -> {
-                goRouting(event.from,event.to)
-            }
-
         }
     }
 
@@ -212,7 +182,6 @@ class MapViewModel  @Inject constructor(
                 fetchData(mapUseCases.getContext())
                 _isLocGranted.value=true
             }
-
         }
     }
 
@@ -222,7 +191,6 @@ class MapViewModel  @Inject constructor(
                 Log.d(TAG,"Location permission denied")
                 _isLocGranted.value=false
             }
-
         }
     }
 
@@ -230,11 +198,7 @@ class MapViewModel  @Inject constructor(
         release()
         fetchData( context =mapUseCases.getContext() )
     }
-    private fun goMapRetry(){
-        release()
-        fetchData(context=mapUseCases.getContext())
 
-    }
     fun release() {
         _userLocation.value = null
         _players.value = null
@@ -274,4 +238,3 @@ class MapViewModel  @Inject constructor(
         itemsLocationJob?.cancel()
     }
 }
-

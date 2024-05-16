@@ -76,11 +76,10 @@ import com.mygdx.game.presentation.map.components.ObjectDialog
 import com.mygdx.game.presentation.map.components.RefreshButton
 import com.mygdx.game.presentation.map.events.LocationDeniedEvent
 import macc.ar.presentation.map.events.LocationGrantedEvent
-import com.mygdx.game.presentation.map.events.RetryMapEvent
-import com.mygdx.game.presentation.map.events.RouteEvent
 import com.mygdx.game.presentation.map.events.UpdateMapEvent
 import com.mygdx.game.presentation.map.utility.findMarker
 import com.mygdx.game.presentation.navgraph.Route
+import com.mygdx.game.presentation.scan.events.GameItemEvent
 import com.mygdx.game.ui.theme.ArAppTheme
 import com.mygdx.game.util.Constants.MARKER_HEIGHT
 import com.mygdx.game.util.Constants.MARKER_WIDTH
@@ -106,6 +105,7 @@ fun MapScreen(
     mapUpdateHandler:(UpdateMapEvent.MapUpdate) -> Unit,
     locationGrantedHandler: (LocationGrantedEvent.LocationGranted) -> Unit,
     locationDeniedHandler:(LocationDeniedEvent.LocationDenied) -> Unit,
+    saveGameItemHandler: (GameItemEvent.SaveGameItem) -> Unit,
     viewModel: MapViewModel,
     navController: NavController
 ) {
@@ -131,6 +131,7 @@ fun MapScreen(
                 if (isLocGranted == true) {
                     DefaultMapContent(
                         mapUpdateHandler = mapUpdateHandler,
+                        saveGameItemHandler = saveGameItemHandler,
                         viewModel = viewModel,
                         navController = navController
                     )
@@ -187,6 +188,7 @@ fun Permission(
 @Composable
 fun DefaultMapContent(
     mapUpdateHandler: (UpdateMapEvent.MapUpdate) -> Unit,
+    saveGameItemHandler: (GameItemEvent.SaveGameItem) -> Unit,
     navController:NavController,
     viewModel: MapViewModel
 ) {
@@ -243,6 +245,7 @@ fun DefaultMapContent(
                     .fillMaxSize()
             ) {
                 OsmMap(
+                    saveGameItemHandler = saveGameItemHandler,
                     navController =  navController,
                     viewModel = viewModel,
                     modifier =  Modifier
@@ -268,6 +271,7 @@ fun DefaultMapContent(
 
 @Composable
 fun OsmMap(
+    saveGameItemHandler: (GameItemEvent.SaveGameItem) -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
     viewModel: MapViewModel
@@ -397,7 +401,6 @@ fun OsmMap(
                 val playerMarker = Marker(mapView)
                 playerMarker.position = playerGeoPoint
 
-
                 val distanceString = if (player.distance > thresholdKm) {
                     "%.0f km".format(player.distance / 1000)
                 } else {
@@ -511,7 +514,8 @@ fun OsmMap(
                             damage,
                             finalItemBitmap
                         )
-                        viewModel.saveGameItem(finalGameItem)
+                        println("$finalGameItem GAMEEEEE <------------------")
+                        saveGameItemHandler(GameItemEvent.SaveGameItem(finalGameItem))
                         navController.navigate(Route.ARScreen.route)
                     },
                     onDismissRequest = { openObjectDialog.value = false }

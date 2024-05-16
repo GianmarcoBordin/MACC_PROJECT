@@ -42,7 +42,6 @@ import com.mygdx.game.domain.usecase.ar.ARUseCases
 import com.mygdx.game.domain.usecase.ar.AddGameItem
 import com.mygdx.game.domain.usecase.ar.GetGameItem
 import com.mygdx.game.domain.usecase.inventory.GetGameItemsUser
-import com.mygdx.game.domain.usecase.ar.ReadGameItem
 import com.mygdx.game.domain.usecase.auth.AuthCheck
 import com.mygdx.game.domain.usecase.auth.AuthenticationUseCases
 import com.mygdx.game.domain.usecase.auth.BioSignIn
@@ -55,7 +54,6 @@ import com.mygdx.game.domain.usecase.map.GetNearbyObjects
 import com.mygdx.game.domain.usecase.map.GetNearbyPlayers
 import com.mygdx.game.domain.usecase.map.GetRoute
 import com.mygdx.game.domain.usecase.map.MapUseCases
-import com.mygdx.game.domain.usecase.map.SaveGameItem
 import com.mygdx.game.domain.usecase.map.StartLocUpdates
 import com.mygdx.game.domain.usecase.map.StopLocUpdates
 import com.mygdx.game.domain.usecase.map.UpdateItemLocation
@@ -270,7 +268,6 @@ object AppModule {
         updateItemLocation = UpdateItemLocation(mapManager),
         updatePlayerLocation = UpdatePlayerLocation(mapManager),
         updateUserLocation = UpdateUserLocation(rankManager),
-        saveGameItem = SaveGameItem(localUserManager),
         getContext = GetContext(contextManager),
         readUser = ReadUser(localUserManager)
     )
@@ -283,7 +280,6 @@ object AppModule {
     ) = ARUseCases(
         addGameItem = AddGameItem(arManager),
         getGameItem = GetGameItem(arManager),
-        readGameItem = ReadGameItem(localUserManager),
         fetchUserProfile = ReadUser(localUserManager),
     )
 
