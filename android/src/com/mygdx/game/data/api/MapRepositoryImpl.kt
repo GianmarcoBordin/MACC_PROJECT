@@ -174,18 +174,18 @@ class MapRepositoryImpl(
                     Route(routePoints)
                 } else {
                     // Handle missing key error
-                    println("Error: Missing expected key")
+                    Log.d("DEBUG","Error: Missing expected key")
                     Route(emptyList())
                 }
             } else {
                 // Handle error
                 val errorResponse = response?.errorBody()?.string() ?: "Unknown error"
-                println("Error response: $errorResponse")
+                Log.d("DEBUG","Error response: $errorResponse")
                 Route(emptyList())
             }
         } catch (e: Exception) {
             // Handle exceptions
-            println("Exception: ${e.message}")
+            Log.d("DEBUG","Exception: ${e.message}")
             Route(emptyList())
         }
     }
@@ -322,7 +322,6 @@ class MapRepositoryImpl(
                         location.longitude = locationGeoPoint.longitude
                         val distance = calculateDistance(userLocation,location)
                         if (distance < radius) {
-                            println("SOMEEEE")
                             val obj = Item(itemId.toString(), itemRarity, distance, location)
                             objectsList.add(obj)
                         }

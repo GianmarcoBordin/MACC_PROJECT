@@ -27,6 +27,7 @@ import com.mygdx.game.presentation.scan.events.UpdateMappingEvent
 import com.mygdx.game.util.Constants
 import com.mygdx.game.util.Constants.DEFAULT_LOCATION_LATITUDE
 import com.mygdx.game.util.Constants.DEFAULT_LOCATION_LONGITUDE
+import com.mygdx.game.util.Constants.OWNERSHIPS
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import org.osmdroid.util.GeoPoint
@@ -140,50 +141,33 @@ class MapViewModel  @Inject constructor(
                 // Update LiveData
                 _userLocation.value = userLoc
                 _players.value = ps ?: emptyList()
-                println("BEFORE"+objs)
+                var caughtObjects : MutableList<Int>
                 viewModelScope.launch {
-                    // filter objects if user already have some of them
-                    val username = mapUseCases.readUser().displayName
-                    // TODO
-                    val items: MutableList<GameItem> = mutableListOf()
-                    val result = mapUseCases.getGameItemsUser(username)
-                    result.observeForever { gameItemList ->
-                        println("INSIDE" + gameItemList)
-                        if (gameItemList != null && gameItemList.isNotEmpty()) {
-                            println("HERE" + gameItemList)
-                            for (i in gameItemList.indices) {
-                                val properties = gameItemList[i].split(" ")
-                                val owner = properties[0]
-                                val rarity = properties[1]
-                                val hp = properties[2]
-                                val damage = properties[3]
-                                items.add(
-                                    GameItem(
-                                        owner,
-                                        rarity.toInt(),
-                                        hp.toInt(),
-                                        damage.toInt()
-                                    )
-                                )
-                            }
-                        }
-                        println("LIST" + items)
-                        val objectsMapping = HashMap<Int, Boolean>()
-                        for (elem in items) {
-                            objectsMapping.set(elem.rarity, true)
-                        }
-                        if (objs?.isNotEmpty() == true) {
-                            for (obj in objs!!) {
-                                if (objectsMapping.get(obj.itemRarity.toInt()) == true) {
-                                    objs!!.remove(obj)
+                   val result = mapUseCases.getObject()
+                    if(result.isEmpty() || result.equals("{}")){
+                        val caughtObjs = MutableList(10) { false }
+                        mapUseCases.saveObject(caughtObjs)
+                    }else{
+                        if (objs != null) {
+                            val list = mapUseCases.getObject()
+                            println(list)
+                            val iterator = objs!!.iterator()
+                            while (iterator.hasNext()) {
+                                val o = iterator.next()
+                                val index = o.itemId.replace("item", "").toInt() - 1
+
+                                if (list[index].toBoolean()) {
+                                    iterator.remove()
                                 }
                             }
-                            _objects.value = objs
-                        }
 
+
+                        }
                     }
                 }
-                println("OUTSIDE" + objs)
+                _objects.value = objs ?: emptyList()
+
+
 
                 // Set loading state to false
                 _isLoading.value = false

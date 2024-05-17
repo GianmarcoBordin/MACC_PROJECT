@@ -11,6 +11,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -56,6 +57,23 @@ class LocalUserManagerImpl(
         val jsonString = sharedPreferences.getString(key, null)
         return gson.fromJson(jsonString, String::class.java)
     }
+
+    override fun getObjectList(key: String): List<String> {
+        val jsonString = sharedPreferences.getString(key, null)
+
+        // Check if jsonString is null
+        if (jsonString == null) {
+            return emptyList() // Return an empty list if jsonString is null
+        }
+
+        // Define the type of the list
+        val listType = object : TypeToken<List<String>>() {}.type
+
+        // Deserialize the JSON array into a list of strings
+        val resultList: List<String> = gson.fromJson(jsonString, listType)
+        return resultList
+    }
+
 
     override suspend fun saveAppEntry() {
         context.dataStore.edit { settings ->

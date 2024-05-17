@@ -41,6 +41,7 @@ import com.mygdx.game.domain.usecase.appEntry.SaveUser
 import com.mygdx.game.domain.usecase.ar.ARUseCases
 import com.mygdx.game.domain.usecase.ar.AddGameItem
 import com.mygdx.game.domain.usecase.ar.GetGameItem
+import com.mygdx.game.domain.usecase.ar.SaveObject
 import com.mygdx.game.domain.usecase.inventory.GetGameItemsUser
 import com.mygdx.game.domain.usecase.auth.AuthCheck
 import com.mygdx.game.domain.usecase.auth.AuthenticationUseCases
@@ -52,6 +53,7 @@ import com.mygdx.game.domain.usecase.map.FetchUserLocation
 import com.mygdx.game.domain.usecase.map.GetContext
 import com.mygdx.game.domain.usecase.map.GetNearbyObjects
 import com.mygdx.game.domain.usecase.map.GetNearbyPlayers
+import com.mygdx.game.domain.usecase.map.GetObject
 import com.mygdx.game.domain.usecase.map.GetRoute
 import com.mygdx.game.domain.usecase.map.MapUseCases
 import com.mygdx.game.domain.usecase.map.StartLocUpdates
@@ -271,7 +273,9 @@ object AppModule {
         updateUserLocation = UpdateUserLocation(rankManager),
         getContext = GetContext(contextManager),
         readUser = ReadUser(localUserManager),
-        getGameItemsUser = GetGameItemsUser(inventoryManager)
+        getGameItemsUser = GetGameItemsUser(inventoryManager),
+        getObject = GetObject(localUserManager),
+        saveObject = SaveObject(localUserManager)
     )
 
     @Provides
@@ -283,6 +287,8 @@ object AppModule {
         addGameItem = AddGameItem(arManager),
         getGameItem = GetGameItem(arManager),
         fetchUserProfile = ReadUser(localUserManager),
+        getObject = GetObject(localUserManager),
+        saveObject = SaveObject(localUserManager)
     )
 
     @Provides

@@ -8,6 +8,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.core.graphics.scale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.reflect.TypeToken
 import com.mygdx.game.data.dao.GameItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -53,6 +54,8 @@ class ARViewModel @Inject constructor(
     private var direction = Vector2(0f, 0f)
     // counter for the presence of the bullets on the screen
     private var justShoot = 0
+
+    private var curr_id:Int = -1
 
     // GameItem retrieved by the DataStore (the one generated from the server)
     private var gameItem: GameItem = GameItem()
@@ -142,7 +145,13 @@ class ARViewModel @Inject constructor(
                     state.value.gameItem.hp,
                     state.value.gameItem.damage)
                 viewModelScope.launch {
-                    // TODO maybe do get items user only on map repository
+                    val list = arUseCases.getObject()
+                    val mutableList = MutableList(10) { false }
+                    for (i in 0..9){
+                        mutableList.set(i,list[i].toBoolean())
+                    }
+                    mutableList.set(curr_id,true)
+                    arUseCases.saveObject(mutableList)
                     arUseCases.addGameItem(newGameItem)
                 }
             }
@@ -180,6 +189,7 @@ class ARViewModel @Inject constructor(
                         if (it.isNotEmpty()) {
                             // because the player already owns an item, then retrieve it immediately and store it
                             val id = it[0]
+                            curr_id = it[0].replace("item","").toInt()
                             val rarity = it[1]
                             val hp = it[2]
                             val damage = it[3]
