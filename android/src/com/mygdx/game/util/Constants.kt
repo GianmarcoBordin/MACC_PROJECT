@@ -7,6 +7,7 @@ object Constants {
     const val FIRESTORE_ID = "firestore"
     const val LOGIN_SUCCESS = "Login success"
     const val LOGIN_FAILED = "Login Failed"
+    const val OWNERSHIPS = "owner"
 
     const val BIO_AUTH_SUCCESS = "Bio Auth Success"
     const val BIO_AUTH_FAILED = "Bio Auth Failed"

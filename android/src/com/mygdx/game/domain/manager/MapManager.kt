@@ -10,7 +10,7 @@ interface MapManager{
     suspend fun getUserLocation(player: Player, context: Context): Location
     suspend fun getNearbyPlayers(userLocation: Location): List<Player>
     suspend fun getRoute(from:Location,to:Location): Route
-    suspend fun getNearbyObjects(userLocation: Location): List<Item>
+    suspend fun getNearbyObjects(userLocation: Location): MutableList<Item>
     suspend fun updateItemsLocation(userLocation: Location): List<Item>
     suspend fun updatePlayersLocation(userLocation: Location): List<Player>
     fun startLocUpdates()

@@ -135,10 +135,11 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideMapRepository(mapApi: MapApi, firestore: FirebaseFirestore, localUserManager: LocalUserManager): MapRepository = MapRepositoryImpl(
+    fun provideMapRepository(mapApi: MapApi, firestore: FirebaseFirestore, localUserManager: LocalUserManager,dataRepository: DataRepository): MapRepository = MapRepositoryImpl(
         mapApi,
         firestore,
         localUserManager,
+        dataRepository
     )
 
 
@@ -254,7 +255,7 @@ object AppModule {
         mapManager: MapManager,
         localUserManager: LocalUserManager,
         contextManager: ContextManager,
-        arManager: ARManager
+        inventoryManager: InventoryManager
 
 
     ) = MapUseCases(
@@ -269,7 +270,8 @@ object AppModule {
         updatePlayerLocation = UpdatePlayerLocation(mapManager),
         updateUserLocation = UpdateUserLocation(rankManager),
         getContext = GetContext(contextManager),
-        readUser = ReadUser(localUserManager)
+        readUser = ReadUser(localUserManager),
+        getGameItemsUser = GetGameItemsUser(inventoryManager)
     )
 
     @Provides

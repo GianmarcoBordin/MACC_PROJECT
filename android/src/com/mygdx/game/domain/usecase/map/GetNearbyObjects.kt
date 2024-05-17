@@ -8,7 +8,7 @@ import com.mygdx.game.domain.manager.MapManager
 class GetNearbyObjects(
     private val mapManager: MapManager
 ) {
-    suspend operator fun invoke(userLocation: Location): List<Item> {
+    suspend operator fun invoke(userLocation: Location): MutableList<Item> {
         return mapManager.getNearbyObjects(userLocation)
     }
 

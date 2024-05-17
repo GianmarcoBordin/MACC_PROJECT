@@ -115,15 +115,5 @@ fun ObjectDialogLine(imageId : Int, distance: String){
 }
 
 
-/*
-@Preview
-@Composable
-fun DialogPreview(){
-    ObjectDialog(imageId = R.drawable.gunner_yellow, distanceFromMe = "19", onCatchObject = { /*TODO*/ }) {
-
-    }
-
-}
-*/
 
 

@@ -15,7 +15,7 @@ interface MapRepository {
 
      fun stopLocUpdates()
 
-    suspend fun getNearbyObjects(userLocation: Location): List<Item>
+    suspend fun getNearbyObjects(userLocation: Location): MutableList<Item>
     suspend fun updateItemsLocation(userLocation: Location): List<Item>
     suspend fun updatePlayersLocation(userLocation: Location): List<Player>
 }

@@ -142,6 +142,7 @@ class ARViewModel @Inject constructor(
                     state.value.gameItem.hp,
                     state.value.gameItem.damage)
                 viewModelScope.launch {
+                    // TODO maybe do get items user only on map repository
                     arUseCases.addGameItem(newGameItem)
                 }
             }

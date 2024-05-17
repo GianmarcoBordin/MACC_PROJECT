@@ -27,6 +27,8 @@ import com.mygdx.game.presentation.scan.events.UpdateMappingEvent
 import com.mygdx.game.util.Constants
 import com.mygdx.game.util.Constants.DEFAULT_LOCATION_LATITUDE
 import com.mygdx.game.util.Constants.DEFAULT_LOCATION_LONGITUDE
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import org.osmdroid.util.GeoPoint
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -103,7 +105,7 @@ class MapViewModel  @Inject constructor(
             userLoc.latitude = DEFAULT_LOCATION_LATITUDE
             userLoc.longitude = DEFAULT_LOCATION_LONGITUDE
             var ps: List<Player>? = null
-            var objs: List<Item>? = null
+            var objs: MutableList<Item>? = null
             // Set loading state
             _isLoading.value = true
             _isError.value = false
@@ -138,7 +140,51 @@ class MapViewModel  @Inject constructor(
                 // Update LiveData
                 _userLocation.value = userLoc
                 _players.value = ps ?: emptyList()
-                _objects.value = objs ?: emptyList()
+                println("BEFORE"+objs)
+                viewModelScope.launch {
+                    // filter objects if user already have some of them
+                    val username = mapUseCases.readUser().displayName
+                    // TODO
+                    val items: MutableList<GameItem> = mutableListOf()
+                    val result = mapUseCases.getGameItemsUser(username)
+                    result.observeForever { gameItemList ->
+                        println("INSIDE" + gameItemList)
+                        if (gameItemList != null && gameItemList.isNotEmpty()) {
+                            println("HERE" + gameItemList)
+                            for (i in gameItemList.indices) {
+                                val properties = gameItemList[i].split(" ")
+                                val owner = properties[0]
+                                val rarity = properties[1]
+                                val hp = properties[2]
+                                val damage = properties[3]
+                                items.add(
+                                    GameItem(
+                                        owner,
+                                        rarity.toInt(),
+                                        hp.toInt(),
+                                        damage.toInt()
+                                    )
+                                )
+                            }
+                        }
+                        println("LIST" + items)
+                        val objectsMapping = HashMap<Int, Boolean>()
+                        for (elem in items) {
+                            objectsMapping.set(elem.rarity, true)
+                        }
+                        if (objs?.isNotEmpty() == true) {
+                            for (obj in objs!!) {
+                                if (objectsMapping.get(obj.itemRarity.toInt()) == true) {
+                                    objs!!.remove(obj)
+                                }
+                            }
+                            _objects.value = objs
+                        }
+
+                    }
+                }
+                println("OUTSIDE" + objs)
+
                 // Set loading state to false
                 _isLoading.value = false
             }

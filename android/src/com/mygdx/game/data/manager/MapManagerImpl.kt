@@ -8,6 +8,7 @@ import com.mygdx.game.data.dao.Route
 import macc.ar.domain.api.MapRepository
 import com.mygdx.game.domain.manager.LocalUserManager
 import com.mygdx.game.domain.manager.MapManager
+import com.mygdx.game.util.Constants
 import javax.inject.Inject
 
 
@@ -17,8 +18,8 @@ class MapManagerImpl @Inject constructor(private val mapRepository: MapRepositor
 
     override suspend fun getUserLocation(player: Player, context: Context): Location {
         val default = Location("provider")
-        default.latitude = 41.89098635680032
-        default.longitude = 12.503826312635637
+        default.latitude = Constants.DEFAULT_LOCATION_LATITUDE
+        default.longitude = Constants.DEFAULT_LOCATION_LONGITUDE
         return mapRepository.getUserLocation(player,context) ?: default
     }
 
@@ -30,7 +31,7 @@ class MapManagerImpl @Inject constructor(private val mapRepository: MapRepositor
         return mapRepository.getRoute(from,to)
     }
 
-    override suspend fun getNearbyObjects(userLocation: Location): List<Item> {
+    override suspend fun getNearbyObjects(userLocation: Location): MutableList<Item> {
         return mapRepository.getNearbyObjects(userLocation)
     }
 

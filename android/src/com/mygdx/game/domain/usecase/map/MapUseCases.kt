@@ -2,6 +2,7 @@ package com.mygdx.game.domain.usecase.map
 
 import com.mygdx.game.domain.usecase.Subscribe
 import com.mygdx.game.domain.usecase.appEntry.ReadUser
+import com.mygdx.game.domain.usecase.inventory.GetGameItemsUser
 
 data class MapUseCases (
     val fetchUserLocation: FetchUserLocation,
@@ -15,5 +16,6 @@ data class MapUseCases (
     val getContext : GetContext,
     val updateUserLocation: UpdateUserLocation,
     val subscribe: Subscribe,
-    val readUser: ReadUser
+    val readUser: ReadUser,
+    val getGameItemsUser: GetGameItemsUser
 )

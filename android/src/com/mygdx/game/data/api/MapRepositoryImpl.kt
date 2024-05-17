@@ -7,14 +7,18 @@ import android.content.Context
 import android.location.Location
 import android.preference.PreferenceManager
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.mygdx.game.data.dao.GameItem
 import com.mygdx.game.data.dao.Item
 import com.mygdx.game.data.dao.Map
 import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.dao.Route
+import com.mygdx.game.domain.api.DataRepository
 import com.mygdx.game.domain.api.MapApi
 import macc.ar.domain.api.MapRepository
 import com.mygdx.game.domain.manager.LocalUserManager
@@ -23,8 +27,12 @@ import com.mygdx.game.util.Constants.DEFAULT_LATITUDE
 import com.mygdx.game.util.Constants.DEFAULT_LONGITUDE
 import com.mygdx.game.util.Constants.LAST_STORED_TIME_KEY
 import com.mygdx.game.util.Constants.MINIMUM_TIME_BETWEEN_LOCATION_UPDATES
+import com.mygdx.game.util.Constants.OWNERSHIPS
 import com.mygdx.game.util.Constants.RADIUS
 import com.mygdx.game.util.Constants.RADIUS2
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Date
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -37,7 +45,8 @@ import kotlin.math.sqrt
 class MapRepositoryImpl(
     private val mapApi: MapApi?,
     private val firestore: FirebaseFirestore?,
-    private val localUserManager: LocalUserManager
+    private val localUserManager: LocalUserManager,
+    private val dataRepository: DataRepository
 ): MapRepository {
 
     override suspend fun getUserLocation(player: Player, context: Context): Location? {
@@ -92,7 +101,7 @@ class MapRepositoryImpl(
         }
     }
 
-    override suspend fun getNearbyObjects(userLocation: Location): List<Item> {
+    override suspend fun getNearbyObjects(userLocation: Location): MutableList<Item> {
         return suspendCoroutine { continuation ->
             // Call queryPlayersLocation() function to get list of players
             queryItemsLocation(userLocation) { items ->
@@ -290,7 +299,7 @@ class MapRepositoryImpl(
             }
     }
 
-    private fun queryItemsLocation(userLocation: Location, callback: (List<Item>) -> Unit) {
+    private fun queryItemsLocation(userLocation: Location, callback: (MutableList<Item>) -> Unit) {
         // Query nearby locations within a certain radius
 
         val radius = RADIUS2  // Radius in meters
@@ -313,6 +322,7 @@ class MapRepositoryImpl(
                         location.longitude = locationGeoPoint.longitude
                         val distance = calculateDistance(userLocation,location)
                         if (distance < radius) {
+                            println("SOMEEEE")
                             val obj = Item(itemId.toString(), itemRarity, distance, location)
                             objectsList.add(obj)
                         }
@@ -320,7 +330,7 @@ class MapRepositoryImpl(
                     callback(objectsList)
                 } else {
                     Log.w(TAG, "Error getting documents.", task.exception)
-                    callback(emptyList()) // Callback with empty list in case of error
+                    callback(mutableListOf()) // Callback with empty list in case of error
                 }
             }
     }
