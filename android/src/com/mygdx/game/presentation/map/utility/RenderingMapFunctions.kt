@@ -24,3 +24,10 @@ import org.osmdroid.views.overlay.Marker
     }
     return null // No marker found at the touch coordinates
 }
+
+
+enum class MapItemType {
+    ME,
+    OBJECT,
+    OTHER
+}

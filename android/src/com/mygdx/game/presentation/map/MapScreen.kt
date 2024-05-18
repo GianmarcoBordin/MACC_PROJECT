@@ -77,6 +77,7 @@ import com.mygdx.game.presentation.map.components.RefreshButton
 import com.mygdx.game.presentation.map.events.LocationDeniedEvent
 import macc.ar.presentation.map.events.LocationGrantedEvent
 import com.mygdx.game.presentation.map.events.UpdateMapEvent
+import com.mygdx.game.presentation.map.utility.MapItemType
 import com.mygdx.game.presentation.map.utility.findMarker
 import com.mygdx.game.presentation.navgraph.Route
 import com.mygdx.game.presentation.scan.events.GameItemEvent
@@ -339,35 +340,36 @@ fun OsmMap(
                         MotionEvent.ACTION_DOWN -> {
                             val clickedMarker = findMarker(event.x, event.y)
 
-                            // clicked item is an object
-                            if (clickedMarker != null && clickedMarker.position.latitude != userLocation?.latitude && clickedMarker.position.longitude != userLocation?.longitude) {
-                                // If a marker is clicked, show marker details
+                            if (clickedMarker != null){
+                                when (clickedMarker.title) {
 
-                                openObjectDialog.value = true
-                                objectContent.value = clickedMarker.title
+                                    MapItemType.ME.toString(), MapItemType.OTHER.toString() -> {
+                                        Toast.makeText(
+                                            context,
+                                            clickedMarker.subDescription,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        performClick() // Simulate a click event on the map view
 
-                                // Convert GeoPoints to Locations
-                                Location("provider").apply {
-                                    latitude = clickedMarker.position.latitude
-                                    longitude = clickedMarker.position.longitude
+                                    }
+
+                                    MapItemType.OBJECT.toString() -> {
+                                        openObjectDialog.value = true
+                                        objectContent.value = clickedMarker.subDescription
+
+                                        // Convert GeoPoints to Locations
+                                        Location("provider").apply {
+                                            latitude = clickedMarker.position.latitude
+                                            longitude = clickedMarker.position.longitude
+                                        }
+
+                                    }
+
                                 }
 
-                                true
 
-                            // clicked marker is the current user or another user
-                            } else {
-                                if (clickedMarker != null) {
-                                    // If a marker is clicked, show marker details
-
-                                    Toast.makeText(
-                                        context,
-                                        clickedMarker.title,
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    performClick() // Simulate a click event on the map view
-                                }
-                                true
                             }
+                            true
                         }
                         else -> false // Continue processing other touch events
                     }
@@ -389,7 +391,8 @@ fun OsmMap(
             userMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
 
             userMarker.position = userGeoPoint
-            userMarker.title = "Your Location"
+            userMarker.title = MapItemType.ME.toString()
+            userMarker.subDescription = "Your Location"
             userMarker.icon = scaleBitmap(
                 mapView.context.resources,
                 playerMarkerIcon,
@@ -400,11 +403,12 @@ fun OsmMap(
             mapView.overlays.add(userMarker)
         }
 
-        Log.d("DEBUG","$players")
+
         // add other user location
         players?.forEach { player ->
 
             if (player.distance > 0.0) {
+                Log.d("DEBUG","$player")
                 val playerGeoPoint = GeoPoint(player.location.latitude, player.location.longitude)
                 val playerMarker = Marker(mapView)
                 playerMarker.position = playerGeoPoint
@@ -414,8 +418,10 @@ fun OsmMap(
                 } else {
                     "%.2f meters".format(player.distance)
                 }
-                playerMarker.title =
-                    "Username: ${player.username} Distance From Me: $distanceString"
+
+                playerMarker.title = MapItemType.OTHER.toString()
+
+                playerMarker.subDescription = "${player.username} is $distanceString far from you!"
                 playerMarker.icon = scaleBitmap(
                     mapView.context.resources,
                     otherPlayerLocationIcon,
@@ -440,11 +446,13 @@ fun OsmMap(
             }
 
             val properties = listOf(
+                "itemId" to obj.itemId,
                 "itemRarity" to obj.itemRarity,
                 "distanceFromMe" to distanceString
             )
 
-            objectMarker.title = serializeObject(properties)
+            objectMarker.title = MapItemType.OBJECT.toString()
+            objectMarker.subDescription = serializeObject(properties)
 
             val objectMarkerIcon: ImageBitmap = when (obj.itemRarity) {
                 "1" -> greenGunner
@@ -486,14 +494,14 @@ fun OsmMap(
 
         if (openObjectDialog.value){
             val jsonObject = deserializeObject(objectContent.value)
-            Log.d("DEBUG","JSON OBJECT $jsonObject")
 
+            val itemId = jsonObject.getAsJsonPrimitive("itemId").asString
             val itemRarity = jsonObject.getAsJsonPrimitive("itemRarity").asString
             val distanceFromMe = jsonObject.getAsJsonPrimitive("distanceFromMe").asString
 
             objects?.forEach { obj ->
 
-                if (obj.itemRarity == itemRarity) {
+                if (obj.itemId == itemId) {
                     val (color, hp, damage) = getItemDetails(obj.itemRarity)
                     val itemBitMap: ImageBitmap = ImageBitmap.imageResource(color)
 

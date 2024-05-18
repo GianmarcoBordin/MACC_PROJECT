@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -185,8 +186,7 @@ fun DefaultContent(
                     Text(
                         text = "User",
                         fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                        color = MaterialTheme.colorScheme.onSurface,
+                        style = MaterialTheme.typography.headlineLarge,
                         modifier = Modifier
                             .weight(1f) // Added weight to occupy available space
                             .padding(vertical = 8.dp)
@@ -195,7 +195,8 @@ fun DefaultContent(
                     Text(
                         text = "Score",
                         fontWeight = FontWeight.Bold,
-                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                        //style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                        style = MaterialTheme.typography.headlineLarge,
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier
                             .weight(1f) // Added weight to occupy available space
@@ -238,17 +239,25 @@ fun UserRankingItem(userRanking: String) {
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = str[0],style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-            color = MaterialTheme.colorScheme.onSurface,modifier = Modifier
+        Text(
+            text = str[0],
+            style = MaterialTheme.typography.labelLarge,
+            modifier = Modifier
                 .weight(1f) // Added weight to occupy available space
                 .padding(vertical = 8.dp))
         Spacer(modifier = Modifier.height(8.dp))
-        Text(text = str[1],style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-            color = MaterialTheme.colorScheme.onSurface,modifier = Modifier
+        Text(text = str[1],
+            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+            modifier = Modifier
                 .weight(1f) // Added weight to occupy available space
                 .padding(vertical = 8.dp))
     }
 }
 
 
+@Preview
+@Composable
+fun preview(){
+    UserRankingItem(userRanking = "Gabriele 200")
+}
 

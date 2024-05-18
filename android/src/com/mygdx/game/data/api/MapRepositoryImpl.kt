@@ -43,6 +43,7 @@ class MapRepositoryImpl(
 
     override suspend fun getUserLocation(player: Player, context: Context): Location? {
         val userLocation = localUserManager.readLocation()
+
         if (userLocation != null) {
             val lastStoredTime = getLastStoredTimeFromPreferences(context)
             val currentTime = Date().time

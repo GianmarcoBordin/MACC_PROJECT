@@ -67,6 +67,7 @@ class LocationHandler(private val context: Context?) {
             // Get last known location
             val locationProvider = locationManager.getBestProvider(Criteria(), false)
 
+
             // Check if locationProvider is null
             return if (locationProvider != null) {
                 Log.d(ContentValues.TAG,"Returning the user location")

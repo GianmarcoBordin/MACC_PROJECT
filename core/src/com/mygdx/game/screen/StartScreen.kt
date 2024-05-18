@@ -46,12 +46,14 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
 
     private val userIdField =  TextField("", game.gameSkin)
     private val errorLabel = Label("Please first insert user id!", game.gameSkin, "big-black")
+    private val noCollectedSkinLabel = Label("Please first try to find a skin on the map and catch it!", game.gameSkin, "big-black")
 
     var selectedCharacter: CharacterType? = null
 
     init {
 
         connectButton.isVisible = false
+        noCollectedSkinLabel.isVisible = false
         userIdField.messageText = "1234"
         addTitle()
 
@@ -63,6 +65,11 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
 
         val padding = width * 0.025f
 
+        if (game.myCollectedSkin.isEmpty()){
+            noCollectedSkinLabel.isVisible = true
+            table.add(noCollectedSkinLabel).fillX().center().padLeft(450f).padRight(450f).padTop(60f).padBottom(40f).colspan(5)
+        }
+
         // create the table
         game.myCollectedSkin.forEach { character ->
             val characterTable = createCharacterTable(character)
@@ -72,6 +79,7 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
         table.row()
 
         table.add(connectButton).fillX().center().padLeft(450f).padRight(450f).padTop(60f).padBottom(40f).colspan(5)
+
 
         addConnectButtonListener()
 
@@ -144,7 +152,6 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
     private fun addConnectButtonListener(){
         connectButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
-
                 handleConnection()
             }
 
