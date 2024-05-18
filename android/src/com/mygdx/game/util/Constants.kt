@@ -7,7 +7,6 @@ object Constants {
     const val FIRESTORE_ID = "firestore"
     const val LOGIN_SUCCESS = "Login success"
     const val LOGIN_FAILED = "Login Failed"
-    const val OWNERSHIPS = "owner"
 
     const val BIO_AUTH_SUCCESS = "Bio Auth Success"
     const val BIO_AUTH_FAILED = "Bio Auth Failed"
@@ -27,7 +26,7 @@ object Constants {
     const val PLAYER_LIST = "player_list"
     const val MAP = "map"
     const val RADIUS = 2000
-    const val RADIUS2 = 100.0
+    const val RADIUS2 = 1000.0
     const val USER_AUTH = "userAuth"
     const val USER_RANK = "userRank"
     const val APP_ENTRY = "appEntry"

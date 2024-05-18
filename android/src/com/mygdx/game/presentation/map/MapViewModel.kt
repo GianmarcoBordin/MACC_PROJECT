@@ -8,7 +8,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mygdx.game.data.dao.GameItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -27,9 +26,6 @@ import com.mygdx.game.presentation.scan.events.UpdateMappingEvent
 import com.mygdx.game.util.Constants
 import com.mygdx.game.util.Constants.DEFAULT_LOCATION_LATITUDE
 import com.mygdx.game.util.Constants.DEFAULT_LOCATION_LONGITUDE
-import com.mygdx.game.util.Constants.OWNERSHIPS
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import org.osmdroid.util.GeoPoint
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -58,7 +54,7 @@ class MapViewModel  @Inject constructor(
     private val _players = MutableLiveData<List<Player>?>()
     val players: LiveData<List<Player>?> = _players
 
-    private val _objects= MutableLiveData<List<Item>?>()
+    private val _objects = MutableLiveData<List<Item>?>()
     val objects: LiveData<List<Item>?> = _objects
 
     private val _navPath = MutableLiveData<List<GeoPoint>?>()
@@ -67,6 +63,8 @@ class MapViewModel  @Inject constructor(
     private val _to = MutableLiveData<Location?>()
 
     private val isActive = MutableLiveData<Boolean>()
+
+    private var itemId: String = ""
 
     init {
         // Set granting state
@@ -83,9 +81,9 @@ class MapViewModel  @Inject constructor(
     }
 
     override fun onUpdate(data: Location) { // receives updates from data layer
-        _userLocation.value=data
+        _userLocation.value = data
         // when I rx an update from data layer the position is changed so if I have a route in progress I will update it
-        if (_navPath.value!=null){
+        if (_navPath.value != null){
             goRouting(_userLocation.value,_to.value ?: Location("provider"))
         }
     }
@@ -124,6 +122,7 @@ class MapViewModel  @Inject constructor(
                 // post user player location
                 player.location = userLoc
                 mapUseCases.updateUserLocation(player)
+
                 // Fetch nearby players
                 ps = mapUseCases.getNearbyPlayers(userLoc)
 
@@ -136,38 +135,17 @@ class MapViewModel  @Inject constructor(
                 _isLoading.value = false
                 stopLocationUpdates()
             }.onSuccess {
+                objs?.forEach { obj ->
+                    if (obj.itemId == itemId) {
+                        objs?.remove(obj)
+                    }
+                }
                 Log.d(TAG, "Success fetching data, players: $ps Objects: $objs")
 
                 // Update LiveData
                 _userLocation.value = userLoc
                 _players.value = ps ?: emptyList()
-                var caughtObjects : MutableList<Int>
-                viewModelScope.launch {
-                   val result = mapUseCases.getObject()
-                    if(result.isEmpty() || result.equals("{}")){
-                        val caughtObjs = MutableList(10) { false }
-                        mapUseCases.saveObject(caughtObjs)
-                    }else{
-                        if (objs != null) {
-                            val list = mapUseCases.getObject()
-                            println(list)
-                            val iterator = objs!!.iterator()
-                            while (iterator.hasNext()) {
-                                val o = iterator.next()
-                                val index = o.itemId.replace("item", "").toInt() - 1
-
-                                if (list[index].toBoolean()) {
-                                    iterator.remove()
-                                }
-                            }
-
-
-                        }
-                    }
-                }
                 _objects.value = objs ?: emptyList()
-
-
 
                 // Set loading state to false
                 _isLoading.value = false
@@ -186,13 +164,14 @@ class MapViewModel  @Inject constructor(
     fun onUpdateMappingEvent(event: UpdateMappingEvent) {
         when (event) {
             is UpdateMappingEvent.UpdateMapping -> {
+                itemId = event.itemId
                 goMapUpdate()
             }
         }
     }
 
     private fun goRouting(from:  Location?, to: Location) {
-        _to.value=to
+        _to.value = to
         viewModelScope.launch {
             val route = from?.let { mapUseCases.getRoute(it, to) }
                 ?: throw IllegalStateException("Route is null")
@@ -210,7 +189,7 @@ class MapViewModel  @Inject constructor(
             is LocationGrantedEvent.LocationGranted -> {
                 Log.d(TAG,"Location permission granted")
                 fetchData(mapUseCases.getContext())
-                _isLocGranted.value=true
+                _isLocGranted.value = true
             }
         }
     }
@@ -226,21 +205,21 @@ class MapViewModel  @Inject constructor(
 
     private fun goMapUpdate(){
         release()
-        fetchData( context =mapUseCases.getContext() )
+        fetchData(context = mapUseCases.getContext())
     }
 
     fun release() {
         _userLocation.value = null
         _players.value = null
-        _objects.value=null
-        _navPath.value=null
-        isActive.value=false
-        _to.value=null
+        _objects.value = null
+        _navPath.value = null
+        isActive.value = false
+        _to.value = null
         stopLocationUpdates()
     }
 
     fun resume() {
-        isActive.value=true
+        isActive.value = true
         startLocationUpdates()
         fetchData(mapUseCases.getContext())
     }

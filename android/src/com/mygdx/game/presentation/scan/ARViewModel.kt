@@ -71,8 +71,9 @@ class ARViewModel @Inject constructor(
             is GameItemEvent.SaveGameItem -> {
                 println("${event.gameItem} <--------------------------")
                 gameItem = event.gameItem
+                val itemId: String = event.itemId
                 // set the gameitem and its health
-                _state.value = state.value.copy(gameItem = gameItem, hp = gameItem.hp)
+                _state.value = state.value.copy(itemId = itemId, gameItem = gameItem, hp = gameItem.hp)
             }
         }
     }
@@ -141,18 +142,12 @@ class ARViewModel @Inject constructor(
             }
 
             UpdateDatabaseEvent.AddItem -> {
-                val newGameItem = GameItem(state.value.gameItem.owner,
+                val username = arUseCases.fetchUserProfile().displayName
+                val newGameItem = GameItem(username,
                     state.value.gameItem.rarity,
                     state.value.gameItem.hp,
                     state.value.gameItem.damage)
                 viewModelScope.launch {
-                    val list = arUseCases.getObject()
-                    val mutableList = MutableList(10) { false }
-                    for (i in 0..9){
-                        mutableList.set(i,list[i].toBoolean())
-                    }
-                    mutableList.set(curr_id,true)
-                    arUseCases.saveObject(mutableList)
                     arUseCases.addGameItem(newGameItem)
                 }
             }
@@ -189,12 +184,12 @@ class ARViewModel @Inject constructor(
                     gameItemString.value?.let {
                         if (it.isNotEmpty()) {
                             // because the player already owns an item, then retrieve it immediately and store it
-                            val id = it[0]
+                            val owner = it[0]
                             curr_id = it[0].replace("item","").toInt()
                             val rarity = it[1]
                             val hp = it[2]
                             val damage = it[3]
-                            ownedGameItem = GameItem(id, rarity.toInt(), hp.toInt(), damage.toInt())
+                            ownedGameItem = GameItem(owner, rarity.toInt(), hp.toInt(), damage.toInt())
                             _state.value.owned = true
                         } else {
                             _state.value.owned = false

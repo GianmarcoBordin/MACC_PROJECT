@@ -257,9 +257,15 @@ fun DefaultMapContent(
                     verticalAlignment = Alignment.Top,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    MyBackButton(onClick = { navController.navigate(Route.HomeScreen.route) })
-                    RefreshButton(onClick = {mapUpdateHandler(UpdateMapEvent.MapUpdate) })
-                    InfoButton(onClick = { openInfoDialog.value = true})
+                    MyBackButton(onClick = {
+                        navController.navigate(Route.HomeScreen.route)
+                    })
+                    RefreshButton(onClick = {
+                        mapUpdateHandler(UpdateMapEvent.MapUpdate)
+                    })
+                    InfoButton(onClick = {
+                        openInfoDialog.value = true
+                    })
                     if (openInfoDialog.value) {
                         InfoDialog(onDismissRequest = {openInfoDialog.value = false})
                     }
@@ -511,13 +517,13 @@ fun OsmMap(
                             val itemHeight = (itemBitmap.height * itemRatio).toInt()
                             val finalItemBitmap = itemBitmap.scale(itemWidth, itemHeight)
                             val finalGameItem = GameItem(
-                                obj.itemId,
-                                obj.itemRarity.toInt(),
-                                hp,
-                                damage,
-                                finalItemBitmap
+                                owner = "",
+                                rarity = obj.itemRarity.toInt(),
+                                hp = hp,
+                                damage = damage,
+                                bitmap = finalItemBitmap
                             )
-                            saveGameItemHandler(GameItemEvent.SaveGameItem(finalGameItem))
+                            saveGameItemHandler(GameItemEvent.SaveGameItem(finalGameItem, obj.itemId))
                             navController.navigate(Route.ARScreen.route)
                         },
                         onDismissRequest = { openObjectDialog.value = false }

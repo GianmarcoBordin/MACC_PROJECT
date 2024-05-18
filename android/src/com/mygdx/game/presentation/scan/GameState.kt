@@ -7,6 +7,7 @@ import com.mygdx.game.data.dao.Line
 import kotlin.math.sqrt
 
 data class GameState(
+    var itemId: String = "",
     var gameItem: GameItem = GameItem(), // default
     // position of the top-left, not the center
     var position: Vector2 = Vector2(100.0f, 100.0f), // default
