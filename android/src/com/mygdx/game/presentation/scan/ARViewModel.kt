@@ -65,6 +65,7 @@ class ARViewModel @Inject constructor(
     private val _state = MutableStateFlow(GameState())
     val state = _state.asStateFlow()
 
+
     fun onGameItemEvent(event: GameItemEvent) {
         when (event) {
             is GameItemEvent.SaveGameItem -> {
