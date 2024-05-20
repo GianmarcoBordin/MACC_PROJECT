@@ -55,7 +55,7 @@ class LocationHandler(private val context: Context?) {
 
     companion object {
         private const val MIN_TIME_BW_UPDATES: Long = 1000 * 60 * 1 // 1 minute
-        private const val MIN_DISTANCE_CHANGE_FOR_UPDATES: Long = 20 // 20 meters
+        private const val MIN_DISTANCE_CHANGE_FOR_UPDATES: Long = 1 // 1 meters
     }
 
     fun getUserLocation(context: Context): Location? {

@@ -135,11 +135,14 @@ class MapViewModel  @Inject constructor(
                 _isLoading.value = false
                 stopLocationUpdates()
             }.onSuccess {
-                objs?.forEach { obj ->
-                    if (obj.itemId == itemId) {
-                        objs?.remove(obj)
+
+                for (i in 0..<objs?.size!!){
+                    if (objs!![i].itemId == itemId){
+                        objs?.removeAt(i)
+                        break
                     }
                 }
+
                 Log.d(TAG, "Success fetching data, players: $ps Objects: $objs")
 
                 // Update LiveData

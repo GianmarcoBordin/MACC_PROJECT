@@ -308,6 +308,7 @@ fun OsmMap(
 
     var pathOverlay: Polyline = Polyline()
     var userMarker: Marker = Marker(MapView(LocalContext.current))
+    var playersMarker: MutableList<Marker> = mutableListOf()
 
     val playerMarkerIcon = ImageBitmap.imageResource(R.drawable.main_player_location)
     val otherPlayerLocationIcon = ImageBitmap.imageResource(R.drawable.other_player_location)
@@ -403,6 +404,12 @@ fun OsmMap(
             mapView.overlays.add(userMarker)
         }
 
+        // Remove other players marker
+        playersMarker.forEach {
+            mapView.overlays.remove(it)
+            mapView.invalidate()
+        }
+        playersMarker.clear()
 
         // add other user location
         players?.forEach { player ->
@@ -430,6 +437,7 @@ fun OsmMap(
                 )
 
                 mapView.overlays.add(playerMarker)
+                playersMarker.add(playerMarker)
             }
         }
 
