@@ -8,7 +8,6 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.core.graphics.scale
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.reflect.TypeToken
 import com.mygdx.game.data.dao.GameItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -133,6 +132,7 @@ class ARViewModel @Inject constructor(
         when (event) {
             is UpdateDatabaseEvent.IncrementItemStats -> {
                 val updatedGameItem = GameItem(ownedGameItem.owner,
+                    ownedGameItem.itemId,
                     ownedGameItem.rarity,
                     ownedGameItem.hp + event.hpIncrement,
                     ownedGameItem.damage + event.damageIncrement)
@@ -144,6 +144,7 @@ class ARViewModel @Inject constructor(
             UpdateDatabaseEvent.AddItem -> {
                 val username = arUseCases.fetchUserProfile().displayName
                 val newGameItem = GameItem(username,
+                    state.value.gameItem.itemId,
                     state.value.gameItem.rarity,
                     state.value.gameItem.hp,
                     state.value.gameItem.damage)
@@ -186,10 +187,11 @@ class ARViewModel @Inject constructor(
                             // because the player already owns an item, then retrieve it immediately and store it
                             val owner = it[0]
                             curr_id = it[0].replace("item","").toInt()
-                            val rarity = it[1]
-                            val hp = it[2]
-                            val damage = it[3]
-                            ownedGameItem = GameItem(owner, rarity.toInt(), hp.toInt(), damage.toInt())
+                            val itemId = it[1]
+                            val rarity = it[2]
+                            val hp = it[3]
+                            val damage = it[4]
+                            ownedGameItem = GameItem(owner, itemId.toInt(), rarity.toInt(), hp.toInt(), damage.toInt())
                             _state.value.owned = true
                         } else {
                             _state.value.owned = false

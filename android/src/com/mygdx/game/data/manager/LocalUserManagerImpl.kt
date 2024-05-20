@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import com.mygdx.game.data.dao.Biometric
-import com.mygdx.game.data.dao.GameItem
 import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.dao.Rank
 import com.mygdx.game.data.dao.UserProfileBundle

@@ -534,6 +534,7 @@ fun OsmMap(
                             val finalItemBitmap = itemBitmap.scale(itemWidth, itemHeight)
                             val finalGameItem = GameItem(
                                 owner = "",
+                                itemId = obj.itemId.toInt(),
                                 rarity = obj.itemRarity.toInt(),
                                 hp = hp,
                                 damage = damage,

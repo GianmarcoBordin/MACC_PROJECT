@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.mygdx.game.data.dao.GameItem
+import com.mygdx.game.data.dao.Merge
 import com.squareup.okhttp.ResponseBody
 import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.dao.Rank
@@ -189,6 +190,7 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
 
         return resultLiveData
     }
+
     override suspend fun getGameItem(user: String, rarity:String): LiveData<List<String>> {
         val data = MutableLiveData<List<String>>()
 
@@ -216,7 +218,7 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
                 if (ranks != null) {
                     println(response.body())
                     val rankInfo = ranks.map {
-                        "${it.owner} ${it.rarity} ${it.hp} ${it.damage}"
+                        "${it.owner} ${it.itemId} ${it.rarity} ${it.hp} ${it.damage}"
                     }
 
                     data.postValue(rankInfo)
@@ -263,7 +265,7 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
                 }
                 if (ranks != null) {
                     val rankInfo = ranks.map {
-                        "${it.owner} ${it.rarity} ${it.hp} ${it.damage}"
+                        "${it.owner} ${it.itemId} ${it.rarity} ${it.hp} ${it.damage}"
                     }
 
                     data.postValue(rankInfo)
@@ -283,5 +285,31 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
         }
 
         return data
+    }
+
+    override suspend fun mergeItems(itemId1: Int, itemId2: Int): LiveData<String> {
+        val resultLiveData = MutableLiveData<String>()
+
+        try {
+            val response = suspendCoroutine { continuation ->
+                val merge = Merge(itemId1 = itemId1, itemId2 = itemId2)
+                rankApi?.mergeItems(merge)?.enqueue(object : Callback<Result<ResponseBody>> {
+                    override fun onResponse(
+                        call: Call<Result<ResponseBody>>,
+                        response: Response<Result<ResponseBody>>
+                    ) {
+                        continuation.resume(response)                        }
+
+                    override fun onFailure(call: Call<Result<ResponseBody>>, t: Throwable) {
+                        continuation.resumeWithException(t)
+                    }
+                })
+            }
+            resultLiveData.value =response.isSuccessful.toString()
+        } catch (e: Exception) {
+            resultLiveData.value = e.message
+        }
+
+        return resultLiveData
     }
 }

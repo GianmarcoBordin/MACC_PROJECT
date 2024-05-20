@@ -61,7 +61,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                     val rankData = dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
                     rank = Rank(rankData?.get(0) ?: name, rankData?.get(1)?.toInt() ?: 0)
 
-                }else {
+                } else {
                     rank = Rank( name,  0)
                 }
                 // save user rank
@@ -74,9 +74,10 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                                 ?: emptyList()
                         val gameItem = GameItem(
                             owner = skin[0],
-                            rarity = skin[1].toInt(),
-                            hp = skin[2].toInt(),
-                            damage = skin[3].toInt()
+                            itemId = skin[1].toInt(),
+                            rarity = skin[2].toInt(),
+                            hp = skin[3].toInt(),
+                            damage = skin[4].toInt()
                         )
                         println(gameItem)
                         // save user skin
@@ -131,9 +132,9 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                     super.onAuthenticationSucceeded(result)
                     CoroutineScope(Dispatchers.IO).launch {
                         // Use withContext to switch to a background thread for blocking operation
-                        val bio =localUserManager.readBio()
+                        val bio = localUserManager.readBio()
 
-                        Log.d("DEBUG","bio from local user manager: $bio")
+                        Log.d("DEBUG", "bio from local user manager: $bio")
                         // Perform the authentication
                         val resultSignIn = doSignIn(bio.first, bio.second)
 
@@ -147,24 +148,27 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                             localUserManager.saveUserProfile(userProfileBundle)
                             // fetch rank data
                             val userDataResult = dataRepository.fetchUserData(name).value
-                            val rank:Rank = if(userDataResult?.isNotEmpty() == true){
-                                val rankData = dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
+                            val rank: Rank = if (userDataResult?.isNotEmpty() == true) {
+                                val rankData =
+                                    dataRepository.fetchUserData(name).value?.get(0)?.split(" ")
                                 Rank(rankData?.get(0) ?: name, rankData?.get(1)?.toInt() ?: 0)
 
-                            }else {
-                                Rank( name,  0)
+                            } else {
+                                Rank(name, 0)
                             }
-                            for (i in 1..5){
+                            for (i in 1..5) {
                                 val res = dataRepository.getGameItem(name, i.toString()).value
                                 if (res?.isNotEmpty() == true) {
                                     val skin =
-                                        dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ")
+                                        dataRepository.getGameItem(name, i.toString()).value?.get(0)
+                                            ?.split(" ")
                                             ?: emptyList()
                                     val gameItem = GameItem(
                                         owner = skin[0],
-                                        rarity = skin[1].toInt(),
-                                        hp = skin[2].toInt(),
-                                        damage = skin[3].toInt()
+                                        itemId = skin[1].toInt(),
+                                        rarity = skin[2].toInt(),
+                                        hp = skin[3].toInt(),
+                                        damage = skin[4].toInt()
                                     )
                                     // save user skin
                                     localUserManager.saveObject("SKIN_${i}", gameItem)
@@ -176,27 +180,22 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                         } else {
                             callbacks.invoke(BIO_AUTH_FAILED)
                         }
-
                     }
-
                 }
 
                 override fun onAuthenticationFailed() {
                     super.onAuthenticationFailed()
                     callbacks.invoke(BIO_AUTH_FAILED)
                     updateListener?.onUpdate(BIO_AUTH_FAILED)
-
                 }
 
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
                     callbacks.invoke(BIO_AUTH_FAILED)
                     updateListener?.onUpdate(BIO_AUTH_FAILED)
-
                 }
             }
         )
-
     }
 
 
@@ -240,9 +239,10 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                                                         ?: emptyList()
                                                 val gameItem = GameItem(
                                                     owner = skin[0],
-                                                    rarity = skin[1].toInt(),
-                                                    hp = skin[2].toInt(),
-                                                    damage = skin[3].toInt()
+                                                    itemId = skin[1].toInt(),
+                                                    rarity = skin[2].toInt(),
+                                                    hp = skin[3].toInt(),
+                                                    damage = skin[4].toInt()
                                                 )
                                                 // save user skin
                                                 localUserManager.saveObject("SKIN_${i}", gameItem)
@@ -251,8 +251,8 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                                         // Post player data
                                         val player= Player(
                                             username = name,
-                                            location =localUserManager.readLocation() ?: Location("provider"),
-                                            distance =0.0
+                                            location = localUserManager.readLocation() ?: Location("provider"),
+                                            distance = 0.0
                                         )
                                         localUserManager.saveFirestoreDocumentId(name)
                                         postPlayerToFirestore(firestore,player)
@@ -292,15 +292,9 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
             }
     }
 
-
-
-
     override fun authCheck(): Boolean {
         return firebaseAuth?.currentUser != null && localUserManager.getUserProfile().email.isNotEmpty()
     }
-
-
-
 
     override fun setUpdateListener(ref: UpdateListener) {
         updateListener=ref
@@ -309,7 +303,6 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
     override suspend fun updatePlayerFirestore(name: String, newName: String): String {
         return com.mygdx.game.framework.updatePlayerFirestore(firestore, name, newName)
     }
-
 
     private suspend fun doSignIn(email: String, password: String): Boolean {
         return if (email.isNotEmpty() && password.isNotEmpty()) {
@@ -325,5 +318,4 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
             false
         }
     }
-
 }

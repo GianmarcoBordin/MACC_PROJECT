@@ -1,6 +1,7 @@
 package com.mygdx.game.domain.api
 
 import com.mygdx.game.data.dao.GameItem
+import com.mygdx.game.data.dao.Merge
 import com.squareup.okhttp.ResponseBody
 import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.dao.Rank
@@ -31,5 +32,8 @@ interface RankApi {
 
     @POST("/game_items")
     fun postGameItem(@Body request: GameItem): Call<Result<ResponseBody>>
+
+    @POST("/game_items")
+    fun mergeItems(@Body merge: Merge): Call<Result<ResponseBody>>
 }
 

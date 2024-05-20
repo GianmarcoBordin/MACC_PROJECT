@@ -49,6 +49,7 @@ class InventoryViewModel @Inject constructor(
                 // create a new object with the updated bitmap and replace the old one with the new one
                 items[event.index] = GameItem(
                     items[event.index].owner,
+                    items[event.index].itemId,
                     items[event.index].rarity,
                     items[event.index].hp,
                     items[event.index].damage,
@@ -77,10 +78,11 @@ class InventoryViewModel @Inject constructor(
                         for (i in gameItemList.indices) {
                             val properties = gameItemList[i].split(" ")
                             val id = properties[0]
-                            val rarity = properties[1]
-                            val hp = properties[2]
-                            val damage = properties[3]
-                            items.add(GameItem(id, rarity.toInt(), hp.toInt(), damage.toInt()))
+                            val itemId = properties[1]
+                            val rarity = properties[2]
+                            val hp = properties[3]
+                            val damage = properties[4]
+                            items.add(GameItem(id, itemId.toInt(), rarity.toInt(), hp.toInt(), damage.toInt()))
                         }
                         completed = true
                         _isLoading.value = false

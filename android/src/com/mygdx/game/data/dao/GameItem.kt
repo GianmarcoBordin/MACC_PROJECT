@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 
 data class GameItem(
     var owner: String = "",
+    val itemId: Int = 0,
     val rarity: Int = 0,
     val hp: Int = 0,
     val damage: Int = 0,

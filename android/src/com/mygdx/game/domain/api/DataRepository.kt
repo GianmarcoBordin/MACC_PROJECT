@@ -14,5 +14,6 @@ interface DataRepository {
     suspend fun getGameItem(user: String,rarity:String): LiveData<List<String>>
     suspend fun fetchUserData(user : String): LiveData<List<String>>
     suspend fun getGameItemsUser(user: String): LiveData<List<String>>
+    suspend fun mergeItems(itemId1: Int, itemId2: Int): LiveData<String>
 }
 
