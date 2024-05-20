@@ -38,7 +38,7 @@ class MapManagerImpl @Inject constructor(private val mapRepository: MapRepositor
     override suspend fun updateItemsLocation(userLocation: Location): List<Item> {
         val items = mapRepository.updateItemsLocation(userLocation)
         for (item in items) {
-            localUserManager.saveObject(item.itemId, item)
+            localUserManager.saveObject(item.itemId.toString(), item)
         }
         return items
     }
@@ -56,9 +56,5 @@ class MapManagerImpl @Inject constructor(private val mapRepository: MapRepositor
     override fun stopLocUpdates() {
         localUserManager.stopLocUpdates()
     }
-
-
-
-
 }
 

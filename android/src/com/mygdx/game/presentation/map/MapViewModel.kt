@@ -64,7 +64,7 @@ class MapViewModel  @Inject constructor(
 
     private val isActive = MutableLiveData<Boolean>()
 
-    private var itemId: String = ""
+    private var itemId: Int = 0
 
     init {
         // Set granting state

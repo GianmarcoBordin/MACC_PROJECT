@@ -307,7 +307,7 @@ class MapRepositoryImpl(
                     val objectsList = mutableListOf<Item>()
                     for (document in task.result!!) {
                         val itemId = document.get("itemId") ?: 0
-                        val itemRarity = document.getString("itemRarity") ?: ""
+                        val itemRarity = document.get("itemRarity") ?: 0
                         val locationGeoPoint = document.getGeoPoint("location") ?: defaultLocationGeoPoint
                         // conversion
                         val location = Location("provider")
@@ -315,7 +315,7 @@ class MapRepositoryImpl(
                         location.longitude = locationGeoPoint.longitude
                         val distance = calculateDistance(userLocation,location)
                         if (distance < radius) {
-                            val obj = Item(itemId.toString(), itemRarity, distance, location)
+                            val obj = Item(itemId.toString().toInt(), itemRarity.toString().toInt(), distance, location)
                             objectsList.add(obj)
                         }
                     }

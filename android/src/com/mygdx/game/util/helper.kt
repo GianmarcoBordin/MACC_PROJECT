@@ -56,36 +56,33 @@ fun fromIntegerToSkin(value: Int): PlayerSkin {
     }
 }
 
-fun getItemDetails(itemRarity: String?): Triple<Int, Int, Int> {
+fun getItemDetails(itemRarity: Int): Triple<Int, Int, Int> {
     val defaultColor = R.drawable.gunner_green
     val defaultHp = RARITY_1_HP
     val defaultDamage = RARITY_1_DAMAGE
 
     return when (itemRarity) {
-        "1" -> Triple(R.drawable.gunner_green, RARITY_1_HP, RARITY_1_DAMAGE)
-        "2" -> Triple(R.drawable.gunner_red, RARITY_2_HP, RARITY_2_DAMAGE)
-        "3" -> Triple(R.drawable.gunner_yellow, RARITY_3_HP, RARITY_3_DAMAGE)
-        "4" -> Triple(R.drawable.gunner_blue, RARITY_4_HP, RARITY_4_DAMAGE)
-        "5" -> Triple(R.drawable.gunner_black, RARITY_5_HP, RARITY_5_DAMAGE)
+        1 -> Triple(R.drawable.gunner_green, RARITY_1_HP, RARITY_1_DAMAGE)
+        2 -> Triple(R.drawable.gunner_red, RARITY_2_HP, RARITY_2_DAMAGE)
+        3 -> Triple(R.drawable.gunner_yellow, RARITY_3_HP, RARITY_3_DAMAGE)
+        4 -> Triple(R.drawable.gunner_blue, RARITY_4_HP, RARITY_4_DAMAGE)
+        5 -> Triple(R.drawable.gunner_black, RARITY_5_HP, RARITY_5_DAMAGE)
         else -> Triple(defaultColor, defaultHp, defaultDamage)
     }
 }
 
-fun getItemDrawable(itemRarity: String?): Int {
+fun getItemDrawable(itemRarity: Int): Int {
     val defaultColor = R.drawable.gunner_green
 
     return when (itemRarity) {
-        "1" -> R.drawable.gunner_green
-        "2" -> R.drawable.gunner_red
-        "3" -> R.drawable.gunner_yellow
-        "4" -> R.drawable.gunner_blue
-        "5" -> R.drawable.gunner_black
+        1 -> R.drawable.gunner_green
+        2 -> R.drawable.gunner_red
+        3 -> R.drawable.gunner_yellow
+        4 -> R.drawable.gunner_blue
+        5 -> R.drawable.gunner_black
         else -> defaultColor
     }
 }
-
-
-
 
 fun serializeObject(objectProperty: List<Pair<String, String>>): String{
     val gson = Gson()

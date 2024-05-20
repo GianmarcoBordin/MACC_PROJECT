@@ -70,7 +70,7 @@ class ARViewModel @Inject constructor(
             is GameItemEvent.SaveGameItem -> {
                 println("${event.gameItem} <--------------------------")
                 gameItem = event.gameItem
-                val itemId: String = event.itemId
+                val itemId: Int = event.itemId
                 // set the gameitem and its health
                 _state.value = state.value.copy(itemId = itemId, gameItem = gameItem, hp = gameItem.hp)
             }

@@ -308,7 +308,7 @@ fun OsmMap(
 
     var pathOverlay: Polyline = Polyline()
     var userMarker: Marker = Marker(MapView(LocalContext.current))
-    var playersMarker: MutableList<Marker> = mutableListOf()
+    val playersMarker: MutableList<Marker> = mutableListOf()
 
     val playerMarkerIcon = ImageBitmap.imageResource(R.drawable.main_player_location)
     val otherPlayerLocationIcon = ImageBitmap.imageResource(R.drawable.other_player_location)
@@ -454,8 +454,8 @@ fun OsmMap(
             }
 
             val properties = listOf(
-                "itemId" to obj.itemId,
-                "itemRarity" to obj.itemRarity,
+                "itemId" to obj.itemId.toString(),
+                "itemRarity" to obj.itemRarity.toString(),
                 "distanceFromMe" to distanceString
             )
 
@@ -463,11 +463,11 @@ fun OsmMap(
             objectMarker.subDescription = serializeObject(properties)
 
             val objectMarkerIcon: ImageBitmap = when (obj.itemRarity) {
-                "1" -> greenGunner
-                "2" -> redGunner
-                "3" -> yellowGunner
-                "4" -> blueGunner
-                "5" -> blackGunner
+                1 -> greenGunner
+                2 -> redGunner
+                3 -> yellowGunner
+                4 -> blueGunner
+                5 -> blackGunner
                 else -> greenGunner
             }
 
@@ -503,8 +503,8 @@ fun OsmMap(
         if (openObjectDialog.value){
             val jsonObject = deserializeObject(objectContent.value)
 
-            val itemId = jsonObject.getAsJsonPrimitive("itemId").asString
-            val itemRarity = jsonObject.getAsJsonPrimitive("itemRarity").asString
+            val itemId = jsonObject.getAsJsonPrimitive("itemId").asInt
+            val itemRarity = jsonObject.getAsJsonPrimitive("itemRarity").asInt
             val distanceFromMe = jsonObject.getAsJsonPrimitive("distanceFromMe").asString
 
             objects?.forEach { obj ->
@@ -534,8 +534,8 @@ fun OsmMap(
                             val finalItemBitmap = itemBitmap.scale(itemWidth, itemHeight)
                             val finalGameItem = GameItem(
                                 owner = "",
-                                itemId = obj.itemId.toInt(),
-                                rarity = obj.itemRarity.toInt(),
+                                itemId = obj.itemId,
+                                rarity = obj.itemRarity,
                                 hp = hp,
                                 damage = damage,
                                 bitmap = finalItemBitmap
