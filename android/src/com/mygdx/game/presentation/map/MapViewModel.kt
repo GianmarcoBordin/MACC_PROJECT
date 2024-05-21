@@ -157,15 +157,25 @@ class MapViewModel  @Inject constructor(
                             val id = properties[1]
                             owned_items.add(id.toInt())
                         }
+
+                        val itemsToRemove = mutableListOf<Int>()
+
+                        for (i in 0 until objs!!.size) {
+                            if (objs!![i].itemId == itemId || objs!![i].itemId in owned_items) {
+                                itemsToRemove.add(i)
+                            }
+                        }
+
+                        // Remove items in reverse order to avoid indexing issues
+                        for (i in itemsToRemove.size - 1 downTo 0) {
+                            objs?.removeAt(itemsToRemove[i])
+                        }
+
+                        _objects.value = objs ?: emptyList()
+
                     }
                 }
 
-                for (i in 0..<objs?.size!!){
-                    if (objs!![i].itemId == itemId || objs!![i].itemId in owned_items ){
-                        objs?.removeAt(i)
-                        break
-                    }
-                }
 
 
                 Log.d(TAG, "Success fetching data, players: $ps Objects: $objs")
@@ -173,7 +183,7 @@ class MapViewModel  @Inject constructor(
                 // Update LiveData
                 _userLocation.value = userLoc
                 _players.value = ps ?: emptyList()
-                _objects.value = objs ?: emptyList()
+
 
                 // Set loading state to false
                 _isLoading.value = false
