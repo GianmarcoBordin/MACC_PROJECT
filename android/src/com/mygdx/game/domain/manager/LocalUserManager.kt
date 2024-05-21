@@ -32,4 +32,5 @@ interface LocalUserManager {
     suspend fun saveFirestoreDocumentId(name: String)
     fun readFirestoreDocumentId(): String
     fun getObjectList(key: String): List<String>
+
 }

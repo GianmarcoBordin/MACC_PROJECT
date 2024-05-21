@@ -137,7 +137,9 @@ fun NavGraph(
             ArHomeScreen(
                 multiplayer = multiplayer,
                 navController = navController,
-                viewModel = viewModel
+                viewModel = viewModel,
+                multiplayerHandler = viewModel::onMultiplayerEvent
+
             )
         }
     }

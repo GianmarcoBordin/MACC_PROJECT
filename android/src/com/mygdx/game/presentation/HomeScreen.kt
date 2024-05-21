@@ -49,10 +49,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.NavController
 import com.mygdx.game.Multiplayer
+import com.mygdx.game.data.dao.GameItem
 import com.mygdx.game.presentation.components.CustomBackHandler
 import com.mygdx.game.presentation.components.ExitPopup
 import com.mygdx.game.presentation.components.LogoUserImage
 import com.mygdx.game.presentation.components.UserGreeting
+import com.mygdx.game.presentation.event.MultiplayerEvent
 import com.mygdx.game.presentation.navgraph.Route
 
 import com.mygdx.game.ui.theme.ArAppTheme
@@ -61,13 +63,18 @@ import com.mygdx.game.ui.theme.ArAppTheme
 fun ArHomeScreen(
     multiplayer: Multiplayer,
     navController: NavController,
-    viewModel: MainViewModel
+    viewModel: MainViewModel,
+    multiplayerHandler: (MultiplayerEvent.GetSkinEvent) -> Unit
 ) {
     // mutable state
     val userProfile by viewModel.userProfile.observeAsState()
+
+    val gameItems by viewModel.skinItems.observeAsState()
+
     // lifecycle
     val lifecycleOwner = LocalLifecycleOwner.current
     val openPopup = remember { mutableStateOf(false) }
+
 
     ManageLifecycle(lifecycleOwner, viewModel)
     CustomBackHandler(
@@ -81,6 +88,7 @@ fun ArHomeScreen(
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
+            //multiplayerHandler(MultiplayerEvent.GetSkinEvent)
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -128,7 +136,7 @@ fun ArHomeScreen(
                                 //StartGameButton(navController = navController)
                                 InventoryButton(navController = navController)
                                 Spacer(modifier = Modifier.width(24.dp))
-                                MultiplayerButton(multiplayer = multiplayer)
+                                gameItems?.let { MultiplayerButton(multiplayer = multiplayer , gameItems = it) }
                             }
                         }
                     }
@@ -205,12 +213,21 @@ private fun RankButton(navController: NavController){
 }
 
 @Composable
-private fun MultiplayerButton(multiplayer: Multiplayer){
-    ExtendedFloatingActionButton(
-        text = { Text("Multiplayer") },
-        icon = {Icon(Icons.Outlined.Gamepad, "multiplayer battle")},
-        onClick = { multiplayer.onSetMultiplayer() },
-    )
+private fun MultiplayerButton(multiplayer: Multiplayer , gameItems: List<GameItem>){
+
+    if (gameItems.isNotEmpty()){
+        ExtendedFloatingActionButton(
+            text = { Text("Multiplayer") },
+            icon = {Icon(Icons.Outlined.Gamepad, "multiplayer battle")},
+            onClick = {
+                multiplayer.onSetMultiplayer(gameItems)
+            },
+        )
+    }
+
+
+
+
 }
 
 @Composable

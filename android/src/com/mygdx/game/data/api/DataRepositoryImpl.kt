@@ -212,11 +212,12 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
 
             if (response.isSuccessful) {
                 val ranks = response.body()
+                Log.d("DEBUG","$ranks")
                 if (ranks == emptyList<GameItem>()) {
                     data.postValue(emptyList())
                 }
                 if (ranks != null) {
-                    println(response.body())
+
                     val rankInfo = ranks.map {
                         "${it.owner} ${it.itemId} ${it.rarity} ${it.hp} ${it.damage}"
                     }

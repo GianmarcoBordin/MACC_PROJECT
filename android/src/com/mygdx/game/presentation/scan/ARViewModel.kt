@@ -153,6 +153,10 @@ class ARViewModel @Inject constructor(
                 }
             }
         }
+        viewModelScope.launch {
+            arUseCases.saveSkin()
+        }
+
     }
 
     fun onGameEvent(event: GameEvent) {

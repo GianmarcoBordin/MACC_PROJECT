@@ -41,12 +41,14 @@ import com.mygdx.game.domain.usecase.appEntry.SaveUser
 import com.mygdx.game.domain.usecase.ar.ARUseCases
 import com.mygdx.game.domain.usecase.ar.AddGameItem
 import com.mygdx.game.domain.usecase.ar.GetGameItem
+import com.mygdx.game.domain.usecase.ar.SaveSkin
 import com.mygdx.game.domain.usecase.inventory.GetGameItemsUser
 import com.mygdx.game.domain.usecase.auth.AuthCheck
 import com.mygdx.game.domain.usecase.auth.AuthenticationUseCases
 import com.mygdx.game.domain.usecase.auth.BioSignIn
 import com.mygdx.game.domain.usecase.auth.SignIn
 import com.mygdx.game.domain.usecase.auth.SignUp
+import com.mygdx.game.domain.usecase.home.HomeUseCases
 import com.mygdx.game.domain.usecase.inventory.InventoryUseCases
 import com.mygdx.game.domain.usecase.map.FetchUserLocation
 import com.mygdx.game.domain.usecase.map.GetContext
@@ -182,7 +184,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideARManager(dataRepository: DataRepository): ARManager = ARManagerImpl(dataRepository = dataRepository)
+    fun provideARManager(dataRepository: DataRepository, localUserManager: LocalUserManager): ARManager = ARManagerImpl(dataRepository = dataRepository, localUserManager = localUserManager)
 
     @Provides
     @Singleton
@@ -282,7 +284,8 @@ object AppModule {
     ) = ARUseCases(
         addGameItem = AddGameItem(arManager),
         getGameItem = GetGameItem(arManager),
-        fetchUserProfile = ReadUser(localUserManager)
+        fetchUserProfile = ReadUser(localUserManager),
+        saveSkin = SaveSkin(arManager)
     )
 
     @Provides
@@ -294,4 +297,13 @@ object AppModule {
         getGameItemsUser = GetGameItemsUser(inventoryManager) ,
         fetchUserProfile = ReadUser(localUserManager)
     )
+
+    @Provides
+    @Singleton
+    fun provideHomeUseCases(
+        inventoryManager: InventoryManager,
+    ) = HomeUseCases(
+        getGameItemsUser = GetGameItemsUser(inventoryManager)
+    )
+
 }

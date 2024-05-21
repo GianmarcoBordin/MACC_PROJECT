@@ -69,9 +69,8 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                 for (i in 1..5){
                     val res = dataRepository.getGameItem(name, i.toString()).value
                     if (res?.isNotEmpty() == true) {
-                        val skin =
-                            dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ")
-                                ?: emptyList()
+                        val skin = res[0].split(" ")
+
                         val gameItem = GameItem(
                             owner = skin[0],
                             itemId = skin[1].toInt(),

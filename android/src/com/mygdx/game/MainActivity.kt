@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.material3.MaterialTheme
 
 import androidx.compose.ui.Modifier
+import com.mygdx.game.data.dao.GameItem
 
 import com.mygdx.game.dto.CharacterType
 
@@ -34,7 +35,7 @@ import org.json.JSONObject
 import java.io.Serializable
 
 interface Multiplayer{
-    fun onSetMultiplayer()
+    fun onSetMultiplayer(gameItems: List<GameItem>)
 }
 
 @AndroidEntryPoint
@@ -54,7 +55,7 @@ class MainActivity : ComponentActivity(){
 
                     val startDestination = viewModel.startDestination
                     NavGraph(
-                        object: Multiplayer{ override fun onSetMultiplayer() { setMultiplayer() } },
+                        object: Multiplayer{ override fun onSetMultiplayer(gameItems: List<GameItem>) { setMultiplayer(gameItems) } },
                         startDestination = startDestination
                     )
                 }
@@ -62,9 +63,11 @@ class MainActivity : ComponentActivity(){
         }
     }
 
-    fun setMultiplayer(){
+    fun setMultiplayer(gameItems: List<GameItem>){
 
         val sharedPreferences = applicationContext.getSharedPreferences(USER_SETTINGS2, Context.MODE_PRIVATE)
+
+        Log.d("DEBUG", "$gameItems")
 
         // read username from shared preferences and pass it to the libgdx game
         val userName = sharedPreferences.getString(USERNAME,"")?.replace("\\\"", "")?.replace("\"","") ?: ""
@@ -72,6 +75,7 @@ class MainActivity : ComponentActivity(){
 
         // read characters from username
         val characters = getUserCharacters(sharedPreferences)
+
 
         // Specify the intent
         val intent = Intent(this, AndroidLauncher::class.java)

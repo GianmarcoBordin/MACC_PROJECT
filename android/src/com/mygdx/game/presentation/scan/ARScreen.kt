@@ -7,6 +7,7 @@ import android.graphics.ImageFormat
 import android.graphics.Rect
 import android.graphics.YuvImage
 import android.opengl.Matrix
+import android.util.Log
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -101,7 +102,14 @@ fun ARScreen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (Visib
             ExitPopup(openPopup)
         }
     } else {
-        navController.navigate(Route.HomeScreen.route)
+        ArAppTheme {
+            BackButton(onClick = { navController.navigate(Route.HomeScreen.route) })
+            Text(
+                text = "The app has no permissions to open the map, allow position tracking in settings",
+                color =Color.Red
+            )
+        }
+
     }
 
     ManageLifecycle(lifecycleOwner = lifecycleOwner, viewModel = viewModel)

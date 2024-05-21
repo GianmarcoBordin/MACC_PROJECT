@@ -298,6 +298,8 @@ fun OsmMap(
     val objects by viewModel.objects.observeAsState()
     val navPath by viewModel.navPath.observeAsState()
 
+    val username by viewModel.username.observeAsState()
+
     // observe state to open dialog of clicked object
     val openObjectDialog = remember {
         mutableStateOf(false)
@@ -407,15 +409,16 @@ fun OsmMap(
         // Remove other players marker
         playersMarker.forEach {
             mapView.overlays.remove(it)
-            mapView.invalidate()
+
         }
+        mapView.invalidate()
         playersMarker.clear()
 
         // add other user location
         players?.forEach { player ->
 
-            if (player.distance > 0.0) {
-                Log.d("DEBUG","$player")
+            if (player.distance > 0.0 && player.username != username) {
+                //Log.d("DEBUG","$player")
                 val playerGeoPoint = GeoPoint(player.location.latitude, player.location.longitude)
                 val playerMarker = Marker(mapView)
                 playerMarker.position = playerGeoPoint

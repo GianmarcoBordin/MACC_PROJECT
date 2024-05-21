@@ -66,6 +66,10 @@ class MapViewModel  @Inject constructor(
 
     private var itemId: Int = 0
 
+    private val _username = MutableLiveData<String>()
+    val username: LiveData<String> = _username
+
+
     init {
         // Set granting state
         _isLocGranted.value = false
@@ -129,6 +133,8 @@ class MapViewModel  @Inject constructor(
                 // Fetch nearby objects
                 objs = mapUseCases.getNearbyObjects(userLoc)
 
+                _username.value = mapUseCases.readUser().displayName
+
             }.onFailure { e ->
                 // Handle error only if user location is null
                 Log.d(TAG, "Error fetching data: ${e.message}")
@@ -152,6 +158,8 @@ class MapViewModel  @Inject constructor(
 
                 // Set loading state to false
                 _isLoading.value = false
+
+
             }
         }
     }

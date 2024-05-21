@@ -76,13 +76,14 @@ class InventoryViewModel @Inject constructor(
                 result.observeForever { gameItemList ->
                     if (gameItemList != null && !completed) {
                         for (i in gameItemList.indices) {
+
                             val properties = gameItemList[i].split(" ")
-                            val id = properties[0]
+                            val owner = properties[0]
                             val itemId = properties[1]
                             val rarity = properties[2]
                             val hp = properties[3]
                             val damage = properties[4]
-                            items.add(GameItem(id, itemId.toInt(), rarity.toInt(), hp.toInt(), damage.toInt()))
+                            items.add(GameItem(owner, itemId.toInt(), rarity.toInt(), hp.toInt(), damage.toInt()))
                         }
                         completed = true
                         _isLoading.value = false
