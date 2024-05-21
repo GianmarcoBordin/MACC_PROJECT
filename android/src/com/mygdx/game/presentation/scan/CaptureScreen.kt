@@ -55,7 +55,7 @@ import com.mygdx.game.presentation.scan.events.UpdateMappingEvent
 @Composable
 fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHandler: (GameEvent.StartGame) -> Unit,
                   lineAddHandler: (LineEvent.AddNewLine) -> Unit, lineDeleteHandler: (LineEvent.DeleteAllLines) -> Unit,
-                  addDatabaseHandler: (UpdateDatabaseEvent.AddItem) -> Unit, updateDatabaseHandler: (UpdateDatabaseEvent.IncrementItemStats) -> Unit,
+                  addDatabaseHandler: (UpdateDatabaseEvent.AddItem) -> Unit,
                   resetGameHandler: (GameEvent.ResetGame) -> Unit, updateMappingHandler: (UpdateMappingEvent.UpdateMapping) -> Unit) {
     // collectAsState() allows Canvas' recomposition
     val gameState by viewModel.state.collectAsState()
@@ -178,28 +178,7 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                             text = "Item captured!"
                         )
 
-                        val textStats: String
-                        if (!gameState.owned) {
-                            addDatabaseHandler(UpdateDatabaseEvent.AddItem)
-                            textStats = "Stats: \n" +
-                                    "- HP: ${gameState.gameItem.hp}\n" +
-                                    "- Damage: ${gameState.gameItem.damage}"
-                        } else {
-                            updateDatabaseHandler(UpdateDatabaseEvent.IncrementItemStats(1, 1))
-                            val rarity: String = when(gameState.gameItem.rarity) {
-                                1 -> Constants.RARITY_1_COLOR
-                                2 -> Constants.RARITY_2_COLOR
-                                3 -> Constants.RARITY_3_COLOR
-                                4 -> Constants.RARITY_4_COLOR
-                                5 -> Constants.RARITY_5_COLOR
-                                else -> Constants.RARITY_1_COLOR
-                            }
-                            textStats = "Your $rarity Gunner has received an upgrade!\n" +
-                                    "Updated Stats: \n" +
-                                    "- HP: ${viewModel.ownedGameItem.hp + 1}\n" +
-                                    "- Damage: ${viewModel.ownedGameItem.damage + 1}"
-                        }
-
+                        addDatabaseHandler(UpdateDatabaseEvent.AddItem)
                         updateMappingHandler(UpdateMappingEvent.UpdateMapping(gameState.itemId))
 
                         Text(
@@ -208,7 +187,9 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
                             textAlign = TextAlign.Center,
                             fontSize = 18.sp,
                             color = MaterialTheme.colorScheme.onSurface,
-                            text = textStats
+                            text = "Stats: \n" +
+                                    "- HP: ${gameState.gameItem.hp}\n" +
+                                    "- Damage: ${gameState.gameItem.damage}"
                         )
                         ElevatedButton(
                             modifier = Modifier

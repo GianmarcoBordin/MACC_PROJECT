@@ -41,7 +41,6 @@ import com.mygdx.game.domain.usecase.appEntry.SaveUser
 import com.mygdx.game.domain.usecase.ar.ARUseCases
 import com.mygdx.game.domain.usecase.ar.AddGameItem
 import com.mygdx.game.domain.usecase.ar.GetGameItem
-import com.mygdx.game.domain.usecase.ar.SaveSkin
 import com.mygdx.game.domain.usecase.inventory.GetGameItemsUser
 import com.mygdx.game.domain.usecase.auth.AuthCheck
 import com.mygdx.game.domain.usecase.auth.AuthenticationUseCases
@@ -284,8 +283,7 @@ object AppModule {
     ) = ARUseCases(
         addGameItem = AddGameItem(arManager),
         getGameItem = GetGameItem(arManager),
-        fetchUserProfile = ReadUser(localUserManager),
-        saveSkin = SaveSkin(arManager)
+        fetchUserProfile = ReadUser(localUserManager)
     )
 
     @Provides

@@ -95,7 +95,6 @@ fun NavGraph(
                     gameHandler = arViewModel::onGameEvent,
                     lineAddHandler = arViewModel::onLineEvent,
                     lineDeleteHandler = arViewModel::onLineEvent,
-                    updateDatabaseHandler = arViewModel::onUpdateDatabaseEvent,
                     addDatabaseHandler = arViewModel::onUpdateDatabaseEvent,
                     resetGameHandler = arViewModel::onGameEvent,
                     updateMappingHandler = mapViewModel::onUpdateMappingEvent
@@ -137,9 +136,7 @@ fun NavGraph(
             ArHomeScreen(
                 multiplayer = multiplayer,
                 navController = navController,
-                viewModel = viewModel,
-                multiplayerHandler = viewModel::onMultiplayerEvent
-
+                viewModel = viewModel
             )
         }
     }

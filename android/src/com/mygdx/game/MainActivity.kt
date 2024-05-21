@@ -67,15 +67,18 @@ class MainActivity : ComponentActivity(){
 
         val sharedPreferences = applicationContext.getSharedPreferences(USER_SETTINGS2, Context.MODE_PRIVATE)
 
-        Log.d("DEBUG", "$gameItems")
+        Log.d("DEBUG", "$gameItems <---")
 
         // read username from shared preferences and pass it to the libgdx game
         val userName = sharedPreferences.getString(USERNAME,"")?.replace("\\\"", "")?.replace("\"","") ?: ""
         val userEmail = sharedPreferences.getString(USER,"")?.replace("\\\"", "")?.replace("\"","") ?: ""
 
-        // read characters from username
-        val characters = getUserCharacters(sharedPreferences)
-
+        // convert game item list into character type list
+        val characters: MutableList<CharacterType> = mutableListOf()
+        gameItems.forEach { gameItem ->
+            val character = CharacterType(fromIntegerToSkin(gameItem.rarity), gameItem.hp, gameItem.damage)
+            characters.add(character)
+        }
 
         // Specify the intent
         val intent = Intent(this, AndroidLauncher::class.java)
@@ -85,28 +88,6 @@ class MainActivity : ComponentActivity(){
         intent.putExtra(USER, userEmail.removeCharactersAfterAt())
 
         startActivity(intent)
-    }
-
-    private fun getUserCharacters(sharedPreferences: SharedPreferences): List<CharacterType>{
-        val characters = mutableListOf<CharacterType>()
-
-        for (i in 1..5){
-            val skin = sharedPreferences.getString("SKIN_$i","")
-            if (skin != null) {
-                if (skin.isNotEmpty()){
-
-                    // convert to json object
-                    val jsonObject = JSONObject(skin)
-                    val hp = jsonObject.getString("hp")
-                    val damage = jsonObject.getString("damage")
-                    Log.d("DEBUG","HP: $hp, DAMAGE: $damage")
-
-                    val characterType = CharacterType(fromIntegerToSkin(i), hp.toInt(), damage.toInt())
-                    characters.add(characterType)
-                }
-            }
-        }
-        return characters
     }
 }
 

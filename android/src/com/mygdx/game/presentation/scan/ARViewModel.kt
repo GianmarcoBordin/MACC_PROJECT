@@ -130,6 +130,7 @@ class ARViewModel @Inject constructor(
     // (it requires more bandwidth, but provide no benefit for the user)
     fun onUpdateDatabaseEvent(event: UpdateDatabaseEvent) {
         when (event) {
+            /*
             is UpdateDatabaseEvent.IncrementItemStats -> {
                 val updatedGameItem = GameItem(ownedGameItem.owner,
                     ownedGameItem.itemId,
@@ -140,7 +141,7 @@ class ARViewModel @Inject constructor(
                     arUseCases.addGameItem(updatedGameItem)
                 }
             }
-
+            */
             UpdateDatabaseEvent.AddItem -> {
                 val username = arUseCases.fetchUserProfile().displayName
                 val newGameItem = GameItem(username,
@@ -153,10 +154,6 @@ class ARViewModel @Inject constructor(
                 }
             }
         }
-        viewModelScope.launch {
-            arUseCases.saveSkin()
-        }
-
     }
 
     fun onGameEvent(event: GameEvent) {

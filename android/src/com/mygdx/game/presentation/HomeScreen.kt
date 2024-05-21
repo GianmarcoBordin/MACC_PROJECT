@@ -23,7 +23,6 @@ import androidx.compose.material.Surface
 
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material.icons.outlined.Gamepad
 import androidx.compose.material.icons.outlined.Inventory2
 import androidx.compose.material.icons.outlined.Place
@@ -54,7 +53,6 @@ import com.mygdx.game.presentation.components.CustomBackHandler
 import com.mygdx.game.presentation.components.ExitPopup
 import com.mygdx.game.presentation.components.LogoUserImage
 import com.mygdx.game.presentation.components.UserGreeting
-import com.mygdx.game.presentation.event.MultiplayerEvent
 import com.mygdx.game.presentation.navgraph.Route
 
 import com.mygdx.game.ui.theme.ArAppTheme
@@ -63,8 +61,7 @@ import com.mygdx.game.ui.theme.ArAppTheme
 fun ArHomeScreen(
     multiplayer: Multiplayer,
     navController: NavController,
-    viewModel: MainViewModel,
-    multiplayerHandler: (MultiplayerEvent.GetSkinEvent) -> Unit
+    viewModel: MainViewModel
 ) {
     // mutable state
     val userProfile by viewModel.userProfile.observeAsState()
@@ -88,7 +85,6 @@ fun ArHomeScreen(
         Surface(
             color = MaterialTheme.colorScheme.background
         ) {
-            //multiplayerHandler(MultiplayerEvent.GetSkinEvent)
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {

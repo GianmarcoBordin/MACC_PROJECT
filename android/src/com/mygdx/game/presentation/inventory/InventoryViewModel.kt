@@ -53,7 +53,8 @@ class InventoryViewModel @Inject constructor(
                     items[event.index].rarity,
                     items[event.index].hp,
                     items[event.index].damage,
-                    event.bitmap.asAndroidBitmap())
+                    event.bitmap.asAndroidBitmap()
+                )
             }
         }
     }
@@ -76,14 +77,13 @@ class InventoryViewModel @Inject constructor(
                 result.observeForever { gameItemList ->
                     if (gameItemList != null && !completed) {
                         for (i in gameItemList.indices) {
-
                             val properties = gameItemList[i].split(" ")
                             val owner = properties[0]
-                            val itemId = properties[1]
+                            val id = properties[1]
                             val rarity = properties[2]
                             val hp = properties[3]
                             val damage = properties[4]
-                            items.add(GameItem(owner, itemId.toInt(), rarity.toInt(), hp.toInt(), damage.toInt()))
+                            items.add(GameItem(owner, id.toInt(), rarity.toInt(), hp.toInt(), damage.toInt()))
                         }
                         completed = true
                         _isLoading.value = false

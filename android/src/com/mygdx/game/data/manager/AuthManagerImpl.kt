@@ -66,23 +66,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                 }
                 // save user rank
                 localUserManager.saveScore(rank)
-                for (i in 1..5){
-                    val res = dataRepository.getGameItem(name, i.toString()).value
-                    if (res?.isNotEmpty() == true) {
-                        val skin = res[0].split(" ")
 
-                        val gameItem = GameItem(
-                            owner = skin[0],
-                            itemId = skin[1].toInt(),
-                            rarity = skin[2].toInt(),
-                            hp = skin[3].toInt(),
-                            damage = skin[4].toInt()
-                        )
-                        println(gameItem)
-                        // save user skin
-                        localUserManager.saveObject("SKIN_${i}", gameItem)
-                    }
-                }
                 // save bio application state
                 val bio = Biometric(userEmail = email, userPass = password)
                 localUserManager.saveBio(bio)
@@ -155,24 +139,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                             } else {
                                 Rank(name, 0)
                             }
-                            for (i in 1..5) {
-                                val res = dataRepository.getGameItem(name, i.toString()).value
-                                if (res?.isNotEmpty() == true) {
-                                    val skin =
-                                        dataRepository.getGameItem(name, i.toString()).value?.get(0)
-                                            ?.split(" ")
-                                            ?: emptyList()
-                                    val gameItem = GameItem(
-                                        owner = skin[0],
-                                        itemId = skin[1].toInt(),
-                                        rarity = skin[2].toInt(),
-                                        hp = skin[3].toInt(),
-                                        damage = skin[4].toInt()
-                                    )
-                                    // save user skin
-                                    localUserManager.saveObject("SKIN_${i}", gameItem)
-                                }
-                            }
+
                             // save user rank
                             localUserManager.saveScore(rank)
                             callbacks.invoke(BIO_AUTH_SUCCESS)
@@ -230,23 +197,7 @@ class AuthManagerImpl @Inject constructor (private val firebaseAuth: FirebaseAut
                                         // Save user rank
                                         val rank = Rank(name, 0)
                                         localUserManager.saveScore(rank)
-                                        for (i in 1..5){
-                                            val res = dataRepository.getGameItem(name, i.toString()).value
-                                            if (res?.isNotEmpty() == true) {
-                                                val skin =
-                                                    dataRepository.getGameItem(name, i.toString()).value?.get(0)?.split(" ")
-                                                        ?: emptyList()
-                                                val gameItem = GameItem(
-                                                    owner = skin[0],
-                                                    itemId = skin[1].toInt(),
-                                                    rarity = skin[2].toInt(),
-                                                    hp = skin[3].toInt(),
-                                                    damage = skin[4].toInt()
-                                                )
-                                                // save user skin
-                                                localUserManager.saveObject("SKIN_${i}", gameItem)
-                                            }
-                                        }
+
                                         // Post player data
                                         val player= Player(
                                             username = name,
