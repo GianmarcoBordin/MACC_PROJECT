@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mygdx.game.data.dao.GameItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -142,12 +143,30 @@ class MapViewModel  @Inject constructor(
                 stopLocationUpdates()
             }.onSuccess {
 
+
+                val username = mapUseCases.readUser().displayName
+                // set if the player already owns the item
+                val owned_items = mutableListOf<Int>()
+                // Fetch data asynchronously
+                val result = mapUseCases.getGameItemsUser(username)
+
+                result.observeForever { gameItemList ->
+                    if (gameItemList != null) {
+                        for (i in gameItemList.indices) {
+                            val properties = gameItemList[i].split(" ")
+                            val id = properties[1]
+                            owned_items.add(id.toInt())
+                        }
+                    }
+                }
+
                 for (i in 0..<objs?.size!!){
-                    if (objs!![i].itemId == itemId){
+                    if (objs!![i].itemId == itemId || objs!![i].itemId in owned_items ){
                         objs?.removeAt(i)
                         break
                     }
                 }
+
 
                 Log.d(TAG, "Success fetching data, players: $ps Objects: $objs")
 
