@@ -17,7 +17,7 @@ import com.mygdx.game.util.Constants.BIO_AUTH_SUCCESS
 import com.mygdx.game.util.Constants.LOGIN_SUCCESS
 import com.mygdx.game.util.Constants.SIGN_UP_SUCCESS
 import com.mygdx.game.util.Constants.USER_AUTH
-import kotlinx.coroutines.delay
+
 import javax.inject.Inject
 
 /* Class responsible for handling authentication related events. It relies on the appEntryUseCases dependency
@@ -53,7 +53,7 @@ class AuthenticationViewModel  @Inject constructor(
                 goSignIn(event.email, event.password)
             }
 
-            else -> {}
+
         }
     }
 
@@ -65,7 +65,7 @@ class AuthenticationViewModel  @Inject constructor(
                 goSignUp(event.name, event.email, event.password, event.confirmPass)
             }
 
-            else -> {}
+
         }
     }
 
@@ -78,7 +78,6 @@ class AuthenticationViewModel  @Inject constructor(
                 goBioSignIn(event.context, event.callback)
             }
 
-            else -> {}
         }
     }
 

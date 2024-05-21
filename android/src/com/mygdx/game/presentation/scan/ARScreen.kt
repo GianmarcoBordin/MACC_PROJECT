@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -141,7 +142,7 @@ fun Screen(focusHandler: (FocusEvent.Focus) -> Unit, visibilityHandler: (Visibil
         val planeRenderer by remember { mutableStateOf(true) }
         var isVisible by remember { mutableStateOf(false) }
         // variable used to update the circular progress bar
-        var counter by remember { mutableStateOf(0f) }
+        var counter by remember { mutableFloatStateOf(0f) }
 
         val modelInstances = remember { mutableListOf<ModelInstance>() }
         var trackingFailureReason by remember {

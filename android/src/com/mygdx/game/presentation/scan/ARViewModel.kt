@@ -54,12 +54,12 @@ class ARViewModel @Inject constructor(
     // counter for the presence of the bullets on the screen
     private var justShoot = 0
 
-    private var curr_id:Int = -1
+    private var currId:Int = -1
 
     // GameItem retrieved by the DataStore (the one generated from the server)
     private var gameItem: GameItem = GameItem()
     // GameItem retrieved by the database (the one the player has already captured)
-    var ownedGameItem: GameItem = GameItem()
+    private var ownedGameItem: GameItem = GameItem()
 
     private val _state = MutableStateFlow(GameState())
     val state = _state.asStateFlow()
@@ -187,7 +187,7 @@ class ARViewModel @Inject constructor(
                         if (it.isNotEmpty()) {
                             // because the player already owns an item, then retrieve it immediately and store it
                             val owner = it[0]
-                            curr_id = it[0].replace("item","").toInt()
+                            currId = it[0].replace("item","").toInt()
                             val itemId = it[1]
                             val rarity = it[2]
                             val hp = it[3]
@@ -394,20 +394,20 @@ class ARViewModel @Inject constructor(
         nex1: Offset,
         nex2: Offset
     ): Boolean {
-        val s1_x = pos2.x - pos1.x
-        val s1_y = pos2.y - pos1.y
-        val s2_x = nex2.x - nex1.x
-        val s2_y = nex2.y - nex1.y
+        val s1X = pos2.x - pos1.x
+        val s1Y = pos2.y - pos1.y
+        val s2X = nex2.x - nex1.x
+        val s2Y = nex2.y - nex1.y
         val s =
-            (-s1_y * (pos1.x - nex1.x) + s1_x * (pos1.y - nex1.y)) / (-s2_x * s1_y + s1_x * s2_y)
-        val t = (s2_x * (pos1.y - nex1.y) - s2_y * (pos1.x - nex1.x)) / (-s2_x * s1_y + s1_x * s2_y)
+            (-s1Y * (pos1.x - nex1.x) + s1X * (pos1.y - nex1.y)) / (-s2X * s1Y + s1X * s2Y)
+        val t = (s2X * (pos1.y - nex1.y) - s2Y * (pos1.x - nex1.x)) / (-s2X * s1Y + s1X * s2Y)
         // if one of the 3 conditions is true, then a collision happened
         return s in 0.0..1.0 && t >= 0 && t <= 1
     }
 
     private fun findFirstCircle(lines: List<Line>): List<Line> {
         var circle = ArrayList<Line>()
-        for (i in 0 until lines.size) {
+        for (i in lines.indices) {
             // extreme points of each line
             val pos1: Offset = lines[i].start
             val pos2: Offset = lines[i].end
@@ -438,7 +438,7 @@ class ARViewModel @Inject constructor(
         // the y coordinate is changed so that it intersects with all the lines of the circle in the up direction
         // it is changed to the max height of all points + 100 (to be sure)
         var counter = 0
-        for (j in 0 until circle.size) {
+        for (j in circle.indices) {
             if (linesIntersection2D(
                     objectPosition,
                     northPosition,

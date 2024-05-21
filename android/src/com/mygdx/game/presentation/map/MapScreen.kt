@@ -308,8 +308,8 @@ fun OsmMap(
         mutableStateOf("")
     }
 
-    var pathOverlay: Polyline = Polyline()
-    var userMarker: Marker = Marker(MapView(LocalContext.current))
+    var pathOverlay = Polyline()
+    var userMarker = Marker(MapView(LocalContext.current))
     val playersMarker: MutableList<Marker> = mutableListOf()
 
     val playerMarkerIcon = ImageBitmap.imageResource(R.drawable.main_player_location)

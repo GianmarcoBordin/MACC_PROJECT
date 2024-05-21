@@ -64,18 +64,12 @@ fun CustomBackHandler(
 
 @Composable
 fun BackButton(onClick: () -> Unit) {
-    Box(
-        modifier = Modifier
-            .background(
-                color = MaterialTheme.colorScheme.surface,
-                //shape = RoundedCornerShape(20.dp)
-            )
-    ){
+    Box{
         IconButton(
             onClick = onClick,
             modifier = Modifier
                 .padding(8.dp)
-                .background(MaterialTheme.colorScheme.surface)
+
         ) {
             BackIcon()
         }

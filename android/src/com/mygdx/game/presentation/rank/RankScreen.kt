@@ -254,10 +254,10 @@ fun UserRankingItem(userRanking: String) {
     }
 }
 
-
+/*
 @Preview
 @Composable
 fun preview(){
     UserRankingItem(userRanking = "Gabriele 200")
-}
+}*/
 

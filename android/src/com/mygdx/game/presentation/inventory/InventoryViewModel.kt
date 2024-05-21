@@ -10,6 +10,7 @@ import com.mygdx.game.data.dao.GameItem
 import com.mygdx.game.domain.usecase.inventory.InventoryUseCases
 import com.mygdx.game.presentation.inventory.events.GameItemEvent
 import com.mygdx.game.presentation.inventory.events.ItemEvent
+import com.mygdx.game.presentation.inventory.events.UpdateItemsEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -57,6 +58,44 @@ class InventoryViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    fun onUpdateMergedItemEvent(event: UpdateItemsEvent){
+
+        when (event) {
+            UpdateItemsEvent.UpdateMergedItems -> {
+
+                // group items by rarity
+                val itemsToMerge = items.groupBy { it.rarity }
+                Log.d("DEBUG","$itemsToMerge")
+                val newMergedItems = mutableListOf<GameItem>()
+                itemsToMerge.forEach { (_, groupedItems) ->
+
+                    // if the group contains one item than add it to the new item list
+                    if (groupedItems.size == 1){
+                        newMergedItems.add(groupedItems[0])
+                    }
+
+                    // otherwise merge all the item in the same list
+                    else if (groupedItems.size > 1) {
+
+                        val mergedItem = groupedItems.reduce { acc, item ->
+                            GameItem(
+                                itemId = acc.itemId, // TODO how to merge item id?
+                                hp = acc.hp + item.hp,
+                                damage = acc.damage + item.damage,
+                                rarity = item.rarity
+                            )
+                        }
+                        newMergedItems.add(mergedItem)
+                    }
+                }
+                items = newMergedItems
+                // TODO store the new merged item in the database
+            }
+        }
+
+
     }
 
     private fun retrieveItems() {
@@ -108,7 +147,7 @@ class InventoryViewModel @Inject constructor(
         release()
     }
 
-    fun release() {
+    private fun release() {
         items = emptyList<GameItem>().toMutableList()
     }
 

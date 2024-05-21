@@ -104,8 +104,10 @@ fun NavGraph(
                 route = Route.InventoryScreen.route
             ) {
                 val viewModel : InventoryViewModel = hiltViewModel()
-                InventoryScreen(retrieveItemsHandler = viewModel::onItemEvent,
+                InventoryScreen(
+                    retrieveItemsHandler = viewModel::onItemEvent,
                     updateBitmapHandler = viewModel::onGameItemEvent,
+                    updateItemsHandler = viewModel::onUpdateMergedItemEvent,
                     navController = navController,
                     viewModel = viewModel)
             }
