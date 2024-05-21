@@ -57,13 +57,13 @@ class MainViewModel @Inject constructor(
 
     fun release(){
         Log.d("MAIN VIEW","releasing resources")
-        _userProfile.value=null
+        _userProfile.value = null
     }
 
     fun resume(){
-        _userProfile.value=appEntryUseCases.readUser()
+        _userProfile.value = appEntryUseCases.readUser()
         getSkin()
-        Log.d("MAIN VIEW","resuming resources ${_userProfile.value}")
+        Log.d("MAIN VIEW","resuming resources ${_userProfile.value} ${skinItems.value}")
     }
 
     private fun getSkin() {

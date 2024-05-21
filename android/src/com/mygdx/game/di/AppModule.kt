@@ -49,6 +49,7 @@ import com.mygdx.game.domain.usecase.auth.SignIn
 import com.mygdx.game.domain.usecase.auth.SignUp
 import com.mygdx.game.domain.usecase.home.HomeUseCases
 import com.mygdx.game.domain.usecase.inventory.InventoryUseCases
+import com.mygdx.game.domain.usecase.inventory.MergeItems
 import com.mygdx.game.domain.usecase.map.FetchUserLocation
 import com.mygdx.game.domain.usecase.map.GetContext
 import com.mygdx.game.domain.usecase.map.GetNearbyObjects
@@ -293,7 +294,8 @@ object AppModule {
         localUserManager: LocalUserManager
     ) = InventoryUseCases(
         getGameItemsUser = GetGameItemsUser(inventoryManager) ,
-        fetchUserProfile = ReadUser(localUserManager)
+        fetchUserProfile = ReadUser(localUserManager),
+        mergeItems = MergeItems(inventoryManager)
     )
 
     @Provides

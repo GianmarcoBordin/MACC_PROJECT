@@ -11,9 +11,9 @@ interface DataRepository {
     suspend fun postRank(request: Rank): LiveData<String>
     suspend fun postPlayer(request: Player): LiveData<String>
     suspend fun postGameItem(request: GameItem): LiveData<String>
+    suspend fun deleteGameItem(gameItem: GameItem): LiveData<String>
     suspend fun getGameItem(user: String,rarity:String): LiveData<List<String>>
     suspend fun fetchUserData(user : String): LiveData<List<String>>
     suspend fun getGameItemsUser(user: String): LiveData<List<String>>
-    suspend fun mergeItems(itemId1: Int, itemId2: Int): LiveData<String>
 }
 

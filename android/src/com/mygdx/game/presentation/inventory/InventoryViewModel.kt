@@ -60,7 +60,7 @@ class InventoryViewModel @Inject constructor(
         }
     }
 
-    fun onUpdateMergedItemEvent(event: UpdateItemsEvent){
+    fun onUpdateMergedItemEvent(event: UpdateItemsEvent) {
 
         when (event) {
             UpdateItemsEvent.UpdateMergedItems -> {
@@ -71,17 +71,28 @@ class InventoryViewModel @Inject constructor(
                 val newMergedItems = mutableListOf<GameItem>()
                 itemsToMerge.forEach { (_, groupedItems) ->
 
-                    // if the group contains one item than add it to the new item list
+                    // if the group contains one item then add it to the new item list
                     if (groupedItems.size == 1){
                         newMergedItems.add(groupedItems[0])
                     }
-
                     // otherwise merge all the item in the same list
                     else if (groupedItems.size > 1) {
 
+                        // save the item that has the most damage among the captured ones
+                        var max = 0
+                        var index = 0
+                        for (i in groupedItems.indices) {
+                            if (groupedItems[i].damage > max) {
+                                max = groupedItems[i].damage
+                                index = i
+                            }
+                        }
+
                         val mergedItem = groupedItems.reduce { acc, item ->
                             GameItem(
-                                itemId = acc.itemId, // TODO how to merge item id?
+                                owner = item.owner,
+                                // select the itemId of the item that has the most damage
+                                itemId = if (item.damage == groupedItems[index].damage) item.itemId else acc.itemId,
                                 hp = acc.hp + item.hp,
                                 damage = acc.damage + item.damage,
                                 rarity = item.rarity
@@ -90,12 +101,13 @@ class InventoryViewModel @Inject constructor(
                         newMergedItems.add(mergedItem)
                     }
                 }
-                items = newMergedItems
-                // TODO store the new merged item in the database
+                viewModelScope.launch {
+                    // before assignment, delete previous items (items list) from db
+                    inventoryUseCases.mergeItems(newMergedItems, items)
+                    items = newMergedItems
+                }
             }
         }
-
-
     }
 
     private fun retrieveItems() {

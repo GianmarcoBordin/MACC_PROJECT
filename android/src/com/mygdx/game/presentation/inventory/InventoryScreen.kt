@@ -147,7 +147,7 @@ fun InventoryScreen(retrieveItemsHandler: (ItemEvent.RetrieveItems) -> Unit,
 
                             InventoryPage(viewModel.items, innerPadding, updateBitmapHandler)
 
-                            if (openDialog.value){
+                            if (openDialog.value) {
                                 SelectDialog(
                                     onDismissRequest = {openDialog.value = false},
                                     onMergeClick = {
@@ -156,16 +156,12 @@ fun InventoryScreen(retrieveItemsHandler: (ItemEvent.RetrieveItems) -> Unit,
                                     }
                                 )
                             }
-
-
                         }
                     }
-
                 }
             }
         )
     }
-
 }
 
 
@@ -183,7 +179,6 @@ fun InventoryPage(items: List<GameItem>, innerPadding: PaddingValues, updateBitm
             }
             InventoryItem(items[index])
         }
-
     }
 }
 
@@ -220,7 +215,6 @@ fun InventoryItem(item: GameItem) {
             }
         }
     }
-
 }
 
 

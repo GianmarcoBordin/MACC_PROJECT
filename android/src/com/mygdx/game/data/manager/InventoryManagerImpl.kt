@@ -2,6 +2,7 @@ package com.mygdx.game.data.manager
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.mygdx.game.data.dao.GameItem
 import com.mygdx.game.domain.api.DataRepository
 import com.mygdx.game.domain.manager.InventoryManager
 import javax.inject.Inject
@@ -15,5 +16,16 @@ class InventoryManagerImpl @Inject constructor(private val dataRepository: DataR
         }
 
         return gameItemLiveData
+    }
+
+    override suspend fun mergeItems(mergedItems: List<GameItem>, itemsToDelete: List<GameItem>) {
+        // first, deletes all previously saved items
+        itemsToDelete.forEach { item ->
+            dataRepository.deleteGameItem(item)
+        }
+        // then, repopulates the db with the new merged items
+        mergedItems.forEach {  item ->
+            dataRepository.postGameItem(item)
+        }
     }
 }

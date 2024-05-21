@@ -191,6 +191,18 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
         return resultLiveData
     }
 
+    override suspend fun deleteGameItem(gameItem: GameItem): LiveData<String> {
+        // TODO create a function that deletes one gameitem at a time
+
+        // TODO test this implementation with the map feature that shows only not captured items (it is likely that it will be broken)
+        // TODO test scenario: capture two items with same rarity, merge them, close the app, go back to the map
+
+        // this two lines are deletable
+        // used only not to generate errors
+        val data = MutableLiveData<String>()
+        return data
+    }
+
     override suspend fun getGameItem(user: String, rarity:String): LiveData<List<String>> {
         val data = MutableLiveData<List<String>>()
 
@@ -286,31 +298,5 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
         }
 
         return data
-    }
-
-    override suspend fun mergeItems(itemId1: Int, itemId2: Int): LiveData<String> {
-        val resultLiveData = MutableLiveData<String>()
-
-        try {
-            val response = suspendCoroutine { continuation ->
-                val merge = Merge(itemId1 = itemId1, itemId2 = itemId2)
-                rankApi?.mergeItems(merge)?.enqueue(object : Callback<Result<ResponseBody>> {
-                    override fun onResponse(
-                        call: Call<Result<ResponseBody>>,
-                        response: Response<Result<ResponseBody>>
-                    ) {
-                        continuation.resume(response)                        }
-
-                    override fun onFailure(call: Call<Result<ResponseBody>>, t: Throwable) {
-                        continuation.resumeWithException(t)
-                    }
-                })
-            }
-            resultLiveData.value =response.isSuccessful.toString()
-        } catch (e: Exception) {
-            resultLiveData.value = e.message
-        }
-
-        return resultLiveData
     }
 }
