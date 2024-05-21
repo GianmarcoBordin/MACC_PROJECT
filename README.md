@@ -8,7 +8,7 @@ AR Battle Game is an Augmented Reality (AR) video game developed with Kotlin for
 
 1. Clone this repository:
     ```bash
-    git clone https://github.com/your-username/ar-battle-game.git
+    git clone https://github.com/GianmarcoBordin/MACC_PROJECT.git
     ```
 2. Open the project in Android Studio.
 3. Sync the project with Gradle.
