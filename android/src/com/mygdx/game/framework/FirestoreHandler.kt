@@ -20,16 +20,16 @@ fun postPlayerToFirestore(firestore: FirebaseFirestore, player: Player): Boolean
         if (e.code == FirebaseFirestoreException.Code.UNKNOWN) {
             // The exception is due to an unknown error, which might be a 500 error
             // Handle the 500 error here or return false
-            Log.d("AuthManager", "Failed to update player in Firestore cause: ${e.message}")
+            Log.d("AuthManager", "Failed to post player in Firestore cause: ${e.message},${player.username}")
             false
         } else {
             // Handle other Firestore-specific errors
             // For example, log the error
-            Log.d("AuthManager", "Firestore Error, failed to update player in Firestore cause: ${e.message}")
+            Log.d("AuthManager", "Failed to post player in Firestore cause: ${e.message},${player.username}")
             false
         }
     }catch (e :Exception){
-        Log.d("AuthManager", "Firestore Error, failed to update player in Firestore cause: ${e.message}")
+        Log.d("AuthManager", "Failed to post player in Firestore cause: ${e.message},${player.username}")
         false
     }
 }

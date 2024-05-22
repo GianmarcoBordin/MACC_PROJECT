@@ -33,6 +33,17 @@ class InventoryViewModel @Inject constructor(
     private var completed: Boolean = false
 
     init {
+        // TEST
+        val gameItem1 = GameItem(itemId = 3)
+        val gameItem2 = GameItem(itemId = 9)
+        val gameItem3 = GameItem(itemId = 5)
+        val debugList : List<GameItem> = listOf(gameItem1,gameItem2,gameItem3)
+        viewModelScope.launch {
+            inventoryUseCases.saveOldItems(debugList)
+            inventoryUseCases.deleteGameItem(debugList.get(0))
+
+        }
+        //
         retrieveItems()
     }
 
@@ -103,8 +114,14 @@ class InventoryViewModel @Inject constructor(
                 }
                 viewModelScope.launch {
                     // before assignment, delete previous items (items list) from db
-                    inventoryUseCases.mergeItems(newMergedItems, items)
                     items = newMergedItems
+                    val itemsToDelete: List<GameItem> = items.filter { item1 ->
+                        newMergedItems.none { item2 -> item2.itemId == item1.itemId }
+                    }
+                    itemsToDelete.forEach{ deleteGameItem ->
+                        inventoryUseCases.deleteGameItem(deleteGameItem)
+                    }
+                    inventoryUseCases.saveOldItems(itemsToDelete)
                 }
             }
         }

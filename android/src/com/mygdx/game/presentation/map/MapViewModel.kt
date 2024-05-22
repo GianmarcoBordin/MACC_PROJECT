@@ -157,14 +157,37 @@ class MapViewModel  @Inject constructor(
                             val id = properties[1]
                             ownedItems.add(id.toInt())
                         }
+                        var reset = false
+                        val season = mapUseCases.checkSeason()
+                        objs?.forEach { obj ->
+                            if (obj.itemId == 0 && obj.itemRarity > season.toInt()){
+                                reset = true
+                                viewModelScope.launch {
+                                    mapUseCases.saveSeason(obj.itemRarity.toString())
+                                }
+                                }
+                        }
 
+                        if (reset) {
+                            viewModelScope.launch {
+                                mapUseCases.saveOldItems(listOf())
+                            }
+                        }else{
+                            val oldGameItemsList = mapUseCases.readOldGameItems()
+                            oldGameItemsList.forEach { oldGameItemString ->
+                                ownedItems.add(oldGameItemString.toInt())
+                            }
+                        }
                         val itemsToRemove = mutableListOf<Int>()
 
                         for (i in 0 until objs!!.size) {
-                            if (objs!![i].itemId == itemId || objs!![i].itemId in ownedItems) {
+                            if (objs!![i].itemId == itemId || objs!![i].itemId in ownedItems || objs!![i].itemId == 0) {
                                 itemsToRemove.add(i)
                             }
                         }
+
+
+                        Log.d("DEBEGGGGG","$itemsToRemove, $ownedItems")
 
                         // Remove items in reverse order to avoid indexing issues
                         for (i in itemsToRemove.size - 1 downTo 0) {
@@ -175,7 +198,6 @@ class MapViewModel  @Inject constructor(
 
                     }
                 }
-                Log.d("DEBUG","$ownedItems")
 
 
 

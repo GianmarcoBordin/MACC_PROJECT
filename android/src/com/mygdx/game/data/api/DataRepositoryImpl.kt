@@ -4,8 +4,8 @@ import android.content.ContentValues.TAG
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.mygdx.game.data.dao.DeleteGameItem
 import com.mygdx.game.data.dao.GameItem
-import com.mygdx.game.data.dao.Merge
 import com.squareup.okhttp.ResponseBody
 import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.dao.Rank
@@ -192,15 +192,29 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
     }
 
     override suspend fun deleteGameItem(gameItem: GameItem): LiveData<String> {
-        // TODO create a function that deletes one gameitem at a time
+        val deleteGameItem = DeleteGameItem(gameItem.itemId)
+        val resultLiveData = MutableLiveData<String>()
 
-        // TODO test this implementation with the map feature that shows only not captured items (it is likely that it will be broken)
-        // TODO test scenario: capture two items with same rarity, merge them, close the app, go back to the map
+        try {
+            val response = suspendCoroutine { continuation ->
+                rankApi?.deleteGameItem(deleteGameItem)?.enqueue(object : Callback<Result<ResponseBody>> {
+                    override fun onResponse(
+                        call: Call<Result<ResponseBody>>,
+                        response: Response<Result<ResponseBody>>
+                    ) {
+                        continuation.resume(response)                        }
 
-        // this two lines are deletable
-        // used only not to generate errors
-        val data = MutableLiveData<String>()
-        return data
+                    override fun onFailure(call: Call<Result<ResponseBody>>, t: Throwable) {
+                        continuation.resumeWithException(t)
+                    }
+                })
+            }
+            resultLiveData.value =response.isSuccessful.toString()
+        } catch (e: Exception) {
+            resultLiveData.value = e.message
+        }
+
+        return resultLiveData
     }
 
     override suspend fun getGameItem(user: String, rarity:String): LiveData<List<String>> {
