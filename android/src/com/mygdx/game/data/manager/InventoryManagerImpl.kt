@@ -19,11 +19,11 @@ class InventoryManagerImpl @Inject constructor(private val dataRepository: DataR
     }
 
     override suspend fun mergeItems(mergedItems: List<GameItem>, itemsToDelete: List<GameItem>) {
-        // first, deletes all previously saved items
+        // first, delete all previously saved items
         itemsToDelete.forEach { item ->
             dataRepository.deleteGameItem(item)
         }
-        // then, repopulates the db with the new merged items
+        // then, repopulate the db with the new merged items
         mergedItems.forEach {  item ->
             dataRepository.postGameItem(item)
         }
