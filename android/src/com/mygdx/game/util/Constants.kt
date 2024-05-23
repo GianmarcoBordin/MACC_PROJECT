@@ -4,6 +4,8 @@ package com.mygdx.game.util
 * Object to hold constant in all the application*/
 object Constants {
 
+    const val SEASON = "season"
+    const val OLD_GAME_ITEMS = "old game items"
     const val FIRESTORE_ID = "firestore"
     const val LOGIN_SUCCESS = "Login success"
     const val LOGIN_FAILED = "Login Failed"

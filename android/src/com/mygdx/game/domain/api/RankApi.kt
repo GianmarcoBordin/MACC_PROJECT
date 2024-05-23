@@ -1,5 +1,6 @@
 package com.mygdx.game.domain.api
 
+import com.mygdx.game.data.dao.DeleteGameItem
 import com.mygdx.game.data.dao.GameItem
 import com.mygdx.game.data.dao.Merge
 import com.squareup.okhttp.ResponseBody
@@ -34,6 +35,6 @@ interface RankApi {
     fun postGameItem(@Body request: GameItem): Call<Result<ResponseBody>>
 
     @POST("/game_items")
-    fun mergeItems(@Body merge: Merge): Call<Result<ResponseBody>>
+    fun deleteGameItem(@Body deleteGameItem: DeleteGameItem): Call<Result<ResponseBody>>
 }
 

@@ -32,5 +32,8 @@ interface LocalUserManager {
     suspend fun saveFirestoreDocumentId(name: String)
     fun readFirestoreDocumentId(): String
     fun getObjectList(key: String): List<String>
+    suspend fun saveOldItems(oldGameItems: List<GameItem>)
 
+    fun getSeason(): String
+    suspend fun  saveSeason(season: String)
 }

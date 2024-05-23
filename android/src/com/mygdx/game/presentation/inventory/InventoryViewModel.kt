@@ -33,6 +33,7 @@ class InventoryViewModel @Inject constructor(
     private var completed: Boolean = false
 
     init {
+
         retrieveItems()
     }
 
@@ -103,8 +104,14 @@ class InventoryViewModel @Inject constructor(
                 }
                 viewModelScope.launch {
                     // before assignment, delete previous items (items list) from db
-                    inventoryUseCases.mergeItems(newMergedItems, items)
                     items = newMergedItems
+                    val itemsToDelete: List<GameItem> = items.filter { item1 ->
+                        newMergedItems.none { item2 -> item2.itemId == item1.itemId }
+                    }
+                    itemsToDelete.forEach{ deleteGameItem ->
+                        inventoryUseCases.deleteGameItem(deleteGameItem)
+                    }
+                    inventoryUseCases.saveOldItems(itemsToDelete)
                 }
             }
         }

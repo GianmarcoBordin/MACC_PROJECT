@@ -5,5 +5,5 @@ import com.mygdx.game.data.dao.GameItem
 
 interface InventoryManager {
     suspend fun getGameItemsUser(username: String): LiveData<List<String>>
-    suspend fun mergeItems(mergedItems: List<GameItem>, itemsToDelete: List<GameItem>)
+    suspend fun deleteItems(gameItem: GameItem) :  LiveData<String>
 }

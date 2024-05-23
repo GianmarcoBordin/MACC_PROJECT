@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import com.mygdx.game.data.dao.Biometric
+import com.mygdx.game.data.dao.GameItem
 import com.mygdx.game.data.dao.Player
 import com.mygdx.game.data.dao.Rank
 import com.mygdx.game.data.dao.UserProfileBundle
@@ -177,6 +178,27 @@ class LocalUserManagerImpl(
         saveObject(Constants.USERNAME,userProfile.displayName)
     }
 
+    override suspend fun saveOldItems(oldGameItems: List<GameItem>) {
+        val idList = mutableListOf<Int>()
+        oldGameItems.forEach { gameItem ->
+            idList.add(gameItem.itemId)
+        }
+        saveObject(Constants.OLD_GAME_ITEMS,idList)
+    }
+
+    override fun getSeason(): String {
+        val data = context.dataStore.data
+        val preferences = runBlocking { data.first() } // Blocking operation to get the first emission
+        val season = preferences[PreferencesKeys.SEASON] ?: "-1"
+        return season
+    }
+
+    override suspend fun saveSeason(season: String) {
+        context.dataStore.edit { settings ->
+            settings[PreferencesKeys.SEASON] = season
+        }
+    }
+
     override fun setUpdateListener(ref: UpdateListener) {
         updateListener = ref
     }
@@ -199,5 +221,8 @@ private object PreferencesKeys{
     val EMAIL = stringPreferencesKey("email")
     // user ranking and player
     val SCORE = stringPreferencesKey("score")
+    // user ranking and player
+    val SEASON = stringPreferencesKey(name = Constants.SEASON)
+
 }
 

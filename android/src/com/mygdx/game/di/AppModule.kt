@@ -48,14 +48,18 @@ import com.mygdx.game.domain.usecase.auth.BioSignIn
 import com.mygdx.game.domain.usecase.auth.SignIn
 import com.mygdx.game.domain.usecase.auth.SignUp
 import com.mygdx.game.domain.usecase.home.HomeUseCases
+import com.mygdx.game.domain.usecase.inventory.DeleteGameItem
 import com.mygdx.game.domain.usecase.inventory.InventoryUseCases
-import com.mygdx.game.domain.usecase.inventory.MergeItems
+import com.mygdx.game.domain.usecase.inventory.SaveOldItems
+import com.mygdx.game.domain.usecase.map.CheckSeason
 import com.mygdx.game.domain.usecase.map.FetchUserLocation
 import com.mygdx.game.domain.usecase.map.GetContext
 import com.mygdx.game.domain.usecase.map.GetNearbyObjects
 import com.mygdx.game.domain.usecase.map.GetNearbyPlayers
 import com.mygdx.game.domain.usecase.map.GetRoute
 import com.mygdx.game.domain.usecase.map.MapUseCases
+import com.mygdx.game.domain.usecase.map.ReadOldGameItems
+import com.mygdx.game.domain.usecase.map.SaveSeason
 import com.mygdx.game.domain.usecase.map.StartLocUpdates
 import com.mygdx.game.domain.usecase.map.StopLocUpdates
 import com.mygdx.game.domain.usecase.map.UpdateItemLocation
@@ -273,7 +277,11 @@ object AppModule {
         updateUserLocation = UpdateUserLocation(rankManager),
         getContext = GetContext(contextManager),
         readUser = ReadUser(localUserManager),
-        getGameItemsUser = GetGameItemsUser(inventoryManager)
+        getGameItemsUser = GetGameItemsUser(inventoryManager),
+        readOldGameItems = ReadOldGameItems(localUserManager),
+        saveSeason = SaveSeason(localUserManager),
+        checkSeason = CheckSeason(localUserManager),
+        saveOldItems = SaveOldItems(localUserManager)
     )
 
     @Provides
@@ -295,7 +303,8 @@ object AppModule {
     ) = InventoryUseCases(
         getGameItemsUser = GetGameItemsUser(inventoryManager) ,
         fetchUserProfile = ReadUser(localUserManager),
-        mergeItems = MergeItems(inventoryManager)
+        deleteGameItem = DeleteGameItem(inventoryManager),
+        saveOldItems = SaveOldItems(localUserManager)
     )
 
     @Provides

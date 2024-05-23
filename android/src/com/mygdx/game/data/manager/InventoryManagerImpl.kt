@@ -27,5 +27,8 @@ class InventoryManagerImpl @Inject constructor(private val dataRepository: DataR
         mergedItems.forEach {  item ->
             dataRepository.postGameItem(item)
         }
+
+    override suspend fun deleteItems(gameItem: GameItem): LiveData<String> {
+      return dataRepository.deleteGameItem(gameItem)
     }
 }
