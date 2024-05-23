@@ -47,6 +47,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.mygdx.game.data.dao.GameItem
+
 import com.mygdx.game.presentation.Dimension
 import com.mygdx.game.presentation.components.BackButton
 import com.mygdx.game.presentation.inventory.components.MergeButton
@@ -54,6 +55,7 @@ import com.mygdx.game.presentation.inventory.components.SelectDialog
 import com.mygdx.game.presentation.inventory.events.GameItemEvent
 import com.mygdx.game.presentation.inventory.events.ItemEvent
 import com.mygdx.game.presentation.inventory.events.UpdateItemsEvent
+import com.mygdx.game.presentation.navgraph.Route
 import com.mygdx.game.ui.theme.ArAppTheme
 import com.mygdx.game.util.getItemDrawable
 
@@ -145,7 +147,26 @@ fun InventoryScreen(retrieveItemsHandler: (ItemEvent.RetrieveItems) -> Unit,
                             horizontalArrangement = Arrangement.End
                         ) {
 
-                            InventoryPage(viewModel.items, innerPadding, updateBitmapHandler)
+                            if(viewModel.items.isEmpty()){
+                                Text(
+                                    text = "You have no item. Start finding them on the map",
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+
+                                Button(
+                                    shape = RoundedCornerShape(size = Dimension.ButtonCornerShape),
+                                    onClick = {
+                                        navController.navigate(Route.MapScreen.route)
+                                    }
+                                ) {
+                                    Text(text = "Retry")
+                                }
+                            }
+                            else {
+                                InventoryPage(viewModel.items, innerPadding, updateBitmapHandler)
+                            }
+
 
                             if (openDialog.value) {
                                 SelectDialog(
