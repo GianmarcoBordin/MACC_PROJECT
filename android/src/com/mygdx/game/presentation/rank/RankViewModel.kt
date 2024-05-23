@@ -48,7 +48,7 @@ class RankViewModel  @Inject constructor(
             // Set loading state
             _isLoading.value = true
             _isError.value=false
-            delay(4000)
+            delay(1000)
             try {
                 // Fetch data asynchronously
                 val result = rankUseCases.fetch()
