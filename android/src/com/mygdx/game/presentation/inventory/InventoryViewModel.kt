@@ -33,17 +33,7 @@ class InventoryViewModel @Inject constructor(
     private var completed: Boolean = false
 
     init {
-        // TEST
-        val gameItem1 = GameItem(itemId = 3)
-        val gameItem2 = GameItem(itemId = 9)
-        val gameItem3 = GameItem(itemId = 5)
-        val debugList : List<GameItem> = listOf(gameItem1,gameItem2,gameItem3)
-        viewModelScope.launch {
-            inventoryUseCases.saveOldItems(debugList)
-            inventoryUseCases.deleteGameItem(debugList.get(0))
 
-        }
-        //
         retrieveItems()
     }
 

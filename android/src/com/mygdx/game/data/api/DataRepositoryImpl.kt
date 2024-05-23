@@ -192,7 +192,7 @@ class DataRepositoryImpl(private val rankApi: RankApi?) : DataRepository {
     }
 
     override suspend fun deleteGameItem(gameItem: GameItem): LiveData<String> {
-        val deleteGameItem = DeleteGameItem(gameItem.itemId)
+        val deleteGameItem = DeleteGameItem(gameItem.itemId,gameItem.owner)
         val resultLiveData = MutableLiveData<String>()
 
         try {

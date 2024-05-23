@@ -1,4 +1,4 @@
 package com.mygdx.game.data.dao
 
-data class DeleteGameItem(val deleteItemId: Int)
+data class DeleteGameItem(val deleteItemId: Int, val owner : String)
 
