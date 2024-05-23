@@ -24,9 +24,10 @@ class InventoryManagerImpl @Inject constructor(private val dataRepository: DataR
             dataRepository.deleteGameItem(item)
         }
         // then, repopulate the db with the new merged items
-        mergedItems.forEach {  item ->
+        mergedItems.forEach { item ->
             dataRepository.postGameItem(item)
         }
+    }
 
     override suspend fun deleteItems(gameItem: GameItem): LiveData<String> {
       return dataRepository.deleteGameItem(gameItem)
