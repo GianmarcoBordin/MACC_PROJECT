@@ -70,6 +70,7 @@ class InventoryViewModel @Inject constructor(
                 val itemsToMerge = items.groupBy { it.rarity }
                 Log.d("DEBUG","$itemsToMerge")
                 val newMergedItems = mutableListOf<GameItem>()
+                val itemsToDelete : MutableList<GameItem> = mutableListOf()
                 itemsToMerge.forEach { (_, groupedItems) ->
 
                     // if the group contains one item then add it to the new item list
@@ -80,37 +81,22 @@ class InventoryViewModel @Inject constructor(
                     else if (groupedItems.size > 1) {
 
                         // save the item that has the most damage among the captured ones
-                        var max = 0
-                        var index = 0
-                        for (i in groupedItems.indices) {
-                            if (groupedItems[i].damage > max) {
-                                max = groupedItems[i].damage
-                                index = i
-                            }
+
+                        val mergedItem = groupedItems[0]
+                        for (i in 1..< groupedItems.size){
+                            mergedItem.hp += groupedItems[i].hp
+                            mergedItem.damage += groupedItems[i].damage
+                            itemsToDelete.add(groupedItems[i])
                         }
 
-                        val mergedItem = groupedItems.reduce { acc, item ->
-                            GameItem(
-                                owner = item.owner,
-                                // select the itemId of the item that has the most damage
-                                itemId = if (item.damage == groupedItems[index].damage) item.itemId else acc.itemId,
-                                hp = acc.hp + item.hp,
-                                damage = acc.damage + item.damage,
-                                rarity = item.rarity
-                            )
-                        }
                         newMergedItems.add(mergedItem)
                     }
                 }
                 viewModelScope.launch {
                     // before assignment, delete previous items (items list) from db
                     items = newMergedItems
-                    val itemsToDelete: List<GameItem> = items.filter { item1 ->
-                        newMergedItems.none { item2 -> item2.itemId == item1.itemId }
-                    }
-                    itemsToDelete.forEach{ deleteGameItem ->
-                        inventoryUseCases.deleteGameItem(deleteGameItem)
-                    }
+
+                    inventoryUseCases.mergeItem(items, itemsToDelete)
                     inventoryUseCases.saveOldItems(itemsToDelete)
                 }
             }

@@ -2,7 +2,6 @@ package com.mygdx.game.presentation.scan
 
 import android.graphics.Bitmap
 import android.location.Location
-import android.util.Log
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.core.graphics.scale
@@ -197,11 +196,9 @@ class ARViewModel @Inject constructor(
                         } else {
                             _state.value.owned = false
                         }
-                        Log.e("DEBUG", it.toString())
+
                     }
 
-                    Log.e("DEBUG", "OWNED = ${state.value.owned}")
-                    Log.e("DEBUG", "ITEM = ${ownedGameItem.hp}, ${ownedGameItem.damage}")
 
                     while (!state.value.isGameOver) {
                         // update each 16 milliseconds (60Hz)

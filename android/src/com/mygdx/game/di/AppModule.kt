@@ -50,6 +50,7 @@ import com.mygdx.game.domain.usecase.auth.SignUp
 import com.mygdx.game.domain.usecase.home.HomeUseCases
 import com.mygdx.game.domain.usecase.inventory.DeleteGameItem
 import com.mygdx.game.domain.usecase.inventory.InventoryUseCases
+import com.mygdx.game.domain.usecase.inventory.MergeItems
 import com.mygdx.game.domain.usecase.inventory.SaveOldItems
 import com.mygdx.game.domain.usecase.map.CheckSeason
 import com.mygdx.game.domain.usecase.map.FetchUserLocation
@@ -304,7 +305,9 @@ object AppModule {
         getGameItemsUser = GetGameItemsUser(inventoryManager) ,
         fetchUserProfile = ReadUser(localUserManager),
         deleteGameItem = DeleteGameItem(inventoryManager),
-        saveOldItems = SaveOldItems(localUserManager)
+        saveOldItems = SaveOldItems(localUserManager),
+        mergeItem = MergeItems(inventoryManager)
+
     )
 
     @Provides

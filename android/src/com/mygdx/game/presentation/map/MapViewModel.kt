@@ -151,7 +151,7 @@ class MapViewModel  @Inject constructor(
 
                 result.observeForever { gameItemList ->
                     if (gameItemList != null) {
-                        Log.d("DEBUG","GAME ITEM $gameItemList")
+
                         for (i in gameItemList.indices) {
                             val properties = gameItemList[i].split(" ")
                             val id = properties[1]
@@ -165,7 +165,7 @@ class MapViewModel  @Inject constructor(
                                 viewModelScope.launch {
                                     mapUseCases.saveSeason(obj.itemRarity.toString())
                                 }
-                                }
+                            }
                         }
 
                         if (reset) {
@@ -173,7 +173,9 @@ class MapViewModel  @Inject constructor(
                                 mapUseCases.saveOldItems(listOf())
                             }
                         }else{
+
                             val oldGameItemsList = mapUseCases.readOldGameItems()
+                            Log.d("DEBUG", "OLD GAME: $oldGameItemsList")
                             oldGameItemsList.forEach { oldGameItemString ->
                                 ownedItems.add(oldGameItemString.toInt())
                             }
@@ -185,9 +187,6 @@ class MapViewModel  @Inject constructor(
                                 itemsToRemove.add(i)
                             }
                         }
-
-
-                        Log.d("DEBEGGGGG","$itemsToRemove, $ownedItems")
 
                         // Remove items in reverse order to avoid indexing issues
                         for (i in itemsToRemove.size - 1 downTo 0) {
