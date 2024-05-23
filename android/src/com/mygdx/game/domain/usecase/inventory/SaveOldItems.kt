@@ -8,7 +8,7 @@ import com.mygdx.game.domain.manager.LocalUserManager
 class SaveOldItems(
     private val localUserManager: LocalUserManager
 ) {
-    suspend operator fun invoke(oldGameItems: List<GameItem>) {
+    suspend operator fun invoke(oldGameItems: List<Int>) {
         return localUserManager.saveOldItems(oldGameItems)
     }
 }

@@ -306,7 +306,8 @@ object AppModule {
         fetchUserProfile = ReadUser(localUserManager),
         deleteGameItem = DeleteGameItem(inventoryManager),
         saveOldItems = SaveOldItems(localUserManager),
-        mergeItem = MergeItems(inventoryManager)
+        mergeItem = MergeItems(inventoryManager),
+        readOldGameItems = ReadOldGameItems(localUserManager)
 
     )
 

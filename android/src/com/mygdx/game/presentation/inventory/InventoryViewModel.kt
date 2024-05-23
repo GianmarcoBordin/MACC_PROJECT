@@ -97,7 +97,20 @@ class InventoryViewModel @Inject constructor(
                     items = newMergedItems
 
                     inventoryUseCases.mergeItem(items, itemsToDelete)
-                    inventoryUseCases.saveOldItems(itemsToDelete)
+                    val oldGameItems = inventoryUseCases.readOldGameItems()
+                    val itemList = mutableListOf<Int>()
+                    oldGameItems.forEach { oldGameItemString ->
+                        itemList.add(oldGameItemString.toInt())
+                    }
+
+                    val itemToDeleteList = mutableListOf<Int>()
+                    itemsToDelete.forEach { item ->
+                        itemToDeleteList.add(item.itemId)
+                    }
+
+                    val mergedList = (itemToDeleteList + itemList).toSet().toList()
+
+                    inventoryUseCases.saveOldItems(mergedList)
                 }
             }
         }

@@ -178,12 +178,8 @@ class LocalUserManagerImpl(
         saveObject(Constants.USERNAME,userProfile.displayName)
     }
 
-    override suspend fun saveOldItems(oldGameItems: List<GameItem>) {
-        val idList = mutableListOf<Int>()
-        oldGameItems.forEach { gameItem ->
-            idList.add(gameItem.itemId)
-        }
-        saveObject(Constants.OLD_GAME_ITEMS,idList)
+    override suspend fun saveOldItems(oldGameItems: List<Int>) {
+        saveObject(Constants.OLD_GAME_ITEMS,oldGameItems)
     }
 
     override fun getSeason(): String {
