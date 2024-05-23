@@ -132,17 +132,24 @@ class GameScreen(
     private fun setPlayerTexture(){
         val myTextureName = myPlayerType.type.getSkinRegionName()
         val otherTextureName = otherPlayerType.type.getSkinRegionName()
+        val secondAtlas = TextureAtlas("atlas/images.atlas")
+
         firstPlayerTexture = textureAtlas.findRegion(myTextureName)
-        secondPlayerTexture = textureAtlas.findRegion(otherTextureName)
+        secondPlayerTexture = secondAtlas.findRegion(otherTextureName)
 
         firstPlayerLaserTexture = textureAtlas.findRegion(if (playerPosition == PlayerPosition.LEFT) "laserGreen" else "laserRed")
-        secondPlayerLaserTexture = textureAtlas.findRegion(if (playerPosition == PlayerPosition.LEFT) "laserRed" else "laserGreen")
+        secondPlayerLaserTexture = secondAtlas.findRegion(if (playerPosition == PlayerPosition.LEFT) "laserRed" else "laserGreen")
+
 
         if (playerPosition == PlayerPosition.RIGHT){
+            Gdx.app.log("CLIENT","RIGHT")
             firstPlayerTexture.flip(true,false)
+
         }
         else {
+            Gdx.app.log("CLIENT","LEFT")
             secondPlayerTexture.flip(true,false)
+
         }
 
     }

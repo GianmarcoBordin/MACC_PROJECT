@@ -103,6 +103,7 @@ class InventoryViewModel @Inject constructor(
                         itemList.add(oldGameItemString.toInt())
                     }
 
+                    Log.d("DEBUG","$itemsToDelete")
                     val itemToDeleteList = mutableListOf<Int>()
                     itemsToDelete.forEach { item ->
                         itemToDeleteList.add(item.itemId)

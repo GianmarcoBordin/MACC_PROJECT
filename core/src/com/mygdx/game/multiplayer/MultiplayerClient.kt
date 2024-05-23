@@ -64,7 +64,7 @@ class MultiplayerClient(
         webSocket = client.newWebSocket(Request.Builder().url(webSocketUrl).build(),
             object : WebSocketListener(){
                 override fun onOpen(webSocket: WebSocket, response: Response) {
-                    Gdx.app.log(debugTag, "INIT MESSAGE")
+                    Gdx.app.log(debugTag, "INIT MESSAGE $myPlayerId, $adversaryId")
                     val message : Message = InitMessage(myPlayerId, adversaryId, PlayerPosition.LEFT, characterType)
                     val json = gson.toJson(message)
 

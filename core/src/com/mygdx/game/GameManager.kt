@@ -88,7 +88,7 @@ class GameManager(val myCollectedSkin: ArrayList<CharacterType>, private val myI
     private fun getConnectionScreen(otherId: String): ConnectionScreen {
         if (connectionScreen == null) {
             connectionScreen =
-                startScreen?.selectedCharacter?.let { ConnectionScreen(this, myId, otherId, it) }
+                startScreen?.selectedCharacter?.let { ConnectionScreen(this, username, otherId, it) }
         }
 
         return connectionScreen!!
