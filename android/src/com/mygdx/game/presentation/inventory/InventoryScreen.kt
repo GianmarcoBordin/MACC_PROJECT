@@ -43,6 +43,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -139,45 +141,57 @@ fun InventoryScreen(retrieveItemsHandler: (ItemEvent.RetrieveItems) -> Unit,
                     Box(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp),
-                            verticalAlignment = Alignment.Top,
-                            horizontalArrangement = Arrangement.End
-                        ) {
 
-                            if(viewModel.items.isEmpty()){
-                                Text(
-                                    text = "You have no item. Start finding them on the map",
-                                    style = MaterialTheme.typography.headlineMedium,
-                                    modifier = Modifier.padding(16.dp)
-                                )
-
-                                Button(
-                                    shape = RoundedCornerShape(size = Dimension.ButtonCornerShape),
-                                    onClick = {
-                                        navController.navigate(Route.MapScreen.route)
-                                    }
+                        if(viewModel.items.isEmpty()){
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center // This will center the content inside the Box
+                            ){
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally // This will center the children inside the Column
                                 ) {
-                                    Text(text = "Retry")
+                                    Text(
+                                        text = "You have no item. Start looking for them on the map!",
+                                        style = MaterialTheme.typography.headlineMedium,
+                                        modifier = Modifier.padding(10.dp),
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Button(
+                                        shape = RoundedCornerShape(size = Dimension.ButtonCornerShape),
+                                        onClick = {navController.navigate(Route.MapScreen.route)}
+                                    ) {
+                                        Text(text = "Map")
+                                    }
                                 }
                             }
-                            else {
+
+                        }
+
+                        else {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                verticalAlignment = Alignment.Top,
+                                horizontalArrangement = Arrangement.End
+                            ) {
+
                                 InventoryPage(viewModel.items, innerPadding, updateBitmapHandler)
-                            }
-
-
-                            if (openDialog.value) {
-                                SelectDialog(
-                                    onDismissRequest = {openDialog.value = false},
-                                    onMergeClick = {
-                                        updateItemsHandler(UpdateItemsEvent.UpdateMergedItems)
-                                        openDialog.value = false
-                                    }
-                                )
+                                if (openDialog.value) {
+                                    SelectDialog(
+                                        onDismissRequest = {openDialog.value = false},
+                                        onMergeClick = {
+                                            updateItemsHandler(UpdateItemsEvent.UpdateMergedItems)
+                                            openDialog.value = false
+                                        }
+                                    )
+                                }
                             }
                         }
+
                     }
                 }
             }
@@ -237,8 +251,5 @@ fun InventoryItem(item: GameItem) {
         }
     }
 }
-
-
-
 
 
