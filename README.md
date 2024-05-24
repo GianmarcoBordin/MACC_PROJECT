@@ -17,7 +17,7 @@ AR Battle Game is an Augmented Reality (AR) video game developed with Kotlin for
 ## Usage
 
 1. Open the app and sign in with your Firebase account.
-2. Switch to the main branch and download the server.py
+2. Switch to the multiplayer server branch and download the server.py
 3. Execute with ```python server.py```
 5. Use the map to search nearby skin and other players.
 6. Capture a skin when you are close enough.
