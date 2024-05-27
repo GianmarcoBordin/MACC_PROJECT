@@ -1,3 +1,5 @@
 
+
+
 def player_opposite(player):
-    return "RED" if player == "GREEN" else "GREEN"
+    return "LEFT" if player == "RIGHT" else "RIGHT"

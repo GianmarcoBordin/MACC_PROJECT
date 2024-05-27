@@ -22,10 +22,13 @@ class StartMessage(Message):
         self.otherPlayerId = otherId
         
 class GenericMessage():
-    def __init__(self, type, senderId, receiverId, newX, newY, playerType):
+    def __init__(self, type, senderId, receiverId = None, newX = None, newY = None, playerPosition = None, playerType = None):
         self.type = type
         self.senderId = senderId
         self.receiverId = receiverId
         self.newX = newX
         self.newY = newY
+        self.playerPosition = playerPosition
         self.playerType = playerType
+
+
