@@ -99,3 +99,7 @@ fun deserializeObject(jsonString: String): JsonObject {
     val gson = Gson()
     return gson.fromJson(jsonString, JsonObject::class.java)
 }
+
+fun cleanName(name: String): String {
+    return name.replace(Regex("[^A-Za-z0-9]"), "")
+}

@@ -1,5 +1,6 @@
 package com.mygdx.game.presentation.authentication.screens
 
+import android.util.Log
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.biometric.BiometricManager
 import androidx.compose.animation.core.Animatable
@@ -312,11 +313,12 @@ fun DefaultSignInContent(
 
             }
 
+            Log.d("DEBUG", "BIO AUTH RESULT $authenticationResult")
             // Handling authentication result
             if (authenticationResult in listOf(BIO_AUTH_SUCCESS, BIO_AUTH_FAILED, BIO_NOT_AVAILABLE)) {
                 when (authenticationResult) {
                     BIO_AUTH_SUCCESS -> viewModel.onUpdateBio(true)
-                    BIO_NOT_AVAILABLE -> viewModel.onUpdateBio(false)
+                    BIO_AUTH_FAILED,BIO_NOT_AVAILABLE -> viewModel.onUpdateBio(false)
                 }
                 if (viewModel.navigateToAnotherScreen.value == true) {
                     navController.navigate(Route.HomeScreen.route)
@@ -324,7 +326,6 @@ fun DefaultSignInContent(
                     authenticationResult = "nothing"
                 }
             }
-
 
             if (isLoading == true) {
                 val progress = remember { Animatable(0f) }

@@ -17,6 +17,7 @@ import com.mygdx.game.util.Constants.BIO_AUTH_SUCCESS
 import com.mygdx.game.util.Constants.LOGIN_SUCCESS
 import com.mygdx.game.util.Constants.SIGN_UP_SUCCESS
 import com.mygdx.game.util.Constants.USER_AUTH
+import com.mygdx.game.util.cleanName
 
 import javax.inject.Inject
 
@@ -50,6 +51,7 @@ class AuthenticationViewModel  @Inject constructor(
             is SignInEvent.SignIn -> {
                 _isError.value = false
                 _isLoading.value = true
+
                 goSignIn(event.email, event.password)
             }
 
@@ -62,7 +64,8 @@ class AuthenticationViewModel  @Inject constructor(
             is SignUpEvent.SignUp -> {
                 _isError.value = false
                 _isLoading.value = true
-                goSignUp(event.name, event.email, event.password, event.confirmPass)
+                val cleanedName = cleanName(event.name)
+                goSignUp(cleanedName, event.email, event.password, event.confirmPass)
             }
 
 
