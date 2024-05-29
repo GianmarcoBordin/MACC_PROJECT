@@ -119,6 +119,7 @@ fun DefaultSignInContent(
     // fields of interest
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+
     val context = LocalContext.current
     // observed state
     val data by viewModel.data.observeAsState()
@@ -283,9 +284,27 @@ fun DefaultSignInContent(
                 }
 
             }
+
+            if (authenticationResult == BIO_AUTH_FAILED) {
+                Text(
+                    text = "Biometric authentication failed.",
+                    color = MaterialTheme.colorScheme.error,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.displayMedium,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            } else if (authenticationResult == BIO_NOT_AVAILABLE) {
+                Text(
+                    text = "Biometric authentication is not available on this device.",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+
+            }
+
+
             // Observe changes in data
-
-
             if (data?.isNotEmpty() == true ) {
 
                 when (data){

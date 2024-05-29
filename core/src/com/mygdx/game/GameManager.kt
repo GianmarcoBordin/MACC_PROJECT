@@ -47,19 +47,19 @@ class GameManager(val myCollectedSkin: ArrayList<CharacterType>, private val myI
 
     fun showStartScreen(adversaryId: String, disconnect: Boolean) {
         if (disconnect){
-            getConnectionScreen(adversaryId).multiplayerClient.disconnect()
+            getConnectionScreen(adversaryId, "").multiplayerClient.disconnect()
         }
         setScreen(getStartScreen())
     }
 
-    fun showConnectionScreen(otherId: String) {
+    fun showConnectionScreen(otherId: String, serverIp: String) {
         if (otherId.isEmpty() || myId == otherId) {
             // Handle invalid input
             return
         }
         // useful when you call the method from the game over screen and you need to disconnect the user
 
-        setScreen(getConnectionScreen(otherId))
+        setScreen(getConnectionScreen(otherId, serverIp))
     }
 
     fun showGameOverScreen(newGameOverScreen: GameOverScreen) {
@@ -85,12 +85,12 @@ class GameManager(val myCollectedSkin: ArrayList<CharacterType>, private val myI
     }
 
 
-    private fun getConnectionScreen(otherId: String): ConnectionScreen {
-        if (connectionScreen == null) {
-            connectionScreen =
-                startScreen?.selectedCharacter?.let { ConnectionScreen(this, username, otherId, it) }
+    private fun getConnectionScreen(otherId: String, serverIp: String): ConnectionScreen {
+        if (connectionScreen == null || connectionScreen!!.otherId != otherId || connectionScreen!!.serverIp != serverIp) {
+            connectionScreen = startScreen?.selectedCharacter?.let {
+                ConnectionScreen(this, serverIp,username, otherId, it)
+            }
         }
-
         return connectionScreen!!
     }
 

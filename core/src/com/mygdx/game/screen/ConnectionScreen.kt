@@ -17,7 +17,7 @@ import com.mygdx.game.multiplayer.MultiplayerClient
 import com.mygdx.game.player.PlayerPosition
 
 
-class ConnectionScreen(private val gameManager: GameManager, private val myId: String, private val otherId: String, private val characterType: CharacterType ) : ScreenAdapter(), MultiplayerClient.MultiplayerListener {
+class ConnectionScreen(private val gameManager: GameManager, val serverIp: String,private val myId: String, val otherId: String, private val characterType: CharacterType ) : ScreenAdapter(), MultiplayerClient.MultiplayerListener {
 
     private val width = (Gdx.graphics.width/1.2).toFloat()
     private val height = (Gdx.graphics.height/1.2).toFloat()
@@ -28,9 +28,11 @@ class ConnectionScreen(private val gameManager: GameManager, private val myId: S
     private val stage: Stage = Stage(FitViewport(width,height))
     private val table: Table = Table()
 
-    var multiplayerClient : MultiplayerClient = MultiplayerClient(gameManager, myId, otherId, characterType)
+
+    var multiplayerClient : MultiplayerClient = MultiplayerClient(gameManager, serverIp, myId, otherId, characterType)
 
     init {
+
 
         table.setFillParent(true)
         table.center()
@@ -83,18 +85,6 @@ class ConnectionScreen(private val gameManager: GameManager, private val myId: S
         multiplayerClient.connect()
 
         Gdx.input.inputProcessor = stage
-    }
-
-    override fun hide() {
-        super.hide()
-    }
-
-    override fun pause() {
-        super.pause()
-    }
-
-    override fun resume() {
-        super.resume()
     }
 
     override fun render(delta: Float) {

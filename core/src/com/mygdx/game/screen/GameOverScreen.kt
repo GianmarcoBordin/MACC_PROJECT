@@ -24,7 +24,7 @@ class GameOverScreen(private val game: GameManager, private val win: Boolean, pr
     private val stage: Stage = Stage(FitViewport(width,height))
     private val table: Table = Table()
 
-    private val playAgainButton = TextButton("Play again", game.gameSkin)
+
     private val changeAdversaryButton = TextButton("Change adversary", game.gameSkin)
     private val exitButton = TextButton("Exit", game.gameSkin)
     init {
@@ -36,7 +36,7 @@ class GameOverScreen(private val game: GameManager, private val win: Boolean, pr
 
         addButtonListener()
 
-        table.add(playAgainButton).fillX().center().padTop(40f).padBottom(20f).row()
+
         table.add(changeAdversaryButton).fillX().center().padTop(40f).padBottom(20f).row()
         table.add(exitButton).fillX().center().padTop(40f).padBottom(20f).row()
 
@@ -46,16 +46,7 @@ class GameOverScreen(private val game: GameManager, private val win: Boolean, pr
     }
 
     private fun addButtonListener(){
-        playAgainButton.addListener(object : InputListener() {
-            override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {
 
-                game.showConnectionScreen(otherId = otherId)
-            }
-
-            override fun touchDown(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int): Boolean {
-                return true
-            }
-        })
 
         changeAdversaryButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent?, x: Float, y: Float, pointer: Int, button: Int) {

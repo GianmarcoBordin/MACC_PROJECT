@@ -75,6 +75,7 @@ class MainViewModel @Inject constructor(
                 if (gameItemList != null) {
                     for (i in gameItemList.indices) {
                         val properties = gameItemList[i].split(" ")
+                        Log.d("DEBUG","$properties")
                         val owner = properties[0]
                         val itemId = properties[1]
                         val rarity = properties[2]

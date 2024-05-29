@@ -3,7 +3,7 @@ package com.mygdx.game.screen
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.Texture
+
 import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
@@ -21,7 +21,6 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.mygdx.game.GameManager
 import com.mygdx.game.dto.CharacterType
-import com.mygdx.game.player.PlayerSkin
 
 class StartScreen(private val game: GameManager) : ScreenAdapter()
 {
@@ -45,7 +44,8 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
     private val selectedDrawable = NinePatchDrawable(NinePatch(selectedDrawableTexture, 10, 10, 10, 10))
 
     private val userIdField =  TextField("", game.gameSkin)
-    private val errorLabel = Label("Please first insert user id!", game.gameSkin, "big-black")
+    private val ipAddressField = TextField("", game.gameSkin)
+    private val errorLabel = Label("User id or server ip is empty!", game.gameSkin, "big-black")
     private val noCollectedSkinLabel = Label("Please first try to find a skin on the map and catch it!", game.gameSkin, "big-black")
 
     var selectedCharacter: CharacterType? = null
@@ -55,6 +55,7 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
         connectButton.isVisible = false
         noCollectedSkinLabel.isVisible = false
         userIdField.messageText = "1234"
+        ipAddressField.messageText = "Enter IP address"
         addTitle()
 
         // Set table properties
@@ -73,7 +74,7 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
         // create the table
         game.myCollectedSkin.forEach { character ->
             val characterTable = createCharacterTable(character)
-            table.add(characterTable).padLeft(padding).padRight(padding).padTop(30f).padBottom(10f)
+            table.add(characterTable).padLeft(padding).padRight(padding).padTop(200f)
         }
 
         table.row()
@@ -112,11 +113,12 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
 
     fun handleConnection(){
 
-        if (userIdField.text.isNotEmpty() && selectedCharacter != null){
+        if (userIdField.text.isNotEmpty() && checkIpv4Address(ipAddressField.text) && selectedCharacter != null){
             errorLabel.isVisible = false
             val playerId = userIdField.text
+            val ipAddress = ipAddressField.text
 
-            game.showConnectionScreen(playerId)
+            game.showConnectionScreen(playerId, ipAddress)
 
         } else {
             errorLabel.isVisible = true
@@ -124,6 +126,10 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
 
     }
 
+    private fun checkIpv4Address(ip: String): Boolean{
+        val ipAddressPattern = "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\$".toRegex()
+        return ip.matches(ipAddressPattern)
+    }
 
     private fun addUserIdFieldTable(){
         val labelTable = Table()
@@ -131,9 +137,16 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
         labelTable.center().padBottom(350f)
 
         val userIdLabel = Label("Insert adversary user id", game.gameSkin, "big-black")
-        labelTable.add(userIdLabel).left().padBottom(5f).padTop(20f).row()
-        labelTable.add(userIdField).width(width / 3).center().padBottom(80f).row()
+        labelTable.add(userIdLabel).left().padBottom(5f).padTop(55f).row()
+        labelTable.add(userIdField).width(width / 3).center().padBottom(20f).row()
+
+        val ipAddressLabel = Label("Insert server IP address", game.gameSkin, "big-black")
+        labelTable.add(ipAddressLabel).left().padBottom(5f).row()
+        labelTable.add(ipAddressField).width(width / 3).center().padBottom(80f).row()
+
+
         stage.addActor(labelTable)
+
 
         errorLabel.isVisible = false
         errorLabel.setPosition(width/3.5f, 160f)
@@ -142,9 +155,9 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
 
     private fun addTitle(){
         val title = Label("Choose one player", game.gameSkin, "big-black")
-        title.setFontScale(1.8f)
+        title.setFontScale(1.6f)
         title.setAlignment(Align.center)
-        title.y = height * 5.3f / 6
+        title.y = height * 5.4f / 6
         title.width = width
         stage.addActor(title)
     }
@@ -171,7 +184,7 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
 
 
         val drawable = TextureRegionDrawable(textureAtlas.findRegion(characterData.type.getSkinRegionName()))
-        drawable.setMinSize(160f,160f)
+        drawable.setMinSize(110f,110f)
         val characterImage = ImageButton(drawable)
 
         characterImage.addListener(object : InputListener() {
@@ -189,23 +202,23 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
             }
         })
 
-        characterImage.setSize(160f,160f)
-        table.add(characterImage).center().padBottom(5f)
+        characterImage.setSize(110f,110f)
+        table.add(characterImage).center().padBottom(2f)
         table.row()
 
         // Add HP label
         val hpLabel = Label("HP: ${characterData.hp}", game.gameSkin, "big-black")
-        hpLabel.setFontScale(0.7f)
+        hpLabel.setFontScale(0.6f)
         hpLabel.setAlignment(Align.left)
         table.add(hpLabel).align(Align.left)
         table.row()
 
         // Add damage label
         val damageLabel = Label("Damage: ${characterData.damage}", game.gameSkin, "big-black")
-        damageLabel.setFontScale(0.7f)
+        damageLabel.setFontScale(0.6f)
         damageLabel.setAlignment(Align.right)
         table.add(damageLabel).align(Align.right)
-        table.padTop(10f)
+        table.padTop(3f)
 
 
         return table
@@ -229,7 +242,7 @@ class StartScreen(private val game: GameManager) : ScreenAdapter()
         Gdx.gl.glClearColor(1f, 1f, 1f, 1f)
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT)
 
-        if(userIdField.text.isNotEmpty()){
+        if(userIdField.text.isNotEmpty() && ipAddressField.text.isNotEmpty()){
             errorLabel.isVisible = false
         }
 
