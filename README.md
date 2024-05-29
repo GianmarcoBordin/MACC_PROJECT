@@ -1,5 +1,12 @@
 # AR Battle Game
 
+## Gameplay
+![map_compressed](https://github.com/GianmarcoBordin/MACC_PROJECT/assets/92364167/e5488cbc-4023-4a08-9fd0-7e1038643a8d)
+![capture_compressed](https://github.com/GianmarcoBordin/MACC_PROJECT/assets/92364167/86c1cdcc-94fc-496a-898b-0296b714f04f)
+![battle](https://github.com/GianmarcoBordin/MACC_PROJECT/assets/92364167/1ab54546-0112-46bc-82d2-168d6c7b358e)
+
+
+
 ## Description
 
 AR Battle Game is an Augmented Reality (AR) video game developed with Kotlin for Android platforms. Users can capture character skins using their camera and then use these skins in multiplayer battles against other users. Skin capturing is location-based, and users can check OpenStreetMap for nearby skins and players. Multiplayer sessions are managed by a WebSocket server, and user data and authentication are handled with Firebase. The skin generation server is hosted on PythonAnywhere. The 2D videogame graphics and dynamics were create via LibGDX framework
