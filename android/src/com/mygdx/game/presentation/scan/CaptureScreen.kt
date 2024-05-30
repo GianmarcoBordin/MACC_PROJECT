@@ -1,5 +1,6 @@
 package com.mygdx.game.presentation.scan
 
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -46,18 +47,24 @@ import com.mygdx.game.presentation.navgraph.Route
 import com.mygdx.game.presentation.scan.events.GameEvent
 import com.mygdx.game.presentation.scan.events.LineEvent
 import com.mygdx.game.presentation.scan.events.UpdateDatabaseEvent
-import com.mygdx.game.util.Constants
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
+import com.mygdx.game.presentation.components.CustomBackHandler
+import com.mygdx.game.presentation.components.ExitPopup
 import com.mygdx.game.presentation.scan.events.UpdateMappingEvent
+import com.mygdx.game.ui.theme.ArAppTheme
+
 
 @Composable
 fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHandler: (GameEvent.StartGame) -> Unit,
                   lineAddHandler: (LineEvent.AddNewLine) -> Unit, lineDeleteHandler: (LineEvent.DeleteAllLines) -> Unit,
                   addDatabaseHandler: (UpdateDatabaseEvent.AddItem) -> Unit,
                   resetGameHandler: (GameEvent.ResetGame) -> Unit, updateMappingHandler: (UpdateMappingEvent.UpdateMapping) -> Unit) {
-    // collectAsState() allows Canvas' recomposition
+
+    val openPopup = remember { mutableStateOf(false) }
     val gameState by viewModel.state.collectAsState()
 
     val item = when(gameState.gameItem.rarity) {
@@ -74,146 +81,158 @@ fun CaptureScreen(viewModel: ARViewModel, navController: NavController, gameHand
         // start the game
         gameHandler(GameEvent.StartGame(bullets))
     }
-
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
+    CustomBackHandler(
+        onBackPressedDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher ?: return,
+        enabled = true // Set to false to disable back press handling
     ) {
-        viewModel.bitmap?.let {
-            Image(
-                modifier = Modifier
-                    .rotate(90f)
-                    .scale(viewModel.imageRatio)
-                    .blur(5.dp)
-                    .fillMaxSize(),
-                bitmap = it.asImageBitmap(),
-                contentDescription = "Item",
-            )
-        }
-        if (!gameState.isGameOver) {
-            Column(
-                modifier = Modifier
-                    .padding(top = 32.dp, start = 32.dp, end = 32.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                HealthBar(health = gameState.hp, maxHealth = gameState.gameItem.hp, barWidth = (viewModel.screenWidth - 64).dp, barHeight = 24.dp)
-                Text(modifier = Modifier
-                        .padding(top = 6.dp),
-                    color = Color.Red,
-                    text = "HP: ${gameState.hp}/${gameState.gameItem.hp}"
+        openPopup.value = true
+    }
+
+
+    ArAppTheme {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            viewModel.bitmap?.let {
+                Image(
+                    modifier = Modifier
+                        .rotate(90f)
+                        .scale(viewModel.imageRatio)
+                        .blur(5.dp)
+                        .fillMaxSize(),
+                    bitmap = it.asImageBitmap(),
+                    contentDescription = "Item",
                 )
             }
-            Canvas(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .pointerInput(true) {
-                        detectDragGestures(onDragEnd = {
-                            lineDeleteHandler(LineEvent.DeleteAllLines)
-                        }) { change, dragAmount ->
-                            change.consume()
+            if (!gameState.isGameOver) {
+                Column(
+                    modifier = Modifier
+                        .padding(top = 32.dp, start = 32.dp, end = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    HealthBar(health = gameState.hp, maxHealth = gameState.gameItem.hp, barWidth = (viewModel.screenWidth - 64).dp, barHeight = 24.dp)
+                    Text(modifier = Modifier
+                        .padding(top = 6.dp),
+                        color = Color.Red,
+                        text = "HP: ${gameState.hp}/${gameState.gameItem.hp}"
+                    )
+                }
+                Canvas(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .pointerInput(true) {
+                            detectDragGestures(onDragEnd = {
+                                lineDeleteHandler(LineEvent.DeleteAllLines)
+                            }) { change, dragAmount ->
+                                change.consume()
 
-                            val line = Line(
-                                start = change.position - dragAmount,
-                                end = change.position
+                                val line = Line(
+                                    start = change.position - dragAmount,
+                                    end = change.position
+                                )
+
+                                // update the game state with the lines drawn by the user
+                                lineAddHandler(LineEvent.AddNewLine(line))
+                            }
+                        }
+                ) {
+                    drawItem(
+                        coordinates = gameState.position,
+                        itemImage = item,
+                        width = gameState.gameItem.bitmap.width,
+                        height = gameState.gameItem.bitmap.height
+                    )
+                    drawLines(
+                        lines = gameState.lines
+                    )
+
+                    if (gameState.shoot) {
+                        gameState.shootBitmap?.let {
+                            drawItem(
+                                coordinates = gameState.shootPosition,
+                                itemImage = bullets,
+                                width = it.width,
+                                height = it.height
                             )
-
-                            // update the game state with the lines drawn by the user
-                            lineAddHandler(LineEvent.AddNewLine(line))
                         }
                     }
-            ) {
-                drawItem(
-                    coordinates = gameState.position,
-                    itemImage = item,
-                    width = gameState.gameItem.bitmap.width,
-                    height = gameState.gameItem.bitmap.height
-                )
-                drawLines(
-                    lines = gameState.lines
-                )
-
-                if (gameState.shoot) {
-                    gameState.shootBitmap?.let {
-                        drawItem(
-                            coordinates = gameState.shootPosition,
-                            itemImage = bullets,
-                            width = it.width,
-                            height = it.height
-                        )
-                    }
                 }
-            }
-        } else {
-            Dialog(
-                onDismissRequest = {
-                },
-                properties = DialogProperties(
-                    dismissOnClickOutside = false,
-                    dismissOnBackPress = false
-                )
-            ) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 10.dp
-                    ),
-                    shape = RoundedCornerShape(16.dp),
+            } else {
+                Dialog(
+                    onDismissRequest = {
+                    },
+                    properties = DialogProperties(
+                        dismissOnClickOutside = false,
+                        dismissOnBackPress = false
+                    )
                 ) {
-                    Column(
+                    Card(
                         modifier = Modifier
-                            .width(width = (viewModel.screenWidth / 2).dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 10.dp
+                        ),
+                        shape = RoundedCornerShape(16.dp),
                     ) {
-                        Text(
+                        Column(
                             modifier = Modifier
-                                .width(width = (viewModel.screenWidth / 2).dp)
-                                .padding(16.dp),
-                            textAlign = TextAlign.Center,
-                            fontSize = 20.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            text = "Item captured!"
-                        )
-
-                        addDatabaseHandler(UpdateDatabaseEvent.AddItem)
-                        updateMappingHandler(UpdateMappingEvent.UpdateMapping(gameState.itemId))
-
-                        Text(
-                            modifier = Modifier
-                                .padding(16.dp),
-                            textAlign = TextAlign.Center,
-                            fontSize = 18.sp,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            text = "Stats: \n" +
-                                    "- HP: ${gameState.gameItem.hp}\n" +
-                                    "- Damage: ${gameState.gameItem.damage}"
-                        )
-                        ElevatedButton(
-                            modifier = Modifier
-                                .align(Alignment.CenterHorizontally)
-                                .padding(bottom = 16.dp),
-                            onClick = {
-                                // whenever the session is started, reset the game state
-                                // so that the game can be played again
-                                resetGameHandler(GameEvent.ResetGame)
-                                // go back to map screen
-                                navController.navigate(Route.MapScreen.route)
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                                .width(width = (viewModel.screenWidth / 2).dp),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Text(
-                                color = Color.White,
-                                text = "OK"
+                                modifier = Modifier
+                                    .width(width = (viewModel.screenWidth / 2).dp)
+                                    .padding(16.dp),
+                                textAlign = TextAlign.Center,
+                                fontSize = 20.sp,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                text = "Item captured!"
                             )
+
+                            addDatabaseHandler(UpdateDatabaseEvent.AddItem)
+                            updateMappingHandler(UpdateMappingEvent.UpdateMapping(gameState.itemId))
+
+                            Text(
+                                modifier = Modifier
+                                    .padding(16.dp),
+                                textAlign = TextAlign.Center,
+                                fontSize = 18.sp,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                text = "Stats: \n" +
+                                        "- HP: ${gameState.gameItem.hp}\n" +
+                                        "- Damage: ${gameState.gameItem.damage}"
+                            )
+                            ElevatedButton(
+                                modifier = Modifier
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(bottom = 16.dp),
+                                onClick = {
+                                    // whenever the session is started, reset the game state
+                                    // so that the game can be played again
+                                    resetGameHandler(GameEvent.ResetGame)
+                                    // go back to map screen
+                                    navController.navigate(Route.MapScreen.route)
+                                },
+                                colors = ButtonDefaults.buttonColors(containerColor = Color.Blue)
+                            ) {
+                                Text(
+                                    color = Color.White,
+                                    text = "OK"
+                                )
+                            }
                         }
                     }
                 }
             }
         }
+        ExitPopup(openPopup)
     }
+
+
 }
 
 private fun DrawScope.drawLines(lines: List<Line>) {

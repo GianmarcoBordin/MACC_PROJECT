@@ -53,12 +53,10 @@ class ARViewModel @Inject constructor(
     // counter for the presence of the bullets on the screen
     private var justShoot = 0
 
-    private var currId:Int = -1
 
     // GameItem retrieved by the DataStore (the one generated from the server)
     private var gameItem: GameItem = GameItem()
-    // GameItem retrieved by the database (the one the player has already captured)
-    private var ownedGameItem: GameItem = GameItem()
+
 
     private val _state = MutableStateFlow(GameState())
     val state = _state.asStateFlow()
@@ -67,7 +65,7 @@ class ARViewModel @Inject constructor(
     fun onGameItemEvent(event: GameItemEvent) {
         when (event) {
             is GameItemEvent.SaveGameItem -> {
-                println("${event.gameItem} <--------------------------")
+
                 gameItem = event.gameItem
                 val itemId: Int = event.itemId
                 // set the gameitem and its health
@@ -129,18 +127,7 @@ class ARViewModel @Inject constructor(
     // (it requires more bandwidth, but provide no benefit for the user)
     fun onUpdateDatabaseEvent(event: UpdateDatabaseEvent) {
         when (event) {
-            /*
-            is UpdateDatabaseEvent.IncrementItemStats -> {
-                val updatedGameItem = GameItem(ownedGameItem.owner,
-                    ownedGameItem.itemId,
-                    ownedGameItem.rarity,
-                    ownedGameItem.hp + event.hpIncrement,
-                    ownedGameItem.damage + event.damageIncrement)
-                viewModelScope.launch {
-                    arUseCases.addGameItem(updatedGameItem)
-                }
-            }
-            */
+
             UpdateDatabaseEvent.AddItem -> {
                 val username = arUseCases.fetchUserProfile().displayName
                 val newGameItem = GameItem(username,
@@ -178,26 +165,7 @@ class ARViewModel @Inject constructor(
                 _state.value = state.value.copy(shootBitmap = finalBullets, isStarted = true)
 
                 viewModelScope.launch {
-                    val username = arUseCases.fetchUserProfile().displayName
-                    val rarityItem = state.value.gameItem.rarity.toString()
-                    // set if the player already owns the item
-                    val gameItemString = arUseCases.getGameItem(username, rarityItem)
-                    gameItemString.value?.let {
-                        if (it.isNotEmpty()) {
-                            // because the player already owns an item, then retrieve it immediately and store it
-                            val owner = it[0]
-                            currId = it[0].replace("item","").toInt()
-                            val itemId = it[1]
-                            val rarity = it[2]
-                            val hp = it[3]
-                            val damage = it[4]
-                            ownedGameItem = GameItem(owner, itemId.toInt(), rarity.toInt(), hp.toInt(), damage.toInt())
-                            _state.value.owned = true
-                        } else {
-                            _state.value.owned = false
-                        }
 
-                    }
 
 
                     while (!state.value.isGameOver) {

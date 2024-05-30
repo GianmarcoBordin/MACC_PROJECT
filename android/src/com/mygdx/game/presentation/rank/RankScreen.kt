@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material3.HorizontalDivider
 //noinspection UsingMaterialAndMaterial3Libraries
@@ -33,6 +34,9 @@ import androidx.compose.material3.Surface
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -56,6 +60,7 @@ import com.mygdx.game.presentation.rank.events.RetryEvent
 import com.mygdx.game.ui.theme.ArAppTheme
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RankScreen(
     rankUpdateHandler: (RankUpdateEvent.RankUpdate) -> Unit,
@@ -95,16 +100,38 @@ fun RankScreen(
         }
     }
     ArAppTheme {
-        Surface(color = MaterialTheme.colorScheme.surface) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                BackButton(onClick = {  navController.popBackStack()})
-                DefaultContent(
-                    updateHandler = rankUpdateHandler,
-                    retryHandler=retryHandler,
-                    viewModel = viewModel
+
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    navigationIcon = {
+                        BackButton(onClick = { navController.popBackStack() })
+                    },
+                    title = {
+                        Text(
+                            text = "Rank"
+                        )
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant)
                 )
+            },
+            content = {
+                Surface(color = MaterialTheme.colorScheme.surface) {
+                    Column(modifier = Modifier.fillMaxSize().padding(it)) {
+                        DefaultContent(
+                            updateHandler = rankUpdateHandler,
+                            retryHandler=retryHandler,
+                            viewModel = viewModel
+                        )
+                    }
+                }
             }
-        }
+
+        )
+
+
     }
 }
 

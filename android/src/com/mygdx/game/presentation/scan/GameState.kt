@@ -20,7 +20,6 @@ data class GameState(
     var shootHitbox: MutableList<Vector2> = mutableListOf(), // default
     var isStarted: Boolean = false, // default
     var isGameOver: Boolean = false,
-    var owned: Boolean = false, // default
     var lines: MutableList<Line> = mutableListOf() // default
 )
 

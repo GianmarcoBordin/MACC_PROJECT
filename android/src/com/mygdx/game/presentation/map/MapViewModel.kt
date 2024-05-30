@@ -4,6 +4,8 @@ import android.content.ContentValues.TAG
 import android.content.Context
 import android.location.Location
 import android.util.Log
+import androidx.compose.animation.core.Animatable
+import androidx.compose.runtime.remember
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -68,7 +70,6 @@ class MapViewModel  @Inject constructor(
 
     private val _username = MutableLiveData<String>()
     val username: LiveData<String> = _username
-
 
     init {
         // Set granting state

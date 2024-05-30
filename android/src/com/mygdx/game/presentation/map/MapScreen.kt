@@ -1,7 +1,11 @@
 package com.mygdx.game.presentation.map
 
 import android.Manifest
+import android.app.Activity
 import android.content.ContentValues.TAG
+import android.content.Context
+import android.content.ContextWrapper
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -46,6 +50,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -100,6 +105,26 @@ import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 
+@Composable
+fun LockScreenOrientation(orientation: Int) {
+    val context = LocalContext.current
+    DisposableEffect(Unit) {
+        val activity = context.findActivity() ?: return@DisposableEffect onDispose {}
+        val originalOrientation = activity.requestedOrientation
+        activity.requestedOrientation = orientation
+        onDispose {
+            // restore original orientation when view disappears
+            activity.requestedOrientation = originalOrientation
+        }
+    }
+}
+
+fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}
+
 
 @Composable
 fun MapScreen(
@@ -110,12 +135,14 @@ fun MapScreen(
     viewModel: MapViewModel,
     navController: NavController
 ) {
+    LockScreenOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT)
+
     // observable state
     val isLocGranted by viewModel.isLocGranted.observeAsState()
     // lifecycle
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val openPopup = remember { mutableStateOf(false) }
+    val openPopup = rememberSaveable { mutableStateOf(false) }
 
     ManageLifecycle(lifecycleOwner = lifecycleOwner, viewModel = viewModel)
     CustomBackHandler(
@@ -198,7 +225,7 @@ fun DefaultMapContent(
     val isError by viewModel.isError.observeAsState()
 
     // state variable used to trigger info dialog display
-    val openInfoDialog = remember {
+    val openInfoDialog = rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -301,10 +328,10 @@ fun OsmMap(
     val username by viewModel.username.observeAsState()
 
     // observe state to open dialog of clicked object
-    val openObjectDialog = remember {
+    val openObjectDialog = rememberSaveable {
         mutableStateOf(false)
     }
-    val objectContent = remember {
+    val objectContent = rememberSaveable {
         mutableStateOf("")
     }
 

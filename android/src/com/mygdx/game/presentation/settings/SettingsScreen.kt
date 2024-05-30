@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material3.Button
@@ -21,7 +22,11 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material3.Text
 //noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
@@ -29,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +59,7 @@ import com.mygdx.game.util.Constants.SIGN_OUT_SUCCESS
 import com.mygdx.game.util.Constants.UPDATE_SUCCESS
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     settingsHandler:(UpdateEvent.Update)-> Unit,
@@ -64,9 +71,9 @@ fun SettingsScreen(
     val userProfile by viewModel.userProfile.collectAsState()
     val data by viewModel.data.observeAsState()
     // field of interest
-    var newName by remember { mutableStateOf(userProfile?.displayName ?: "New Name") }
-    var newEmail by remember { mutableStateOf(userProfile?.email ?: "New Name") }
-    var newPassword by remember { mutableStateOf("New Password") }
+    var newName by rememberSaveable { mutableStateOf(userProfile?.displayName ?: "New Name") }
+    var newEmail by rememberSaveable { mutableStateOf(userProfile?.email ?: "New Name") }
+    var newPassword by rememberSaveable { mutableStateOf("New Password") }
 
 
     //lifecycle
@@ -103,146 +110,162 @@ fun SettingsScreen(
 
     }
     ArAppTheme {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween    ){
-            BackButton(
-                onClick = {navController.popBackStack()}
-            )
 
-        }
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(modifier = Modifier
-                .padding(18.dp),
-                horizontalArrangement = Arrangement.SpaceBetween  ) {
-
-                Text(
-                    text = "Your Settings",
-                    modifier = Modifier.padding(vertical = 16.dp),
-                    style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
-                    fontSize = 18.sp,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-            }
-            // Name field
-            OutlinedTextField(
-                value = newName,
-                onValueChange = { newValue ->
-                    newName = newValue },
-                label = { Text( "New Name", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onSurface,) },
-                shape = RoundedCornerShape(size = 20.dp),
-                textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
-
-                modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = MaterialTheme.colorScheme.onSurface, // Set the contour color when focused
-                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface // Set the contour color when not focused
-                )
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            // Email field
-            OutlinedTextField(
-                value = newEmail,
-                onValueChange = { newValue ->
-                    newEmail  = newValue },
-                label = { Text( "New Email", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onSurface,) },
-                shape = RoundedCornerShape(size = 20.dp),
-                textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
-
-                modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = MaterialTheme.colorScheme.onSurface, // Set the contour color when focused
-                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface // Set the contour color when not focused
-                )
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-            // Password field
-            OutlinedTextField(
-                value = newPassword,
-                onValueChange = { newValue ->
-                    newPassword = newValue },
-                visualTransformation = PasswordVisualTransformation(),
-                shape = RoundedCornerShape(size = 20.dp),
-                textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
-
-                label = { Text("New Password", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
-                    color = MaterialTheme.colorScheme.onSurface,) },
-                modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = MaterialTheme.colorScheme.onSurface, // Set the contour color when focused
-                    unfocusedBorderColor = MaterialTheme.colorScheme.onSurface // Set the contour color when not focused
-                )
-            )
-            Row(modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween) {
-                // logout button
-                Button(
-                    onClick = {
-                        signOutHandler(SignOutEvent.SignOut)
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    navigationIcon = {
+                        BackButton(onClick = { navController.popBackStack() })
                     },
-                    shape = RoundedCornerShape(size = ButtonCornerShape),
-                    modifier = Modifier
-                        .padding(16.dp)
-                        .weight(1f)
-                ) {
-                    Text(text = "Logout")
-                }
-                // Save button
-                Button(
-                    onClick = {
-                        settingsHandler(UpdateEvent.Update(newName ,newEmail, newPassword))
+                    title = {
+                        Text(
+                            text = "Settings"
+                        )
                     },
-                    shape = RoundedCornerShape(size = ButtonCornerShape),
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant)
+                )
+            },
+            content = { innerPadding ->
+                LazyColumn(
                     modifier = Modifier
-                        .padding(16.dp)
-                        .weight(1f)
+                        .fillMaxSize()
+                        .padding(innerPadding).padding(horizontal = 15.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Save")
-                }
-            }
-            // Observe changes in data
-            if (data?.isNotEmpty() == true) {
-                // Display data
+                    item {
+                        Row(modifier = Modifier
+                            .padding(18.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween  ) {
 
-                if (data.equals(UPDATE_SUCCESS)){
-                    Text(
-                        text = data!!.toString(),
-                        color = Color.Green
-                    )
-                }
-                else if (!data.equals(SIGN_OUT_SUCCESS) &&  !data.equals(UPDATE_SUCCESS)){
-                    Text(
-                        text = data!!.toString(),
-                        color = MaterialTheme.colorScheme.onError
-                    )
-                }
+                            Text(
+                                text = "Your Settings",
+                                modifier = Modifier.padding(vertical = 16.dp),
+                                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+                                fontSize = 18.sp,
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+                        }
+                        // Name field
+                        OutlinedTextField(
+                            value = newName,
+                            onValueChange = { newValue ->
+                                newName = newValue },
+                            label = { Text( "New Name", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                                color = MaterialTheme.colorScheme.onSurface,) },
+                            shape = RoundedCornerShape(size = 20.dp),
+                            textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
+
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = MaterialTheme.colorScheme.onSurface, // Set the contour color when focused
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface // Set the contour color when not focused
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        // Email field
+                        OutlinedTextField(
+                            value = newEmail,
+                            onValueChange = { newValue ->
+                                newEmail  = newValue },
+                            label = { Text( "New Email", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                                color = MaterialTheme.colorScheme.onSurface,) },
+                            shape = RoundedCornerShape(size = 20.dp),
+                            textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
+
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = MaterialTheme.colorScheme.onSurface, // Set the contour color when focused
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface // Set the contour color when not focused
+                            )
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+                        // Password field
+                        OutlinedTextField(
+                            value = newPassword,
+                            onValueChange = { newValue ->
+                                newPassword = newValue },
+                            visualTransformation = PasswordVisualTransformation(),
+                            shape = RoundedCornerShape(size = 20.dp),
+                            textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface), // Set the text color to white
+
+                            label = { Text("New Password", style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
+                                color = MaterialTheme.colorScheme.onSurface,) },
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedBorderColor = MaterialTheme.colorScheme.onSurface, // Set the contour color when focused
+                                unfocusedBorderColor = MaterialTheme.colorScheme.onSurface // Set the contour color when not focused
+                            )
+                        )
+                        Row(modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween) {
+                            // logout button
+                            Button(
+                                onClick = {
+                                    signOutHandler(SignOutEvent.SignOut)
+                                },
+                                shape = RoundedCornerShape(size = ButtonCornerShape),
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .weight(1f)
+                            ) {
+                                Text(text = "Logout")
+                            }
+                            // Save button
+                            Button(
+                                onClick = {
+                                    settingsHandler(UpdateEvent.Update(newName ,newEmail, newPassword))
+                                },
+                                shape = RoundedCornerShape(size = ButtonCornerShape),
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .weight(1f)
+                            ) {
+                                Text(text = "Save")
+                            }
+                        }
+                        // Observe changes in data
+                        if (data?.isNotEmpty() == true) {
+                            // Display data
+
+                            if (data.equals(UPDATE_SUCCESS)){
+                                Text(
+                                    text = data!!.toString(),
+                                    color = Color.Green
+                                )
+                            }
+                            else if (!data.equals(SIGN_OUT_SUCCESS) &&  !data.equals(UPDATE_SUCCESS)){
+                                Text(
+                                    text = data!!.toString(),
+                                    color = MaterialTheme.colorScheme.onError
+                                )
+                            }
 
 
-                // Change page if all ok
-                if (viewModel.navigateToAnotherScreen.value == true) {
-                    val route:String = if (data.equals(SIGN_OUT_SUCCESS)){
-                        Route.SignInScreen.route
-                    }else{
-                        Route.HomeScreen.route
+                            // Change page if all ok
+                            if (viewModel.navigateToAnotherScreen.value == true) {
+                                val route:String = if (data.equals(SIGN_OUT_SUCCESS)){
+                                    Route.SignInScreen.route
+                                }else{
+                                    Route.HomeScreen.route
+                                }
+                                // navigate
+                                navController.navigate(route)
+                                viewModel.onNavigationComplete()
+                            }
+
+                        }
                     }
-                    // navigate
-                    navController.navigate(route)
-                    viewModel.onNavigationComplete()
-                }
 
+                }
             }
-        }
+
+        )
+
+
     }
 }
 
